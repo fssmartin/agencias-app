@@ -1,0 +1,15 @@
+<nav class="navbar container-fluid"> 
+	
+  <a
+    *ngFor="let link of links"
+    [routerLink]="link.path"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: exact }"
+  >
+
+    {{ link.label }}
+
+	</a> 
+</nav>
+
+<hr>
