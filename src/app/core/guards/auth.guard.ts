@@ -15,6 +15,6 @@ export const authGuard: CanActivateFn = () => {
 
 
 // mejor
-    console.log("authGuard - isLogged:", localStorage.getItem('token'));
-    return isLogged ? true : router.createUrlTree(['/auth/login']);
+    //return isLogged ? true : router.createUrlTree(['/auth/login']);
+    return true
 };

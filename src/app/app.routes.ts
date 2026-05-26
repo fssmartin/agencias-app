@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { NotFoundComponent } from './features/public/not-found/not-found.component';
 import { authGuard } from './core/guards/auth.guard';
+import { HomeComponent } from './features/public/home/home.component';
+import { NotFoundComponent } from './features/public/not-found/not-found.component';
 
 export const routes: Routes = [
     {
@@ -8,7 +9,7 @@ export const routes: Routes = [
     }, 
     {
          path:'home',
-         loadChildren:() => import('./agencias/agencias.routes').then(m => m.AGENCIAS_ROUTES)
+        component: HomeComponent
     },
     {
         path:'auth',

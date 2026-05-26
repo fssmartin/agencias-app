@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import {Component, Input, } from '@angular/core'; 
  
 import { Router, RouterLink, RouterLinkActive,   } from '@angular/router';
-import { NavLink } from '../../models/agencia.model';
+import { NavLink } from '../../../models/navlink.model';
 
  
 @Component({

@@ -29,7 +29,19 @@ export const AUTH_ROUTES : Routes = [
                 loadComponent: () =>
                 import('./pages/register/register.component')
                     .then(m => m.RegisterComponent)
-            }    
+            },
+            {
+                path: 'change',
+                loadComponent: () =>
+                import('./pages/change/change.component')
+                    .then(m => m.ChangeComponent)
+            },
+            {
+                path: 'forget',
+                loadComponent: () =>
+                import('./pages/forget/forget.component')
+                    .then(m => m.ForgetComponent)
+            },
         ]
     }
 ]

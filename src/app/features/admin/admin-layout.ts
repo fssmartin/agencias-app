@@ -1,19 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
+import { NavbarComponent } from '../../shared/components/layout/navbar/navbar.component';
 
 @Component({
   selector: 'app-admin-layout',
   imports: [RouterOutlet,  CommonModule, NavbarComponent],  
   template:`
-    <h3>{{titularAdmin}}</h3>
-
-    <app-navbar [links]="links" [exact]="exact"></app-navbar>
-
-    <main>
-      <router-outlet/>
-    </main>
+  <div class="container">
+    <div class="col">
+        <h3>{{titularAdmin}}</h3>      
+        <app-navbar [links]="links" [exact]="exact"></app-navbar>      
+        <main>
+          <router-outlet/>
+        </main>
+    </div>
+  </div> 
   ` 
 })
 export class AdminLayoutComponent {  
@@ -22,7 +24,7 @@ export class AdminLayoutComponent {
     { path: './config', label: 'Configurations' },
     { path: './questions', label: 'Questions' },
     { path: './users', label: 'Users' },
-    { path: './agencias', label: 'Agencias' }
+    { path: './categories', label: 'Categories' }
   ]
 exact = true;
   constructor( ){ 

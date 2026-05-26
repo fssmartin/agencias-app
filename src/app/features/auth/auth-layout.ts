@@ -1,17 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
+import { NavbarComponent } from '../../shared/components/layout/navbar/navbar.component';
 
 @Component({
   selector: 'app-auth-layout',
   imports: [RouterOutlet,  CommonModule],  
   template:`
-    <h3>{{titularAdmin}}</h3>
-
-    <main>
-      <router-outlet/>
-    </main>
+  <div class="container">
+    <div class="col">
+      <h3>{{titularAdmin}}</h3>
+      <main>
+        <router-outlet/>
+      </main>
+    </div>
+  </div>  
   ` 
 })
 export class AuthLayoutComponent {  

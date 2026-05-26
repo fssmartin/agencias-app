@@ -8,3 +8,28 @@ main{
 hr{
     margin:  0;
 }
+
+.container {
+  position: relative;
+  display: flex;
+  justify-content: left;
+  margin: 0;
+  width: 100%;
+  gap: 10px;
+}
+
+.col {
+  flex: 1;
+  padding: 10px;
+    position: relative;
+}
+
+.col+.col::after {
+  content: "";
+  position: absolute;
+  left: -20px;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background: #ccc;
+}

@@ -44,7 +44,13 @@ export const ADMIN_ROUTES : Routes = [
                 loadComponent: () =>
                 import('./pages/configuration/configuration.component')
                     .then(m => m.ConfigurationComponent)
-            }     
+            },
+            {
+                path: 'category',
+                loadComponent: () =>
+                import('./pages/configuration/configuration.component')
+                    .then(m => m.ConfigurationComponent)
+            }                 
         ]
     }
 
