@@ -1,46 +1,57 @@
 import { Component, Renderer2, computed, effect, signal } from '@angular/core'; 
 import { Router, RouterLink } from '@angular/router'; 
-
- 
-
- 
+import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-forget',
-  imports: [RouterLink],
+  imports: [AuthCardComponent, RouterLink, FormsModule],
   standalone: true,
-  templateUrl: './forget.component.html' 
+  template: `
+
+
+    <app-auth-card>
+
+      <div header>
+        <h4>Forgot Password</h4>
+        <p>Enter your email to reset your password</p>
+      </div>
+
+      <div>
+        <form (ngSubmit)="submit()">
+
+          <input
+            type="email"
+            placeholder="Email"
+            [(ngModel)]="email"
+            name="email"
+            required
+          >
+
+          <button type="submit">Send reset link</button>
+
+        </form>
+      </div>
+
+      <div footer>
+        <p>
+          Remembered your password?
+          <a routerLink="/auth/login">Back to login</a>
+        </p>
+      </div>
+
+    </app-auth-card>
+
+  `
 })
 export class ForgetComponent { 
   
-  
-  
-  isError:boolean  = false;
-  disabled:string = '';
-  loading:boolean  = true; 
- 
 
-  constructor(private router: Router, 
-    private renderer: Renderer2, ){  
- 
-  } 
+  email = '';
 
-  ngOnInit(){
-  }
-   
-  reset():void{   
-
-
-/* TEXTO DEL CORREO QUE LE LLEGARA...
-    Estimado ASD@ASD.ES,
-    Has solicitado restablecer tu contraseña, para restablecer tu contraseña haz click en el botón que se encuentra en la parte inferior.
-    El enlace para recuperar la contraseña tendrá una validez de 24 horas, si no has solicitado cambiar la contraseña, ignora este mensaje.
-*/
-
- 
+  submit() {
+    console.log('Reset password for:', this.email);
   }
 
-  ngOnDestroy():void {  
-  }
 }
 

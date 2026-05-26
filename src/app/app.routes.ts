@@ -7,25 +7,27 @@ export const routes: Routes = [
     {
         path:'', redirectTo: 'home', pathMatch: 'full',
     }, 
+
     {
-         path:'home',
-        component: HomeComponent
+         path:'home',component: HomeComponent
     },
+
     {
         path:'auth',
         loadChildren:() => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES),
     }, 
+
     {
         path:'admin',
         canActivate: [authGuard], // ✅ evita cargar si no está logueado
         loadChildren:() => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
     }, 
+
     {
         path:'about',
-        loadComponent: () =>
-        import('./features/public/about/about.component')
-            .then(m => m.AboutComponent)
+        loadComponent: () => import('./features/public/about/about.component').then(m => m.AboutComponent)
     },
+
     {    
         path: '**',
         component: NotFoundComponent

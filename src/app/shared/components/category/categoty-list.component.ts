@@ -8,7 +8,10 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <ul>
-        <li *ngFor="let cat of categories" (click)="select(cat)">
+        <li *ngFor="let cat of categories; trackBy: trackById" 
+              (click)="select(cat)"
+              [class.selected]="cat===selected"
+              >
           {{ cat.nombre }}
         </li> 
     </ul>  
@@ -17,12 +20,20 @@ import { CommonModule } from '@angular/common';
 export class CategoryListComponent { 
    
 
-  @Input() categories: Category[] = [];
+  @Input() categories?: Category[] = [];
 
   @Output() selectCategory = new EventEmitter<Category>();
 
+  selected?: Category;
+
   select(categoria: Category) {
     this.selectCategory.emit(categoria);
+    this.selected = categoria;
+  }
+
+  // Solo actualiza los que cambian
+  trackById(index: number, cat: any) {
+    return cat.id;
   }
 
     
