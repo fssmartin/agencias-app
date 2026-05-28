@@ -2,10 +2,11 @@ import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { User, UserRole } from '../../models/users.models';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../user.service';
 
 import { UserFormComponent } from "../user-form/user-form.component";
+import { map, switchMap } from 'rxjs';
 
 
 @Component({
@@ -31,32 +32,27 @@ export class UserEditComponent {
 
   constructor(
     private route: ActivatedRoute,
-    // private userService: UserService
+    private router: Router,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
 
-    this.route.paramMap.subscribe(params => {
-      this.id = params.get('id') || '';
-
-      this.user = { id: '1', name: 'Pedro Vila', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() };
-
-      // this.userService.getById(id).subscribe(user => {
-      //   this.user = user;
-      //   // los dos son iguales , pero patch mete en el form los que vengan 
-      //   // y set mete todos y si no vienen los borra, por eso es mejor patch
-      //   //this.form.patchValue(user);
-      //   //this.form.setchValue(user);        
-      // });
+    this.route.paramMap.pipe(
+      map(params => params.get('id') || ''),
+      switchMap(id => this.userService.getById(id))
+    ).subscribe(user => {
+      this.user = user;
     });
+
   }
  
-
   onSave(updatedUser: User) {
-    // this.userService.update(this.user.id, updatedUser)
-    //   .subscribe(() => {
-    //     // navegación o mensaje
-    //   });
+     this.userService.update(updatedUser)
+       .subscribe(() => {
+          //volver a la lista o mostrar mensaje
+          this.router.navigate(['/admin/users']);          
+       });
   }
 
 

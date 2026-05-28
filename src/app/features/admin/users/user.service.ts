@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { User } from "./models/users.models";
+import { User, UserRole } from "./models/users.models";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { BehaviorSubject, delay, Observable, of, switchMap } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -10,24 +10,136 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<User[]> {
-    return this.http.get<User[]>(this.api);
+  public userEmpty: User = {
+    id: '', 
+    name: '', 
+    email: '', 
+    isActive: true,  
+    role: UserRole.USER, 
+    permissions: [],
+    createdAt: new Date() 
+  };  
+
+  private usersSubject = new BehaviorSubject<User[]>([
+    { id: '1', name: 'Pedro Vila', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
+    { id: '2', name: 'Luis Garcia', email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
+    { id: '3', name: 'Belen Perez', email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
+  ]);
+
+  users$ = this.usersSubject.asObservable();
+
+  private setUsers(users: User[]): void {
+    this.usersSubject.next(users);
+  }
+  
+  private get users(): User[] {
+    return this.usersSubject.getValue();
   }
 
-  getById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.api}/${id}`);
+
+  getAll(): Observable<User[]> {
+    // return this.http.get<User[]>(this.api);
+    // return of(this.users);
+    
+     return this.users$.pipe(delay(400));
+    
+  }
+
+  getById(id: string): Observable<User> {
+    //return this.http.get<User>(`${this.api}/${id}`);
+        
+    // const user = this.users.find(u => u.id === id)!;
+    // return of(user);
+
+    // const current = this.usersSubject.getValue();
+    // const index = current.findIndex(u => u.id === id);
+    // if (index !== -1) {
+    //   return of(current[index]).pipe(delay(1000));
+    // }
+    // return of(this.userEmpty).pipe(delay(1000));
+
+    return this.users$.pipe(
+      delay(400),
+      switchMap(users => {
+        const user = users.find(u => u.id === id);
+        return of(user ? user : this.userEmpty);
+      })
+    );
+
+
   }
 
   create(user: User): Observable<User> {
-    return this.http.post<User>(this.api, user);
+    //return this.http.post<User>(this.api, user);    
+    
+    //user.id = Math.random().toString();
+    //this.users.push(user);
+    //return of(user).pipe(delay(1000));
+    
+    // const current = this.users$.value;
+    // const newUser = { 
+    //   ...user, 
+    //   id: Math.random().toString(), 
+    //   createdAt: new Date() 
+    // };
+    // this.users$.next([...current, newUser]);
+
+    // return of(newUser).pipe(delay(1000));
+
+      const newUser = { 
+        ...user,
+        id: Math.random().toString(),
+        createdAt: new Date()
+      };
+
+      this.setUsers([...this.users, newUser]);
+
+      return of(newUser).pipe(delay(400));
+
   }
 
-  update(id: number, user: User): Observable<User> {
-    return this.http.put<User>(`${this.api}/${id}`, user);
+  update(user: User): Observable<User> {
+   // return this.http.put<User>(`${this.api}/${id}`, user)
+
+  //  const index= this.users.findIndex(u => u.id === user.id);
+  //  if (index !== -1) {
+  //     console.log("Actualizando usuario:", this.users[index]);
+  //     this.users[index] = {
+  //       ...this.users[index], // mantenemos los datos que no se actualizan
+  //       ...user, // todos los q tengan que actualizarse
+  //       updatedAt: new Date(),
+  //       id: user.id // aseguramos que no se pierde
+  //     };
+  //   }
+  //   return of(this.users[index]).pipe(delay(1000));
+
+
+    const updated = this.users.map(u =>
+        u.id === user.id
+          ? { 
+              ...u,           // ✅ mantiene lo anterior
+              ...user,        // ✅ sobrescribe cambios
+              updatedAt: new Date() // ✅ añade timestamp
+            }
+          : u
+    );
+
+    this.setUsers(updated);
+    return of(user).pipe(delay(400));
+
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/${id}`);
+  delete(id: string): Observable<void> {
+    //return this.http.delete<void>(`${this.api}/${id}`);
+    
+    // this.users = this.users.filter(u => u.id !== id);
+    // return of(void 0).pipe(delay(1000));
+
+    
+    const current = this.users;
+    const filtered = current.filter(u => u.id !== id);
+    this.setUsers(filtered);
+    return  of(void 0).pipe(delay(400));
   }
 
   

@@ -4,8 +4,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-loading',
   templateUrl: './loading.component.html',
   styleUrls: ['./loading.component.css'],
-  standalone: false,
-  changeDetection : ChangeDetectionStrategy.OnPush
+  standalone: true
 })
 export class LoadingComponent {
 

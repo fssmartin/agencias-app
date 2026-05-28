@@ -1,6 +1,6 @@
 
 export interface User {
-  id: string;
+  id?: string;
 
   // datos básicos
   name: string;
@@ -10,12 +10,12 @@ export interface User {
   isActive: boolean;
 
   // roles / permisos
-  role: UserRole;
+  role?: UserRole;
   permissions?: Permission[];  
   
   // auditoría
-  createdAt: Date;
-  updatedAt?: Date;
+  readonly createdAt?: Date; // 🔒 no se debe cambiar
+  updatedAt?: Date;          // ✏️ se añade en updates
 
   // opcional
   lastLogin?: Date;

@@ -1,63 +1,70 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core'; 
+import { Component } from '@angular/core';
 import { User, UserRole } from '../../models/users.models';
 import { AuthService } from '../../../../auth/auth.service';
+import { UserService } from './../../user.service';
 import { RouterLink } from '@angular/router';
- 
+import { Observable, switchMap } from 'rxjs';
+import { LoadingComponent } from "../../../../../shared/components/ui/loading/loading.component";
+
 
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, LoadingComponent],
   template: `
 
-    <button routerLink="/admin/users/create"  class="fRight">Crear Usuario</button>
+    <h4>User List</h4>
 
-    <table>
+    <table *ngIf="users$ | async as users; else loading" class="listTable" >
       <tr>
-        <th>Status</th>
+        <th></th>
         <th>Name</th>
         <th>Email</th>
-        <th></th>
+        <th><button routerLink="/admin/users/create"  class="fRight btEnlace btCrear">Crear Usuario</button></th>
       </tr>
       <tr *ngFor="let user of users; trackBy: trackById">
-        <td>{{ user.isActive ? 'Active' : 'Inactive' }}</td>
+        <td>
+            {{ user.isActive ? '✅' : '❌' }}
+            {{ user.role === 'ADMIN' ? '🛡️' : user.role === 'MANAGER' ? '📊' : '👤' }}
+        </td>
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>
         <td>
-          <button [routerLink]="['/admin/users/edit', user.id]" >  👁️</button>
-          <button [routerLink]="['/admin/users/edit', user.id]" >✏️</button>          
+          <button [routerLink]="['/admin/users/view', user.id]" title="Show" >  👁️</button>
+          <button [routerLink]="['/admin/users/edit', user.id]" title="Edit">✏️</button>
           <button (click)="deleteUser(user)"  class="" >🗑️</button>
         </td>
       </tr>
-      <tr *ngIf="users.length === 0">
+      <tr *ngIf="users?.length === 0">
         <td colspan="4" align="center" class="notFound">No users</td>
       </tr>
     </table>
-    
-    <pre>{{ auth.getUser()| json }}</pre>
 
+    <ng-template #loading>
+      <app-loading></app-loading>
+    </ng-template>
+
+    <pre>{{ auth.getUser()| json }}</pre>
   `
 })
-export class UserListComponent {  
-  selected?: User;
+export class UserListComponent {
+  selectedUser?: User;
+  users$: Observable<User[]> | undefined;
+  userEmpty?: User;
 
-    users: User[] = [
-      { id: '1', name: 'Pedro Vila', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
-      { id: '2', name: 'Luis Garcia', email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
-      { id: '3', name: 'Belen Perez', email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
-    ];
+  constructor(
+    public auth: AuthService,
+    private userService: UserService ) {}
 
-  constructor(public auth: AuthService) {}
- 
-
-  ngOnInit(): void {  
-  
+  ngOnInit(): void {
+    this.userEmpty = this.userService.userEmpty;
+    this.users$ = this.userService.getAll();
   }
 
   select(user: User) {
-    this.selected = user;
+    this.selectedUser = user;
   }
 
   // Solo actualiza los que cambian
@@ -67,8 +74,12 @@ export class UserListComponent {
 
   deleteUser(user: User) {
     console.log("Usuario a eliminar:", user.id);
-    this.users = this.users.filter(u => u.id !== user.id);
+    this.users$ = this.userService.delete(user.id!)
+      .pipe(
+        // Refrescar la lista después de eliminar
+        switchMap(() => this.userService.getAll())
+      );
   }
-   
-    
+
+
 }
