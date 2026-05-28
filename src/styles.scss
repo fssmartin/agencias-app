@@ -34,6 +34,57 @@ hr{
   background: #ccc;
 }
 
+.fRight{
+  float: right;
+}
+.fLeft{
+  float: left;
+}
+
 .selected {
  font-weight: bold;
+}
+
+input.ng-invalid.ng-touched:not(:focus) { 
+  border: 1px solid red;
+}
+
+input.ng-valid.ng-touched:not(.ng-pristine) {
+  border: 1px solid green;
+}
+
+input:focus { 
+  outline: none;
+  border: 1px solid blue;
+}
+
+table button{background:none; border: none; padding:0;margin:0;margin-right: 0.1rem; font-size:0.8rem;}
+table td,th{padding: 0;background-color: transparent;}
+table tr:hover{background-color: aquamarine;}
+
+.notFound{
+  text-align: center;
+  font-size: 1.2rem;
+  color: red;
+}
+
+button {
+ padding: 0.2rem;
+ margin: 0.5rem;
+}
+
+
+label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+
+label span{
+  width: 100px;
+}
+label input,label select {
+   flex: 1;
 }

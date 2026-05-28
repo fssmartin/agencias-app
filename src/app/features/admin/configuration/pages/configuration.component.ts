@@ -2,7 +2,11 @@ import { Component } from '@angular/core';
  
 @Component({
   selector: 'app-configuration',
-  templateUrl: './configuration.component.html' 
+  template: `
+    <div class="admin admin--config">  
+      <h4>Configuration !</h4>
+    </div>   
+  ` 
 })
 export class ConfigurationComponent { 
    

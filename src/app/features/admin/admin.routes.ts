@@ -24,33 +24,27 @@ export const ADMIN_ROUTES : Routes = [
         children: [
             {
                 path: '',
-                redirectTo: 'config',
+                redirectTo: 'users',
                 pathMatch: 'full'
             },
             {
-                path: 'questions',
-                loadComponent: () =>
-                import('./pages/questions/questions.component')
-                    .then(m => m.QuestionsComponent)
+                path: 'users',
+                loadChildren: () => import('./users/users.routes').then(m => m.USERS_ROUTES)    
             },
             {
-                path: 'users',
-                loadComponent: () =>
-                import('./pages/users/users.component')
-                    .then(m => m.UsersComponent)
+                path: 'questions',
+                loadChildren: () => import('./questions/questions.routes').then(m => m.QUESTIONS_ROUTES)
             },
+/*
             {
                 path: 'config',
-                loadComponent: () =>
-                import('./pages/configuration/configuration.component')
-                    .then(m => m.ConfigurationComponent)
+                loadChildren: () => import('./configuration/configuration.routes').then(m => m.CONFIGURATION_ROUTES)
             },
             {
                 path: 'categories',
-                loadComponent: () =>
-                import('./pages/configuration/configuration.component')
-                    .then(m => m.ConfigurationComponent)
-            }                 
+                loadChildren: () => import('./questions/questions.routes').then(m => m.QUESTIONS_ROUTES)
+            }
+*/
         ]
     }
 

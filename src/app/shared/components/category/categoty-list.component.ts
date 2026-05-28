@@ -19,12 +19,15 @@ import { CommonModule } from '@angular/common';
 })
 export class CategoryListComponent { 
    
-
   @Input() categories?: Category[] = [];
 
   @Output() selectCategory = new EventEmitter<Category>();
 
-  selected?: Category;
+  selected?: Category = undefined;
+
+  ngOnInit(): void {  
+    this.selected = this.categories ? this.categories[0] : undefined;
+  }
 
   select(categoria: Category) {
     this.selectCategory.emit(categoria);

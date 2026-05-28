@@ -4,7 +4,7 @@
     *ngFor="let link of links"
     [routerLink]="link.path"
     routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: exact }"
+    [routerLinkActiveOptions]="{ exact: false }"
   >
     {{ link.label }}
 	</a> 

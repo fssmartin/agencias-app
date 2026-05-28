@@ -1,13 +1,18 @@
 .navbar{
-  padding: 10px 0;
+  padding: 0 10px;
   justify-content: left;
   gap: 10px;
   & a{
-    color:darkblue;
+    color:black;
     padding: 0 5px;
+    text-decoration: none;
     &.active{
       font-weight: bold;
       color:orangered;
+      text-decoration: underline;
+    }
+    &:hover{
+      text-decoration: underline;
     }
   }
 }
