@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { User, UserRole } from "../../../core/models/users.models";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, catchError, delay, Observable, of, switchMap } from "rxjs";
+import { BehaviorSubject, catchError, delay, Observable, of, switchMap, tap } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -19,8 +19,8 @@ export class UserService {
     permissions: [],
     createdAt: new Date() 
   };  
-  private loadingSubject = new BehaviorSubject<Boolean>(true)
-  private errorSubject = new BehaviorSubject<any>(null);
+  private loadingSubject = new BehaviorSubject<boolean>(true)
+  private errorSubject = new BehaviorSubject<string | null>(null);
 
   private usersSubject = new BehaviorSubject<User[]>([
     { id: '1', name: 'Pedro Vila', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
@@ -67,7 +67,18 @@ export class UserService {
 
    
     // temporal sin http
-    return this.users$.pipe(delay(400));
+    //return this.users$.pipe(delay(400));
+    
+    return of(this.users).pipe(
+        delay(400),
+        tap(() => this.loadingSubject.next(false)),
+        catchError(err => {
+          this.errorSubject.next('Error');
+          this.loadingSubject.next(false);
+          return of([]);
+        })
+      );
+
     
   }
 

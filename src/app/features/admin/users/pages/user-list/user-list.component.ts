@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { User, UserRole } from '../../../../../core/models/users.models';
 import { AuthService } from '../../../../auth/auth.service';
 import { UserService } from './../../user.service';
@@ -21,7 +21,11 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
       {{ error }}
     </div>
 
-    <table *ngIf="users$ | async as users; else loading" class="listTable" >
+    <div *ngIf="loading$ | async as loading">
+      <app-loading></app-loading>
+    </div>
+
+    <table *ngIf="users$ | async as users;" class="listTable" >
       <tr>
         <th></th>
         <th>Name</th>
@@ -51,23 +55,24 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
       </tr>
     </table>
 
-    <ng-template #loading>
-      <app-loading></app-loading>
-    </ng-template>
+    
 
     <!-- <pre>{{ auth.getUser()| json }}</pre> -->
   `
 })
 export class UserListComponent {
   selectedUser?: User;
-  users$: Observable<User[]> | undefined;
-  userEmpty?: User;
-  error$?: Observable<string>;
-
+  
+  private userService = inject(UserService);
+  
+  users$ = this.userService.users$;
+  error$ = this.userService.error$;
+  loading$ = this.userService.loading$;
+  userEmpty?: User = this.userService.userEmpty;
+ 
   constructor(
     // public auth: AuthService,
-    private router: Router,
-    private userService: UserService )
+    private router: Router )
   {}
 
   ngOnInit(): void {
@@ -78,8 +83,7 @@ export class UserListComponent {
     //   console.log('ID actualizado:', updatedId, action);
     // }    
 
-    this.userEmpty = this.userService.userEmpty;
-    this.users$ = this.userService.getAll();
+      this.users$ = this.userService.getAll();
 
   }
 

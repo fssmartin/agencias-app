@@ -21,7 +21,7 @@ import { CommonModule } from '@angular/common';
         </div>
 
         <!-- BODY -->
-        <div>
+        <div body>
           <form [formGroup]="form" (ngSubmit)="login()">
 
               <input

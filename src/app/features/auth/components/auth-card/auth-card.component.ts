@@ -9,25 +9,28 @@ import { Component} from '@angular/core';
   standalone: true,
   template: `
 
-    <div class="auth-container">
-      <div class="auth-card">
+      <div class="auth-container">
 
-        <!-- HEADER -->
-        <div class="auth-header">
-          <ng-content select="[header]"></ng-content>
+          <div class="auth-card">
+
+            <!-- HEADER -->
+            <div class="auth-header">
+              <ng-content select="[header]"></ng-content>
+            </div>
+
+            <!-- BODY -->
+            <div class="auth-body">
+              <ng-content select="[body]"></ng-content>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="auth-footer">
+              <ng-content select="[footer]"></ng-content>
+            </div>
+            
         </div>
 
-        <!-- BODY -->
-        <div class="auth-body">
-          <ng-content></ng-content>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="auth-footer">
-          <ng-content select="[footer]"></ng-content>
-        </div>
-
-    </div>
+      </div>
 
   `
 })
