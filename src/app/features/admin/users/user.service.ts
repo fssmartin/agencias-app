@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { User, UserRole } from "../../../core/models/users.models";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, catchError, delay, Observable, of, switchMap, tap } from "rxjs";
+import { BehaviorSubject, catchError, delay, finalize, Observable, of, switchMap, tap } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -41,7 +41,7 @@ export class UserService {
   }
 
 
-  getAll(): Observable<User[]> {
+  getAll(): void {
     // bueno con api
     
     this.loadingSubject.next(true);
@@ -66,19 +66,20 @@ export class UserService {
     // );
 
    
-    // temporal sin http
-    //return this.users$.pipe(delay(400));
-    
-    return of(this.users).pipe(
+    // temporal sin http jejeje
+    of(this.users).pipe(
         delay(400),
         tap(() => this.loadingSubject.next(false)),
         catchError(err => {
           this.errorSubject.next('Error');
           this.loadingSubject.next(false);
           return of([]);
-        })
-      );
-
+        }),
+        finalize(() => this.loadingSubject.next(false))
+      )
+      .subscribe(users => {
+        this.setUsers(users);
+      });
     
   }
 
@@ -107,7 +108,6 @@ export class UserService {
   }
 
   create(user: User): Observable<User> {
-    //return this.http.post<User>(this.api, user);  
 
     // return this.http.post<User>(this.api, user).pipe(
     //   tap(newUser => {
@@ -117,9 +117,7 @@ export class UserService {
     //   // 🔁 refresco opcional
     //   switchMap(() => this.http.get<User[]>(this.api)),
     //   tap(users => this.setUsers(users))
-    // );
-
-
+    // ); 
 
       const newUser = { 
         ...user,
@@ -133,7 +131,11 @@ export class UserService {
 
   }
 
-  update(user: User): Observable<User> {
+  update(user: User): void {
+
+    this.loadingSubject.next(true);
+    this.errorSubject.next(null);
+
    // return this.http.put<User>(`${this.api}/${id}`, user)
 
   //  const index= this.users.findIndex(u => u.id === user.id);
@@ -148,34 +150,61 @@ export class UserService {
   //   }
   //   return of(this.users[index]).pipe(delay(1000));
 
-    // siempre se crea un nuevo array para que detecte el cambio, 
-    // y se actualiza solo el que cambia
-    const updated = this.users.map(u =>
-        u.id === user.id
-          ? { 
-              ...u,           // ✅ mantiene lo anterior
-              ...user,        // ✅ sobrescribe cambios
-              updatedAt: new Date() // ✅ añade timestamp
-            }
-          : u
-    );
 
-    this.setUsers(updated);
-    return of(user).pipe(delay(400));
+    of(user).pipe(
+          delay(400),
+          tap(() =>{        
+                // siempre se crea un nuevo array para que detecte el cambio, 
+                // y se actualiza solo el que cambia
+                const updated = this.users.map(u =>
+                    u.id === user.id
+                      ? { 
+                          ...u,           // ✅ mantiene lo anterior
+                          ...user,        // ✅ sobrescribe cambios
+                          updatedAt: new Date() // ✅ añade timestamp
+                        }
+                      : u
+                );
+                this.setUsers(updated); 
+            }),
+            catchError(err => {
+                this.errorSubject.next('Error');
+                this.loadingSubject.next(false);
+                return of([]);
+            }),
+            finalize(() => this.loadingSubject.next(false))
+      ) 
+
 
   }
 
-  delete(id: string): Observable<void> {
-    //return this.http.delete<void>(`${this.api}/${id}`);
-    
-    // this.users = this.users.filter(u => u.id !== id);
-    // return of(void 0).pipe(delay(1000));
+  delete(userId: string): void {
 
-    
-    const current = this.users;
-    const filtered = current.filter(u => u.id !== id);
-    this.setUsers(filtered);
-    return  of(void 0).pipe(delay(400));
+    this.loadingSubject.next(true);
+    this.errorSubject.next(null);
+
+    // this.http.delete(`${this.api}/${userId}`).pipe(
+    //   tap(() => this.getAll())
+    // );
+ 
+    of(this.users).pipe(
+      delay(400),
+      tap(() =>{        
+          const current = this.users;
+          const filtered = current.filter(u => u.id !== userId); 
+          this.setUsers(filtered);
+      }),
+      catchError(err => {
+          this.errorSubject.next('Error');
+          this.loadingSubject.next(false);
+          return of([]);
+      }),
+      finalize(() => this.loadingSubject.next(false))
+    )
+    .subscribe(users => {
+        //console.log("Usuario eliminado, ID:", userId,users);
+        //this.setUsers(users);
+    });
   }
 
   

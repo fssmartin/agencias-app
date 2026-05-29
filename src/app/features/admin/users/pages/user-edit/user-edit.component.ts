@@ -56,15 +56,15 @@ export class UserEditComponent {
  
   onSave(updatedUser: User) {
      this.userService.update(updatedUser)
-       .subscribe(() => {
-          //volver a la lista y le paso info de lo que se ha actualizado para mostrar un mensaje o algo
-          this.router.navigate(['/admin/users'], {
-            state: {
-              updatedId: updatedUser.id,
-              action: 'update' 
-            }
-          });
-       });  
+      //  .subscribe(() => {
+      //     //volver a la lista y le paso info de lo que se ha actualizado para mostrar un mensaje o algo
+      //     this.router.navigate(['/admin/users'], {
+      //       state: {
+      //         updatedId: updatedUser.id,
+      //         action: 'update' 
+      //       }
+      //     });
+      //  });  
        
   }
 

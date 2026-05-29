@@ -15,47 +15,48 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
   imports: [CommonModule, RouterLink, LoadingComponent],
   template: `
 
-    <h4>User List</h4>
+    <h4>User List</h4> 
 
-    <div *ngIf="error$ | async as error">
-      {{ error }}
-    </div>
+    <app-loading *ngIf="loading$ | async"></app-loading>
 
-    <div *ngIf="loading$ | async as loading">
-      <app-loading></app-loading>
-    </div>
+    <ng-container *ngIf="!(loading$ | async)">
 
-    <table *ngIf="users$ | async as users;" class="listTable" >
-      <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Email</th>
-        <th><button routerLink="/admin/users/create"  class="fRight btEnlace btCrear">Crear Usuario</button></th>
-      </tr>
-      <tr *ngFor="let user of users; trackBy: trackById">
-        <td>
-            {{ user.isActive ? '✅' : '❌' }}
-            {{ user.role === 'ADMIN' ? '🛡️' : user.role === 'MANAGER' ? '📊' : '👤' }}
-        </td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.email }}</td>
-        <td>
-          <button [routerLink]="['/admin/users/view', user.id]" title="Show" >  👁️</button>
-          <button [routerLink]="['/admin/users/edit', user.id]" title="Edit">✏️</button>
-          <button (click)="deleteUser(user)"  class="" >🗑️</button>
-        </td>
-      </tr>
-      <tr>
-        <td></td>
-        <td text-align="left"><strong>Total: {{ users.length }}</strong></td>
-        <td colspan="2"></td>
-      </tr>
-      <tr *ngIf="users?.length === 0">
-        <td colspan="4" align="center" class="notFound">No users</td>
-      </tr>
-    </table>
+        <div *ngIf="error$ | async as error">
+          {{ error }}
+        </div>  
 
-    
+        <table
+          *ngIf="users$ | async as users"
+          class="listTable">
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Email</th>
+            <th><button routerLink="/admin/users/create"  class="fRight btEnlace btCrear">Crear Usuario</button></th>
+          </tr>
+          <tr *ngFor="let user of users; trackBy: trackById">
+            <td>
+                {{ user.isActive ? '✅' : '❌' }}
+                {{ user.role === 'ADMIN' ? '🛡️' : user.role === 'MANAGER' ? '📊' : '👤' }}
+            </td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <button [routerLink]="['/admin/users/view', user.id]" title="Show" >  👁️</button>
+              <button [routerLink]="['/admin/users/edit', user.id]" title="Edit">✏️</button>
+              <button (click)="deleteUser(user)"  class="" >🗑️</button>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td text-align="left"><strong>Total: {{ users.length }}</strong></td>
+            <td colspan="2"></td>
+          </tr>
+          <tr *ngIf="users?.length === 0">
+            <td colspan="4" align="center" class="notFound">No users</td>
+          </tr>
+        </table>    
+    </ng-container> 
 
     <!-- <pre>{{ auth.getUser()| json }}</pre> -->
   `
@@ -83,7 +84,7 @@ export class UserListComponent {
     //   console.log('ID actualizado:', updatedId, action);
     // }    
 
-      this.users$ = this.userService.getAll();
+    this.userService.getAll();
 
   }
 
@@ -98,12 +99,16 @@ export class UserListComponent {
 
   deleteUser(user: User) {
     console.log("Usuario a eliminar:", user.id);
-    this.users$ = this.userService.delete(user.id!)
-      .pipe(
-        // Refrescar la lista después de eliminar
-        switchMap(() => this.userService.getAll())
-      );
+    // this.users$ = this.userService.delete(user.id!)
+    //   .pipe(
+    //     // Refrescar la lista después de eliminar
+    //     switchMap(() => this.userService.getAll())
+    //   );
+
+    this.userService.delete(user.id!);
+
   }
+
 
 
 }
