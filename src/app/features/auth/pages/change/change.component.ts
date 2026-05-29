@@ -1,5 +1,5 @@
-import { Component, effect, Renderer2 } from '@angular/core'; 
-import { Router, RouterLink } from '@angular/router'; 
+import { Component } from '@angular/core'; 
+import { Router,  } from '@angular/router'; 
 
  
  
@@ -7,7 +7,7 @@ import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-change',
-  imports: [RouterLink],
+  imports: [],
   standalone: true,
   templateUrl: './change.component.html' 
 })
@@ -17,8 +17,7 @@ export class ChangeComponent {
   isError:boolean  = false;
   disabled:string = ''; 
 
-  constructor(   
-     private renderer: Renderer2, 
+  constructor(
      private router: Router, 
      ){    
 

@@ -17,6 +17,10 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
 
     <h4>User List</h4>
 
+    <div *ngIf="error$ | async as error">
+      {{ error }}
+    </div>
+
     <table *ngIf="users$ | async as users; else loading" class="listTable" >
       <tr>
         <th></th>
@@ -58,24 +62,25 @@ export class UserListComponent {
   selectedUser?: User;
   users$: Observable<User[]> | undefined;
   userEmpty?: User;
+  error$?: Observable<string>;
 
   constructor(
     // public auth: AuthService,
     private router: Router,
-    private userService: UserService ) {}
+    private userService: UserService )
+  {}
 
   ngOnInit(): void {
  
-    //me viene de edit , y se cual ha sido el id actualizado para hacer algun efecto jejeje    
+    // me viene de edit , y se cual ha sido el id actualizado para hacer algun efecto jejeje    
     // const { updatedId, action } = history.state || {};
     // if ( updatedId && action) { 
     //   console.log('ID actualizado:', updatedId, action);
-    // }
-    
+    // }    
 
     this.userEmpty = this.userService.userEmpty;
-
     this.users$ = this.userService.getAll();
+
   }
 
   select(user: User) {

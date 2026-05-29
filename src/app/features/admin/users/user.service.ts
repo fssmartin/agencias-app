@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { User, UserRole } from "../../../core/models/users.models";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, delay, Observable, of, switchMap } from "rxjs";
+import { BehaviorSubject, catchError, delay, Observable, of, switchMap } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -19,6 +19,8 @@ export class UserService {
     permissions: [],
     createdAt: new Date() 
   };  
+  private loadingSubject = new BehaviorSubject<Boolean>(true)
+  private errorSubject = new BehaviorSubject<any>(null);
 
   private usersSubject = new BehaviorSubject<User[]>([
     { id: '1', name: 'Pedro Vila', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
@@ -27,6 +29,8 @@ export class UserService {
   ]);
 
   users$ = this.usersSubject.asObservable();
+  error$ = this.errorSubject.asObservable();
+  loading$ = this.loadingSubject.asObservable();
 
   private setUsers(users: User[]): void {
     this.usersSubject.next(users);
@@ -38,12 +42,28 @@ export class UserService {
 
 
   getAll(): Observable<User[]> {
-
     // bueno con api
+    
+    this.loadingSubject.next(true);
+    this.errorSubject.next(null);
+
     // this.http.get<User[]>('/api/users')
-    //   .subscribe(users => {
-    //     this.setUsers(users);
-    //   });
+    //   .pipe(
+    //        catchError(err => {
+    //           console.error(err);
+    //           this.errorSubject.next('Error cargando usuarios');
+    //           return of([]);
+    //        }),
+    //        finalize(() => this.loadingSubject.next(false))
+    //   ) 
+    //   .subscribe(
+    //     {
+    //       next: users => this.setUsers(users),
+    //       error: err => {
+    //         console.error('Error fetching users:', err);  
+    //       }
+    //     }  
+    // );
 
    
     // temporal sin http
