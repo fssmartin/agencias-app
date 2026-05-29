@@ -1,8 +1,12 @@
 import { CommonModule } from '@angular/common';
 import {Component, Input, } from '@angular/core'; 
+import { Observable } from 'rxjs';
  
 import { Router, RouterLink, RouterLinkActive,   } from '@angular/router';
+
+import { UserService } from '../../../../features/admin/users/user.service';
 import { NavLink } from '../../../models/navlink.model';
+import { User } from '../../../../core/models/users.models';
 
  
 @Component({
@@ -15,12 +19,16 @@ import { NavLink } from '../../../models/navlink.model';
 export class NavbarComponent  {  
  
   @Input() links:NavLink[] = []; 
-  @Input() exact = false;
+  @Input() exact = false; 
+  
 
+  constructor( 
+    private router: Router
+  ) {}
 
-  constructor(private router: Router) {}
-
- 
+ ngOnInit(): void {
+    console.log('navbar init'); 
+  }
 
  
 }

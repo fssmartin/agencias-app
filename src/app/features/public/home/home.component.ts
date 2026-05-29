@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
 
       </div>
 
-      <div class="col"> 
+      <div class="col">
         
         <h3>Detail:</h3>
 
@@ -38,8 +38,7 @@ import { CommonModule } from '@angular/common';
     </div>  
   ` 
 })
-export class HomeComponent {  
- 
+export class HomeComponent {
 
   categories: Category[] = [
     { id: 1, nombre: 'Cat 1' },

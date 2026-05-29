@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core'; 
 import { UserFormComponent } from '../user-form/user-form.component';
-import { User, UserRole } from '../../models/users.models';
+import { User, UserRole } from '../../../../../core/models/users.models';
 import { USERS_ROUTES } from '../../users.routes';
 import { UserService } from '../../user.service';
 import { Router } from '@angular/router';

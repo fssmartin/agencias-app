@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { User, UserRole } from "./models/users.models";
+import { User, UserRole } from "../../../core/models/users.models";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, delay, Observable, of, switchMap } from "rxjs";
 
@@ -38,10 +38,16 @@ export class UserService {
 
 
   getAll(): Observable<User[]> {
-    // return this.http.get<User[]>(this.api);
-    // return of(this.users);
-    
-     return this.users$.pipe(delay(400));
+
+    // bueno con api
+    // this.http.get<User[]>('/api/users')
+    //   .subscribe(users => {
+    //     this.setUsers(users);
+    //   });
+
+   
+    // temporal sin http
+    return this.users$.pipe(delay(400));
     
   }
 
@@ -70,21 +76,19 @@ export class UserService {
   }
 
   create(user: User): Observable<User> {
-    //return this.http.post<User>(this.api, user);    
-    
-    //user.id = Math.random().toString();
-    //this.users.push(user);
-    //return of(user).pipe(delay(1000));
-    
-    // const current = this.users$.value;
-    // const newUser = { 
-    //   ...user, 
-    //   id: Math.random().toString(), 
-    //   createdAt: new Date() 
-    // };
-    // this.users$.next([...current, newUser]);
+    //return this.http.post<User>(this.api, user);  
 
-    // return of(newUser).pipe(delay(1000));
+    // return this.http.post<User>(this.api, user).pipe(
+    //   tap(newUser => {
+    //     // ✅ actualización inmediata
+    //     this.setUsers([...this.users, newUser]);
+    //   }),
+    //   // 🔁 refresco opcional
+    //   switchMap(() => this.http.get<User[]>(this.api)),
+    //   tap(users => this.setUsers(users))
+    // );
+
+
 
       const newUser = { 
         ...user,
@@ -113,7 +117,8 @@ export class UserService {
   //   }
   //   return of(this.users[index]).pipe(delay(1000));
 
-
+    // siempre se crea un nuevo array para que detecte el cambio, 
+    // y se actualiza solo el que cambia
     const updated = this.users.map(u =>
         u.id === user.id
           ? { 
@@ -143,17 +148,11 @@ export class UserService {
   }
 
   
-  // loadUsers() {
-  //   this.userService.getAll().subscribe(users => {
-  //     this.users = users;
-  //   });
-  // }
+  refresh(): void {
+    this.http.get<User[]>(this.api)
+      .subscribe(users => this.setUsers(users));
+  }
 
-  // delete(id: number) {
-  //   this.userService.delete(id).subscribe(() => {
-  //     this.loadUsers();
-  //   });
-  // }
-
+ 
 
 }

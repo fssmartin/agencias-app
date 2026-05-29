@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { User, UserRole } from '../../models/users.models';
+import { User, UserRole } from '../../../../../core/models/users.models';
 import { AuthService } from '../../../../auth/auth.service';
 import { UserService } from './../../user.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Observable, switchMap } from 'rxjs';
 import { LoadingComponent } from "../../../../../shared/components/ui/loading/loading.component";
 
@@ -37,6 +37,11 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
           <button (click)="deleteUser(user)"  class="" >🗑️</button>
         </td>
       </tr>
+      <tr>
+        <td></td>
+        <td text-align="left"><strong>Total: {{ users.length }}</strong></td>
+        <td colspan="2"></td>
+      </tr>
       <tr *ngIf="users?.length === 0">
         <td colspan="4" align="center" class="notFound">No users</td>
       </tr>
@@ -46,7 +51,7 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
       <app-loading></app-loading>
     </ng-template>
 
-    <pre>{{ auth.getUser()| json }}</pre>
+    <!-- <pre>{{ auth.getUser()| json }}</pre> -->
   `
 })
 export class UserListComponent {
@@ -55,11 +60,21 @@ export class UserListComponent {
   userEmpty?: User;
 
   constructor(
-    public auth: AuthService,
+    // public auth: AuthService,
+    private router: Router,
     private userService: UserService ) {}
 
   ngOnInit(): void {
+ 
+    //me viene de edit , y se cual ha sido el id actualizado para hacer algun efecto jejeje    
+    // const { updatedId, action } = history.state || {};
+    // if ( updatedId && action) { 
+    //   console.log('ID actualizado:', updatedId, action);
+    // }
+    
+
     this.userEmpty = this.userService.userEmpty;
+
     this.users$ = this.userService.getAll();
   }
 
