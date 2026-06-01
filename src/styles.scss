@@ -121,7 +121,29 @@ select:not([multiple], [size]) {
   height: auto;
 }
 
-.listTable tr td:last-child{  
-  text-align: right;
+.listTable tr{
+  &:last-child{
+    td{border: none;}
+    font-size: .8rem;
+  }
+
+  & td{
+   &:last-child{  
+     text-align: right;
+   }
 }
 
+}
+
+
+
+.msj{
+  color: green;
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 10px 0;
+  &.msjError{
+    color: red; 
+  }
+
+}

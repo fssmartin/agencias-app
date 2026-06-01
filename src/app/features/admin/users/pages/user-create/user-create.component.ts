@@ -15,7 +15,8 @@ import { Router } from '@angular/router';
   template: `
     <app-user-form 
         [user]="user"
-        (save)="onSave($event)">
+        (save)="onSave($event)"
+        (cancel)="onCancel($event)">
     </app-user-form>
   ` 
 })
@@ -33,11 +34,23 @@ export class UserCreateComponent {
   }
 
   onSave(newUser: User) {
-     this.userService.create(newUser)
-       .subscribe(() => {
-          //volver a la lista o mostrar mensaje
-          this.router.navigate(['/admin/users']);
-       }); 
+      this.userService.createUser(newUser)
+       .subscribe((userNew:User) => {
+          //volver a la lista y le paso info de lo que se ha actualizado para mostrar un mensaje o algo
+          this.router.navigate(['/admin/users'], {
+            state: {
+              userId: userNew.id,
+              action: 'create' 
+            }
+          });
+       });  
   }
+
+       
+  onCancel(data:any) {
+          this.router.navigate(['/admin/users']);
+  }
+
+
 
 }

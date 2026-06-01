@@ -1,15 +1,17 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { User, UserRole } from "../../../core/models/users.models";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, catchError, delay, finalize, Observable, of, switchMap, tap } from "rxjs";
+import { BehaviorSubject, catchError, delay, filter, finalize, map, Observable, of, shareReplay, startWith, Subject, switchMap, take, tap, throwError } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
 
   private api = '/api/users';
 
-  constructor(private http: HttpClient) {}
-
+ // constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  
+  
   public userEmpty: User = {
     id: '', 
     name: '', 
@@ -19,200 +21,192 @@ export class UserService {
     permissions: [],
     createdAt: new Date() 
   };  
-  private loadingSubject = new BehaviorSubject<boolean>(true)
+
+  private loadingSubject = new BehaviorSubject<boolean>(false)
   private errorSubject = new BehaviorSubject<string | null>(null);
 
-  private usersSubject = new BehaviorSubject<User[]>([
+  // 🔁 Trigger para recargar datos
+  private reload$ = new BehaviorSubject<void>(undefined);
+
+  private myUsers: User[] = [
     { id: '1', name: 'Pedro Vila', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
     { id: '2', name: 'Luis Garcia', email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
     { id: '3', name: 'Belen Perez', email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
-  ]);
+  ]; 
 
-  users$ = this.usersSubject.asObservable();
   error$ = this.errorSubject.asObservable();
   loading$ = this.loadingSubject.asObservable();
-
-  private setUsers(users: User[]): void {
-    this.usersSubject.next(users);
-  }
   
-  private get users(): User[] {
-    return this.usersSubject.getValue();
+ 
+users$ = this.reload$.pipe(
+  tap(() => console.log('PIPE START')),
+  startWith(void 0),
+  delay(0),
+  switchMap(() =>{
+    console.log('SWITCHMAP');
+    this.loadingSubject.next(true);
+    return of(this.myUsers).pipe(
+      delay(500),
+      map(users => users ?? []),
+      tap(users => {
+        console.log('USERS:', users);
+        this.loadingSubject.next(false);
+      }),
+      catchError(() => {
+        this.loadingSubject.next(false);
+        this.errorSubject.next('Error cargando usuarios');
+        return of([]);
+      })
+    )
+  }),
+  shareReplay(0)
+);
+
+  clearObservable(loading: boolean=false) {
+    this.loadingSubject.next(loading);
+    this.errorSubject.next(null); 
   }
 
+  // 🔄 trigger manual
+  reload() { 
+      console.log('RELOAD CALLED'); // 👈 añade esto
+      this.reload$.next(); 
+  }
+ 
 
-  getAll(): void {
-    // bueno con api
+  deleteById(id: string): Observable<void> {
     
-    this.loadingSubject.next(true);
-    this.errorSubject.next(null);
-
-    // this.http.get<User[]>('/api/users')
-    //   .pipe(
-    //        catchError(err => {
-    //           console.error(err);
-    //           this.errorSubject.next('Error cargando usuarios');
-    //           return of([]);
-    //        }),
-    //        finalize(() => this.loadingSubject.next(false))
-    //   ) 
-    //   .subscribe(
-    //     {
-    //       next: users => this.setUsers(users),
-    //       error: err => {
-    //         console.error('Error fetching users:', err);  
-    //       }
-    //     }  
+    // return this.http.delete<void>(`${this.api}/${id}`).pipe(
+      // tap(() => {
+      //   this.loadingSubject.next(true); 
+      //   this.errorSubject.next(''); // Limpia errores previos
+      // }),
+    //   tap(() => this.reload()) 
+    //   catchError(err => {
+    //      this.errorSubject.next('Error eliminando usuario'); 
+    //      return throwError(() => err);  
+    //   })
     // );
 
-   
-    // temporal sin http jejeje
-    of(this.users).pipe(
-        delay(400),
-        tap(() => this.loadingSubject.next(false)),
-        catchError(err => {
-          this.errorSubject.next('Error');
-          this.loadingSubject.next(false);
-          return of([]);
-        }),
-        finalize(() => this.loadingSubject.next(false))
-      )
-      .subscribe(users => {
-        this.setUsers(users);
-      });
-    
+    return of(void 0).pipe(
+      tap(() => {
+    this.clearObservable(true);
+
+      }),
+      delay(300),
+      tap(() => {
+        throw new Error('xxxxxxxxxxxxxxxx');
+        this.myUsers = this.myUsers.filter(u => u.id !== id);
+        this.reload();
+      }),
+      catchError(err => {
+        // ✅ aquí actualizas el estado global de error
+        this.loadingSubject.next(false); 
+        this.errorSubject.next('❌ Error eliminando usuario');
+        // ✅ y decides si propagas o no
+        return throwError(() => err);
+      })
+
+    );
   }
 
-  getById(id: string): Observable<User> {
-    //return this.http.get<User>(`${this.api}/${id}`);
-        
-    // const user = this.users.find(u => u.id === id)!;
-    // return of(user);
+ getById(id: string): Observable<User | undefined> {
 
-    // const current = this.usersSubject.getValue();
-    // const index = current.findIndex(u => u.id === id);
-    // if (index !== -1) {
-    //   return of(current[index]).pipe(delay(1000));
-    // }
-    // return of(this.userEmpty).pipe(delay(1000));
+      this.clearObservable(true);
 
-    return this.users$.pipe(
-      delay(400),
-      switchMap(users => {
-        const user = users.find(u => u.id === id);
-        return of(user ? user : this.userEmpty);
+      // return this.http.get<User>(`${this.api}/${id}`).pipe(
+      //   tap(user => {
+      //     console.log('USER:', user);
+      //     this.loadingSubject.next(false);
+      //   }),
+      //   catchError(err => {
+      //     this.loadingSubject.next(false);
+
+      //     if (err.status === 404) {
+      //       this.errorSubject.next('Usuario no encontrado');
+      //     } else {
+      //       this.errorSubject.next('Error cargando usuario');
+      //     }
+
+      //     return of(null); // ✅ en vez de error, devuelves null para que el flujo siga
+      //   })
+      // );
+
+      return this.users$.pipe(
+        delay(300),
+        filter(users => users.length > 0),
+        map(users => users.find(u => u.id === id)  ) ,
+        tap((user) => {
+          this.loadingSubject.next(false); 
+          if(!user) this.errorSubject.next('error, usuario no encontrado'); 
+        }),
+        take(1) // ✅ solo lo necesitas una vez
+      )
+
+  }
+
+  updateUser(user: User): Observable<User[]> {
+
+    this.clearObservable(true);
+
+    return of([]).pipe(
+      delay(100),
+      tap(() => {
+                throw new Error('xxxxxxxxxxxxxxxx');
+        user.updatedAt = new Date();
+        this.myUsers = this.myUsers.map(u =>
+          u.id === user.id ? { ...u, ...user } : u
+        );
+      }),
+      
+      tap(() => this.reload()), // dispara reload
+      switchMap(() => this.users$.pipe(take(1))), // ✅ espera datos nuevos
+      map(() => []),
+      catchError(() => {
+        this.loadingSubject.next(false);
+        this.errorSubject.next('❌ Error actualizando usuario');
+        return throwError(() => new Error('Update failed'));
       })
     );
 
-
   }
 
-  create(user: User): Observable<User> {
+  createUser(user: User): Observable<User> {
+     this.clearObservable(true);
 
     // return this.http.post<User>(this.api, user).pipe(
-    //   tap(newUser => {
-    //     // ✅ actualización inmediata
-    //     this.setUsers([...this.users, newUser]);
-    //   }),
-    //   // 🔁 refresco opcional
-    //   switchMap(() => this.http.get<User[]>(this.api)),
-    //   tap(users => this.setUsers(users))
-    // ); 
-
-      const newUser = { 
-        ...user,
-        id: Math.random().toString(),
-        createdAt: new Date()
-      };
-
-      this.setUsers([...this.users, newUser]);
-
-      return of(newUser).pipe(delay(400));
-
-  }
-
-  update(user: User): void {
-
-    this.loadingSubject.next(true);
-    this.errorSubject.next(null);
-
-   // return this.http.put<User>(`${this.api}/${id}`, user)
-
-  //  const index= this.users.findIndex(u => u.id === user.id);
-  //  if (index !== -1) {
-  //     console.log("Actualizando usuario:", this.users[index]);
-  //     this.users[index] = {
-  //       ...this.users[index], // mantenemos los datos que no se actualizan
-  //       ...user, // todos los q tengan que actualizarse
-  //       updatedAt: new Date(),
-  //       id: user.id // aseguramos que no se pierde
-  //     };
-  //   }
-  //   return of(this.users[index]).pipe(delay(1000));
-
-
-    of(user).pipe(
-          delay(400),
-          tap(() =>{        
-                // siempre se crea un nuevo array para que detecte el cambio, 
-                // y se actualiza solo el que cambia
-                const updated = this.users.map(u =>
-                    u.id === user.id
-                      ? { 
-                          ...u,           // ✅ mantiene lo anterior
-                          ...user,        // ✅ sobrescribe cambios
-                          updatedAt: new Date() // ✅ añade timestamp
-                        }
-                      : u
-                );
-                this.setUsers(updated); 
-            }),
-            catchError(err => {
-                this.errorSubject.next('Error');
-                this.loadingSubject.next(false);
-                return of([]);
-            }),
-            finalize(() => this.loadingSubject.next(false))
-      ) 
-
-
-  }
-
-  delete(userId: string): void {
-
-    this.loadingSubject.next(true);
-    this.errorSubject.next(null);
-
-    // this.http.delete(`${this.api}/${userId}`).pipe(
-    //   tap(() => this.getAll())
+    //   tap(() => this.reload()), 
+    //   catchError(err => {
+    //     this.loadingSubject.next(false);
+    //     this.errorSubject.next('Error creando usuario');
+    //     return throwError(() => err);
+    //   })
     // );
- 
-    of(this.users).pipe(
-      delay(400),
-      tap(() =>{        
-          const current = this.users;
-          const filtered = current.filter(u => u.id !== userId); 
-          this.setUsers(filtered);
-      }),
-      catchError(err => {
-          this.errorSubject.next('Error');
-          this.loadingSubject.next(false);
-          return of([]);
-      }),
-      finalize(() => this.loadingSubject.next(false))
-    )
-    .subscribe(users => {
-        //console.log("Usuario eliminado, ID:", userId,users);
-        //this.setUsers(users);
-    });
-  }
 
-  
-  refresh(): void {
-    this.http.get<User[]>(this.api)
-      .subscribe(users => this.setUsers(users));
-  }
+    let newUser:User =  this.userEmpty;
 
- 
+    return of(newUser).pipe(
+      delay(100),
+      tap(() => {
+
+        newUser = {
+            ...user,
+            id: Date.now().toString(), // o uuid si quieres
+            createdAt: new Date()
+        }; 
+        this.myUsers = [...this.myUsers, newUser];
+
+      }),
+      tap(() => this.reload()), // dispara reload
+      switchMap(() => this.users$.pipe(take(1))), // ✅ espera datos nuevos
+      map(() => newUser),
+      catchError(() => {
+        this.loadingSubject.next(false);
+        this.errorSubject.next('❌ Error creando usuario');
+        return throwError(() => new Error('Add failed'));
+      })
+    );
+
+  }  
 
 }

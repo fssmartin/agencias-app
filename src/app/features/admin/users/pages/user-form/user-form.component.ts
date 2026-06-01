@@ -9,54 +9,56 @@ import { UserService } from '../../user.service';
   standalone: true,
   imports: [CommonModule ,ReactiveFormsModule],
   template: `
-<h4>
-  {{ user?.id ? 'Editar Usuario' : 'Crear Usuario' }}
-</h4>
+      <h4>
+        {{ user?.id ? 'Editar Usuario' : 'Crear Usuario' }}
+      </h4>
 
-<form [formGroup]="form" (ngSubmit)="submit()">
+      <form [formGroup]="form" (ngSubmit)="submit()">
 
-  <div class="container">
-    <label><span>Activo</span>
-      <input type="checkbox" formControlName="isActive" />
-    </label>
-  </div>
+        <div class="container">
+          <label><span>Activo</span>
+            <input type="checkbox" formControlName="isActive" />
+          </label>
+        </div>
 
-  <div>
-    <label><span>Nombre</span>
-      <input type="text" formControlName="name" />
-    </label>
-  </div>
+        <div>
+          <label><span>Nombre</span>
+            <input type="text" formControlName="name" />
+          </label>
+        </div>
 
-  <div>
-    <label><span>Email</span>
-      <input type="email" formControlName="email" />
-    </label>
-  </div>
+        <div>
+          <label><span>Email</span>
+            <input type="email" formControlName="email" />
+          </label>
+        </div>
 
-  <div>
-    <label><span>Rol</span>
-      <select formControlName="role">
-        <option value="">Selecciona un rol</option>
-        <option value="ADMIN">Admin</option>
-        <option value="USER">User</option>
-        <option value="MANAGER">Manager</option>
-      </select>
-    </label>
-  </div>
+        <div>
+          <label><span>Rol</span>
+            <select formControlName="role">
+              <option value="">Selecciona un rol</option>
+              <option value="ADMIN">Admin</option>
+              <option value="USER">User</option>
+              <option value="MANAGER">Manager</option>
+            </select>
+          </label>
+        </div>
 
-  <button type="submit" [disabled]="form.invalid">    
-    {{ user?.id ? 'Modificar' : 'Guardar' }}
-  </button>
+        <button type="submit" [disabled]="form.invalid">    
+          {{ user?.id ? 'Modificar' : 'Guardar' }}
+        </button>
+        <button type="button" (click)="cancelar()">Cancelar</button>
 
-</form>
+      </form>
 
-  <PRE>{{this.user | json}}</PRE>
+      <PRE>{{this.user | json}}</PRE>
 
 `
 })
 export class UserFormComponent {
     @Input() user?: User;
     @Output() save = new EventEmitter<User>();
+    @Output() cancel = new EventEmitter<string>();
     form!: FormGroup;
     
     constructor(private fb: FormBuilder,private userService: UserService) {}
@@ -96,6 +98,11 @@ export class UserFormComponent {
         console.log("submit",this.value)
         this.save.emit(this.value);
         //throw new Error('Method not implemented.');
+    }  
+
+    cancelar() {
+        console.log("cancelar")
+        this.cancel.emit('cancelado');
     }  
     
     

@@ -22,8 +22,14 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
     <ng-container *ngIf="!(loading$ | async)">
 
         <div *ngIf="error$ | async as error">
-          {{ error }}
-        </div>  
+            <div class="msj msjError">{{ error }}</div>
+        </div> 
+        
+        
+        <div *ngIf="successMessage" class="success">
+          <div class="msj msjOk">{{ successMessage }}</div>  
+        </div>
+
 
         <table
           *ngIf="users$ | async as users"
@@ -49,11 +55,10 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
           </tr>
           <tr>
             <td></td>
-            <td text-align="left"><strong>Total: {{ users.length }}</strong></td>
-            <td colspan="2"></td>
+            <td  colspan="4" text-align="right">Total: <strong>{{ users.length }}</strong></td>
           </tr>
           <tr *ngIf="users?.length === 0">
-            <td colspan="4" align="center" class="notFound">No users</td>
+            <td colspan="4" align="end" class="notFound">No users</td>
           </tr>
         </table>    
     </ng-container> 
@@ -63,7 +68,7 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
 })
 export class UserListComponent {
   selectedUser?: User;
-  
+  successMessage: string | null = null;
   private userService = inject(UserService);
   
   users$ = this.userService.users$;
@@ -79,13 +84,19 @@ export class UserListComponent {
   ngOnInit(): void {
  
     // me viene de edit , y se cual ha sido el id actualizado para hacer algun efecto jejeje    
-    // const { updatedId, action } = history.state || {};
-    // if ( updatedId && action) { 
-    //   console.log('ID actualizado:', updatedId, action);
-    // }    
+    const { userId, action } = history.state || {};
+    console.log('UserListComponent ngOnInit - history.state:', history.state);
+    if ( userId && action) {  
+      
+      this.successMessage =  action === 'create' ? '✅ Usuario creado correctamente' : '✅ Usuario actualizado correctamente';
 
-    this.userService.getAll();
+      setTimeout(() => {
+        this.successMessage = null;
+      }, 3000); // desaparece en 3s
 
+    }
+    this.userService.clearObservable(false); // Limpia estados al entrar a la lista
+ 
   }
 
   select(user: User) {
@@ -98,16 +109,13 @@ export class UserListComponent {
   }
 
   deleteUser(user: User) {
+    if(!user.id) return;
     console.log("Usuario a eliminar:", user.id);
-    // this.users$ = this.userService.delete(user.id!)
-    //   .pipe(
-    //     // Refrescar la lista después de eliminar
-    //     switchMap(() => this.userService.getAll())
-    //   );
-
-    this.userService.delete(user.id!);
+    this.userService.deleteById(user.id).subscribe();
 
   }
+
+
 
 
 
