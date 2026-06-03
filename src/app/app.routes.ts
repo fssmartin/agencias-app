@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './features/public/home/home.component';
 import { NotFoundComponent } from './features/public/not-found/not-found.component';
 
@@ -15,11 +15,12 @@ export const routes: Routes = [
     {
         path:'auth',
         loadChildren:() => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES),
+        
     }, 
 
     {
         path:'admin',
-        canActivate: [authGuard], // ✅ evita cargar si no está logueado
+        canActivate: [adminGuard], // ✅ evita cargar si no está logueado
         loadChildren:() => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
     }, 
 

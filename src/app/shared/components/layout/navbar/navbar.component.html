@@ -14,17 +14,22 @@
               <a 
                 routerLinkActive="active"      
                 [routerLink]="link.path"
-                [routerLinkActiveOptions]="{ exact: false }">
+                [routerLinkActiveOptions]="{ exact: false }"
+                [title]="link.label">
                 {{ link.label }}
               </a> 
             </li>
           </ng-template>
       </ng-container>
   </ul>
-
+ 
   <ul *ngIf="isHeader">
       <li *ngIf="authService.isLogged(); else loggedOut">
-          <span class="userLogado">{{ authService.currentUser()?.name }}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <a 
+            title="View User"
+            [routerLink]="['/admin/users/edit', authService.currentUser()?.id]"
+            [queryParams]="{ mode: 'view' }"
+          ><span class="userLogado">{{authService.iconByRole()}}{{authService.currentUser()?.name }}</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a (click)="authService.logout()" href="" title="Log Out">
              Logout
           </a>
@@ -32,6 +37,7 @@
       <ng-template #loggedOut>
         <li>
             <a 
+              title="Sign Up"
               routerLinkActive="active"      
               [routerLink]="['auth/register']"
               [routerLinkActiveOptions]="{ exact: true }">
@@ -40,6 +46,7 @@
          </li>
         <li>
             <a 
+              title="Log In"
               routerLinkActive="active"      
               [routerLink]="['auth/login']"
               [routerLinkActiveOptions]="{ exact: false }">

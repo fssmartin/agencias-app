@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router'; 
 import { AdminLayoutComponent } from './admin-layout';
-import { authGuard } from '../../core/guards/auth.guard';
+import { adminGuard } from '../../core/guards/auth.guard';
 // import { ConfigurationComponent } from './pages/configuration/configuration.component';
 // import { UsersComponent } from './pages/users/users.component';
 // import { QuestionsComponent } from './pages/questions/questions.component';
@@ -20,12 +20,11 @@ export const ADMIN_ROUTES : Routes = [
     {
         path: '',
         component: AdminLayoutComponent,
-        canActivateChild: [authGuard], // ✅ protege navegación interna
         children: [
             {
                 path: '',
                 redirectTo: 'users',
-                pathMatch: 'full'
+                pathMatch: 'full',
             },
             {
                 path: 'users',

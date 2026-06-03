@@ -1,20 +1,18 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../../features/auth/auth.service';
 
-export const authGuard: CanActivateFn = () => {
+export const adminGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  const isLogged = !!localStorage.getItem('token');
+  console.log("----------------------- VALIDO ?  ", authService.isAdmin())
 
-//  peor
-//   if (!isLogged) {
-//     router.navigate(['/login']);
-//     return false;
-//   }
-//   return true;
+  if (authService.isAdmin()) {
+    return true;
+  }
 
-
-// mejor
-    //return isLogged ? true : router.createUrlTree(['/auth/login']);
-    return true
+  // ❌ no es admin → redirigir
+  router.navigate(['/home']);
+  return false;
 };

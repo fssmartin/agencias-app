@@ -15,7 +15,7 @@ import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
   template: `
  
       <h4>
-        {{ user?.id ? 'Editar Usuario' : 'Crear Usuario' }}
+        {{ user?.id ?  mode === 'view' ? 'Consulta Usuario' :  'Editar Usuario' : 'Crear Usuario' }}
       </h4>
       
       <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off">

@@ -59,7 +59,7 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
             <td>{{ user.email }}</td>
             <td>
               <button [routerLink]="['/admin/users/edit', user.id]"
-                [queryParams]="{ mode: 'view' }" title="Show" >  👁️</button>
+                      [queryParams]="{ mode: 'view' }" title="Show" >  👁️</button>
               <button [routerLink]="['/admin/users/edit', user.id]" 
                 [queryParams]="{ mode: 'edit' }" title="Edit">✏️</button>
               <button (click)="deleteUser(user)"  class="" >🗑️</button>

@@ -78,7 +78,7 @@ export class UserEditComponent {
        this.user = user;
     });
 
-    
+    // y esta para el modo
     this.route.queryParamMap
           .pipe(map(params => params.get('mode')))
           .subscribe(mode => {
