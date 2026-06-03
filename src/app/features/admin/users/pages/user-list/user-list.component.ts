@@ -6,6 +6,7 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
 
 import { UserUiStateService } from '../../userState.service';
 import { UserService } from '../../user.service';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
 
 
 @Component({
@@ -30,12 +31,22 @@ import { UserService } from '../../user.service';
     <ng-container *ngIf="!(loading$ | async)">
 
         <table
-          *ngIf="users$ | async as users"
+          *ngIf="sortedUsers$ | async as users"
           class="listTable">
           <tr>
             <th></th>
-            <th>Name</th>
-            <th>Email</th>
+            <th (click)="sortBy('name')">
+                Name
+              <span *ngIf="(sortField$ | async) === 'name'">
+                {{ (sortDirection$ | async) === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th (click)="sortBy('email')">
+                Email
+              <span *ngIf="(sortField$ | async) === 'email'">
+                {{ (sortDirection$ | async) === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
             <th><button routerLink="/admin/users/create"  class="fRight btEnlace btCrear">Crear Usuario</button></th>
           </tr>
           <tr *ngFor="let user of users; trackBy: trackById"
@@ -83,6 +94,38 @@ export class UserListComponent {
   loading$ = this.userService.loading$;
   userEmpty?: User = this.userService.userEmpty;
  
+ 
+    sortField$ = new BehaviorSubject<keyof User>('name');
+    sortDirection$ = new BehaviorSubject<'asc' | 'desc'>('asc');
+
+  sortedUsers$ = combineLatest([
+    this.users$,
+    this.sortField$,
+    this.sortDirection$
+  ]).pipe(
+
+        map(([users, field, direction]) => {
+          return [...users].sort((a, b) => {
+            const valueA = a[field]!;
+            const valueB = b[field]!;
+
+            let result = 0;
+
+            if (valueA instanceof Date && valueB instanceof Date) {
+              result = valueA.getTime() - valueB.getTime();
+            } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+              result = valueA.localeCompare(valueB);
+            } else if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
+              result = Number(valueA) - Number(valueB);
+            } else {
+              result = valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+            }
+
+            return direction === 'asc' ? result : -result;
+          })
+        })
+  )  
+  
   constructor(
     private UserUiStateService: UserUiStateService,
     private router: Router )
@@ -128,6 +171,17 @@ export class UserListComponent {
 
   }
 
+// Cambiar orden
+  sortBy(field: keyof User) {
+    if (this.sortField$.value === field) {
+      this.sortDirection$.next(
+        this.sortDirection$.value === 'asc' ? 'desc' : 'asc'
+      );
+    } else {
+      this.sortField$.next(field);
+      this.sortDirection$.next('asc');
+    }
+  }
 
 
 

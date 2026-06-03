@@ -49,7 +49,7 @@ import { CommonModule } from '@angular/common';
                 name="email"
                 id="email"
                 required 
-                role="presentation" required autocomplete="off" autofocus="" /> 
+                role="presentation" required autocomplete="of" autofocus="" /> 
                 <p *ngIf="getError('email')" class="inputError">
                   {{ getError('email') }}
                 </p>                
@@ -63,7 +63,7 @@ import { CommonModule } from '@angular/common';
                 name="password"
                 id="password"
                 required 
-                role="presentation" required autocomplete="off" autofocus="" /> 
+                role="presentation" required autocomplete="new-password" autofocus="" /> 
                 <p *ngIf="getError('password')" class="inputError">
                   {{ getError('password') }}
                 </p>                
@@ -95,12 +95,17 @@ export class RegisterComponent {
   private fb = inject(FormBuilder);
   form:FormGroup = createRegisterForm(this.fb);
 
-  ngAfterViewInit(): void {  
+  ngOnInit(): void { 
     this.form.reset({
       email: '',
       name: '',
       password: ''
     });
+
+  }
+
+  ngAfterViewInit(): void {  
+   
 
   }
 

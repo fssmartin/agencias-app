@@ -27,36 +27,36 @@ export class UserService {
   // 🔁 Trigger para recargar datos
   private reload$ = new BehaviorSubject<void>(undefined);
 
+  error$ = this.errorSubject.asObservable();
+  loading$ = this.loadingSubject.asObservable();
+
   private myUsers: User[] = [
     { id: '1', name: 'Pedro Vila', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
     { id: '2', name: 'Luis Garcia', email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
     { id: '3', name: 'Belen Perez', email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
   ]; 
-
-  error$ = this.errorSubject.asObservable();
-  loading$ = this.loadingSubject.asObservable();
   
  
-users$ = this.reload$.pipe(
-  startWith(void 0),
-  delay(0),
-  switchMap(() =>{
-    this.loadingSubject.next(true);
-    return of(this.myUsers).pipe(
-      delay(500),
-      map(users => users ?? []),
-      tap(() => { 
-        this.loadingSubject.next(false);
-      }),
-      catchError(() => {
-        this.loadingSubject.next(false);
-        this.errorSubject.next('Error cargando usuarios');
-        return of([]);
-      })
-    )
-  }),
-  shareReplay(0)
-);
+  users$ = this.reload$.pipe(
+    startWith(void 0),
+    delay(0),
+    switchMap(() =>{
+      this.loadingSubject.next(true);
+      return of(this.myUsers).pipe(
+        delay(500),
+        map(users => users ?? []),
+        tap(() => { 
+          this.loadingSubject.next(false);
+        }),
+        catchError(() => {
+          this.loadingSubject.next(false);
+          this.errorSubject.next('Error cargando usuarios');
+          return of([]);
+        })
+      )
+    }),
+    shareReplay(0)
+  );
 
   clearObservable(loading: boolean=false) {
     this.loadingSubject.next(loading);

@@ -151,22 +151,36 @@ select:not([multiple], [size]) {
   height: auto;
 }
 
-.listTable tr{ 
-  &.highlight-row {
-    background-color: #c8f7c5;  
-    transition: background-color 0.5s ease;
+.listTable {
+
+  th {
+    cursor: pointer;
+    user-select: none;
+    & span {
+      margin-left: 5px;
+      font-size: 12px;
+    }
   }
 
-  &:last-child{
-      td{border: none;}
-      font-size: .8rem;
-  }
+  tr{
+    &.highlight-row {
+      background-color: #c8f7c5;  
+      transition: background-color 0.5s ease;
+    }
+  
+    &:last-child{
+        td{border: none;}
+        font-size: .8rem;
+    }
+  
+    & td{
+        &:last-child{  
+          text-align: right;
+        }
+    }
+  } 
 
-  & td{
-      &:last-child{  
-        text-align: right;
-      }
-  }
+
 
 }
 

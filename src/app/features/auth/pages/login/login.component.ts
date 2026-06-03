@@ -30,7 +30,7 @@ import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
                   <input
                       formControlName="email"
                       placeholder="Email"
-                      autocomplete="off"
+                      autocomplete="off"  
                       autofocus
                       #emailInput
                       />
@@ -49,7 +49,7 @@ import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
                     placeholder="Password"
                     name="password"
                     id="password"
-                    autocomplete="off"
+                    autocomplete="new-password"
                     /> 
                       <!-- [ngClass]="{ 'error': form.get('password')?.invalid && form.get('password')?.touched }" -->
                     <!-- 
@@ -95,8 +95,16 @@ export class LoginComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
   form:FormGroup = createLoginForm(this.fb);
 
-  //@ViewChild('emailInput') emailInput!: ElementRef;
 
+
+  ngOnInit(): void { 
+    
+      this.form.reset({
+        email: '',
+        password: ''
+      });
+
+  }
 
   login() {
  
@@ -105,12 +113,14 @@ export class LoginComponent implements AfterViewInit {
         this.form.markAllAsTouched();
         return;
     }
+    
   
   }
   
   ngAfterViewInit(): void {  
     //this.onPathValue();
-    this.onSetValue();
+     
+   // this.onSetValue();
 
     // this.form.reset({
     //   email: '',
