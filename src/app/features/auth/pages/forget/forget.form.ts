@@ -2,9 +2,8 @@
 import { FormBuilder } from '@angular/forms';
 import { AppValidators } from '../../../../shared/utils/forms/validators';
 
-export const createLoginForm = (fb: FormBuilder) => {
+export const createForgetForm = (fb: FormBuilder) => {
   return fb.group({
-    email:    ['m',AppValidators.email],
-    password: ['m',AppValidators.password]
+    email:    ['',AppValidators.email],
   });
 }; 

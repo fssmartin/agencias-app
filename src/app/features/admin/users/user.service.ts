@@ -11,7 +11,6 @@ export class UserService {
  // constructor(private http: HttpClient) {}
   private http = inject(HttpClient);
   
-  
   public userEmpty: User = {
     id: '', 
     name: '', 
@@ -39,17 +38,14 @@ export class UserService {
   
  
 users$ = this.reload$.pipe(
-  tap(() => console.log('PIPE START')),
   startWith(void 0),
   delay(0),
   switchMap(() =>{
-    console.log('SWITCHMAP');
     this.loadingSubject.next(true);
     return of(this.myUsers).pipe(
       delay(500),
       map(users => users ?? []),
-      tap(users => {
-        console.log('USERS:', users);
+      tap(() => { 
         this.loadingSubject.next(false);
       }),
       catchError(() => {
@@ -95,7 +91,7 @@ users$ = this.reload$.pipe(
       }),
       delay(300),
       tap(() => {
-        throw new Error('xxxxxxxxxxxxxxxx');
+        //throw new Error('xxxxxxxxxxxxxxxx');
         this.myUsers = this.myUsers.filter(u => u.id !== id);
         this.reload();
       }),
@@ -152,7 +148,7 @@ users$ = this.reload$.pipe(
     return of([]).pipe(
       delay(100),
       tap(() => {
-                throw new Error('xxxxxxxxxxxxxxxx');
+          //      throw new Error('xxxxxxxxxxxxxxxx');
         user.updatedAt = new Date();
         this.myUsers = this.myUsers.map(u =>
           u.id === user.id ? { ...u, ...user } : u
@@ -195,7 +191,6 @@ users$ = this.reload$.pipe(
             createdAt: new Date()
         }; 
         this.myUsers = [...this.myUsers, newUser];
-
       }),
       tap(() => this.reload()), // dispara reload
       switchMap(() => this.users$.pipe(take(1))), // ✅ espera datos nuevos

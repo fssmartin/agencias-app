@@ -14,22 +14,43 @@ import { Question } from '../../models/questions.model';
   imports: [CommonModule, RouterLink],
   template: `
 
-    <button routerLink="/admin/questions/create" class="fRight">Crear Question</button>
 
-    <table>
-      <tr>
-        <th>Id</th>
-        <th>Descripcion</th>
-        <th></th>
-      </tr>
-      <tr *ngFor="let question of questions; trackBy: trackById">
-        <td>{{ question.id }}</td>
-        <td>{{ question.descripcion }}</td>
-      </tr>
-      <tr *ngIf="questions.length === 0">
-        <td colspan="4" align="center" class="notFound">No questions</td>
-      </tr>
-    </table>
+    <h4>Questions List</h4> 
+ 
+    <ng-container  >
+
+        <table
+          *ngIf="questions"
+          class="listTable">
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th><button routerLink="/admin/question/create"  class="fRight btEnlace btCrear">Crear Question</button></th>
+          </tr>
+          <tr *ngFor="let question of questions; trackBy: trackById">
+            <td>{{ question.isActive ? '✅' : '❌' }}</td>
+            <td>{{ question.descripcion | slice:0:15 }} {{ question.descripcion.length > 15 ? '...' : '' }}</td>
+            <td>
+              <button [routerLink]="['/admin/users/edit', question.id]"
+                [queryParams]="{ mode: 'view' }" title="Show" >  👁️</button>
+              <button [routerLink]="['/admin/users/edit', question.id]" 
+                [queryParams]="{ mode: 'edit' }" title="Edit">✏️</button>
+              <button (click)="deleteQuestion(question)"  class="" >🗑️</button>
+            </td>
+          </tr>
+          <tr *ngIf="questions.length > 0; else noUsers">
+            <td></td>
+            <td  colspan="4" text-align="right">Total: <strong>{{ questions.length }}</strong></td>
+          </tr>
+          <ng-template #noUsers>
+            <tr>
+              <td colspan="5" class="notFound" style="text-align: center;">
+                No users
+              </td>
+            </tr>
+          </ng-template>
+        </table>    
+    </ng-container> 
     
 
   `
@@ -61,7 +82,7 @@ export class QuestionListComponent {
 
   deleteQuestion(question: any) {
     console.log("Pregunta a eliminar:", question.id);
-    this.questions = this.questions.filter(q => q.id !== question.id);
+     
   }
    
     

@@ -4,7 +4,8 @@ import { UserFormComponent } from '../user-form/user-form.component';
 import { User, UserRole } from '../../../../../core/models/users.models';
 import { USERS_ROUTES } from '../../users.routes';
 import { UserService } from '../../user.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserUiStateService } from '../../userState.service';
  
 
 
@@ -15,6 +16,7 @@ import { Router } from '@angular/router';
   template: `
     <app-user-form 
         [user]="user"
+        [roles]="roles"
         (save)="onSave($event)"
         (cancel)="onCancel($event)">
     </app-user-form>
@@ -23,27 +25,35 @@ import { Router } from '@angular/router';
 export class UserCreateComponent {  
  
   user?: User; 
+  roles: string[] = [];
 
   constructor(
     private userService: UserService,
-    private router: Router){ 
+    private userStateService: UserUiStateService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { 
   } 
 
   ngOnInit(): void {  
     this.user = this.userService.userEmpty;
+    this.roles = this.route.snapshot.data['roles'];
   }
 
   onSave(newUser: User) {
       this.userService.createUser(newUser)
        .subscribe((userNew:User) => {
           //volver a la lista y le paso info de lo que se ha actualizado para mostrar un mensaje o algo
-          this.router.navigate(['/admin/users'], {
-            state: {
-              userId: userNew.id,
-              action: 'create' 
-            }
-          });
-       });  
+          // ya no , lo actualizo en la lista y listo, no hace falta volver a cargar toda la lista
+          // this.router.navigate(['/admin/users'], {
+          //   state: {
+          //     userId: userNew.id,
+          //     action: 'create' 
+          //   }
+          // });
+          this.userStateService.setState(userNew.id || '', 'create');
+          this.router.navigate(['/admin/users']);
+        });  
   }
 
        

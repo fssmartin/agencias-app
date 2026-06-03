@@ -21,8 +21,6 @@ export interface User {
   lastLogin?: Date;
 }
 
-
-
 export enum UserRole {
   ADMIN = 'ADMIN',
   USER = 'USER',

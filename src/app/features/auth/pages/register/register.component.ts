@@ -1,13 +1,16 @@
-import { Component} from '@angular/core';  
+import { Component, inject} from '@angular/core';  
 import { Router, RouterLink } from '@angular/router'; 
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { createRegisterForm } from './register.form';
+import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
+import { CommonModule } from '@angular/common';
 
 
 
 @Component({
   selector: 'app-register', 
- imports: [AuthCardComponent, RouterLink, FormsModule],
+   imports: [AuthCardComponent, RouterLink, ReactiveFormsModule,CommonModule],
   standalone: true,
   template: `
 
@@ -20,34 +23,57 @@ import { FormsModule } from '@angular/forms';
         </div>
 
         <!-- BODY -->
-        <div>
-          <form (ngSubmit)="register()">
+        <div body>
 
-            <input
-              type="text"
-              placeholder="Name"
-              [(ngModel)]="name"
-              name="name"
-              required
-            />
+          <form [formGroup]="form" (ngSubmit)="register()" class="login" autocomplete="off">
 
-            <input
-              type="email"
-              placeholder="Email"
-              [(ngModel)]="email"
-              name="email"
-              required
-            />
-
-            <input
-              type="password"
-              placeholder="Password"
-              [(ngModel)]="password"
-              name="password"
-              required
-            />
-
-            <button type="submit">Register</button>
+            <label for="name">
+              <span></span>
+              <input
+                type="text"
+                placeholder="Name"
+                name="name"
+                id="name"
+                required 
+                role="presentation" required autocomplete="off" autofocus="" /> 
+                <p *ngIf="getError('name')" class="inputError">
+                  {{ getError('name') }}
+                </p>                
+            </label>
+           
+            <label for="email">
+              <span></span>
+              <input
+                type="email"
+                placeholder="Email"
+                name="email"
+                id="email"
+                required 
+                role="presentation" required autocomplete="off" autofocus="" /> 
+                <p *ngIf="getError('email')" class="inputError">
+                  {{ getError('email') }}
+                </p>                
+            </label>
+         
+            <label for="password">
+              <span></span>
+              <input
+                type="password"
+                placeholder="Password"
+                name="password"
+                id="password"
+                required 
+                role="presentation" required autocomplete="off" autofocus="" /> 
+                <p *ngIf="getError('password')" class="inputError">
+                  {{ getError('password') }}
+                </p>                
+            </label>
+          
+             <div class="fm_actions">  
+                  <button type="submit" 
+                      [disabled]="form.invalid || form.pristine">Register
+                  </button>
+              </div>
 
           </form>
         </div>
@@ -55,29 +81,42 @@ import { FormsModule } from '@angular/forms';
         <!-- FOOTER -->
 
         <div footer>
-          <p>
+          <!-- <p>
             Forgot your password?
             <a routerLink="/auth/forget">Reset it</a> ✅
-          </p>
+          </p> -->
         </div>
-
-
     </app-auth-card>
-
   ` 
 })
 
 export class RegisterComponent {
 
-  name = '';
-  email = '';
-  password = '';
+  private fb = inject(FormBuilder);
+  form:FormGroup = createRegisterForm(this.fb);
+
+  ngAfterViewInit(): void {  
+    this.form.reset({
+      email: '',
+      name: '',
+      password: ''
+    });
+
+  }
 
   register() {
-    console.log('Register:', this.name, this.email, this.password);
-
-    // aquí luego conectarías con AuthService
+    console.log('Register:', this.form.value);
+    if (this.form.invalid) {
+        this.form.markAllAsTouched();
+        return;
+    }
   }
+  
+  getError(controlName: string): string {
+    return getErrorMessage(this.form.get(controlName));
+  }
+
+
 }
 
 

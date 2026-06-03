@@ -1,10 +1,10 @@
-import { Component, inject} from '@angular/core';  
+import { AfterViewInit, Component, ElementRef, inject, ViewChild} from '@angular/core';  
 import { RouterLink } from '@angular/router';
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
 import { createLoginForm } from './login.form';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
 
 @Component({
   selector: 'app-login',
@@ -22,39 +22,59 @@ import { CommonModule } from '@angular/common';
 
         <!-- BODY -->
         <div body>
-          <form [formGroup]="form" (ngSubmit)="login()">
 
-              <input
-                  formControlName="email"
-                  placeholder="Email"
-                  [ngClass]="{ 'error': form.get('email')?.invalid && form.get('email')?.touched }"
-              />
+          <form [formGroup]="form" (ngSubmit)="login()" class="login" autocomplete="off">
 
-              <input
-                  type="password"
-                  formControlName="password"
-                  placeholder="Password"
-                  [ngClass]="{ 'error': form.get('password')?.invalid && form.get('password')?.touched }"
-              /> 
+              <label for="email">
+                  <span></span>
+                  <input
+                      formControlName="email"
+                      placeholder="Email"
+                      autocomplete="off"
+                      autofocus
+                      #emailInput
+                      />
+                      <!-- [ngClass]="{ 'error': form.get('email')?.invalid && form.get('email')?.touched }" -->
+    
+                  <p *ngIf="getError('email')" class="inputError">
+                    {{ getError('email') }}
+                  </p>
+              </label>
 
-              <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
-                Email inválido
+              <label for="password">
+                  <span></span> 
+                  <input
+                    type="password"
+                    formControlName="password"
+                    placeholder="Password"
+                    name="password"
+                    id="password"
+                    autocomplete="off"
+                    /> 
+                      <!-- [ngClass]="{ 'error': form.get('password')?.invalid && form.get('password')?.touched }" -->
+                    <!-- 
+                    <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+                      Email inválido
+                    </div>
+                    <div *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">
+                      Password length must be at least <strong>{{form.get('password')?.errors?.['minlength']?.requiredLength }}</strong> characters
+                    </div> -->  
+
+                  <p *ngIf="getError('password')"  class="inputError">
+                    {{ getError('password') }}
+                  </p>
+              </label>
+              <div class="fm_actions">  
+                  <button type="submit" 
+                      [disabled]="form.invalid || form.pristine">Login
+                  </button>
               </div>
-              <div *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">
-                Password length must be at least <strong>{{form.get('password')?.errors?.['minlength']?.requiredLength }}</strong> characters
-              </div>
-
-
-              <button type="submit" [
-                  disabled]="form.invalid || form.pristine" style="margin-top:10px"
-              >Login</button>
-
-              <p>is invalid form ?  :{{ form.invalid }}</p>
+               
           </form>
         </div>
 
         <!-- FOOTER -->
-        <div footer>
+        <div footer  style="display:flex;justify-content:space-between">
             <p>
               Don't have an account?
               <a routerLink="/auth/register">Register</a>
@@ -70,25 +90,40 @@ import { CommonModule } from '@angular/common';
 
   `
 })
-export class LoginComponent {  
-
-
+export class LoginComponent implements AfterViewInit {  
 
   private fb = inject(FormBuilder);
+  form:FormGroup = createLoginForm(this.fb);
 
-  form = createLoginForm(this.fb);
+  //@ViewChild('emailInput') emailInput!: ElementRef;
 
 
   login() {
-
-    if (this.form.invalid) return;
+ 
     console.log('Login:', this.form.value);
+    if (this.form.invalid) {
+        this.form.markAllAsTouched();
+        return;
+    }
   
   }
   
-  ngOnInit(): void {  
-    this.onPathValue();
+  ngAfterViewInit(): void {  
+    //this.onPathValue();
     this.onSetValue();
+
+    // this.form.reset({
+    //   email: '',
+    //   password: ''
+    // });
+
+    //this.focusInput(this.emailInput);
+    
+
+  }
+
+  focusInput(el: ElementRef) {
+    setTimeout(() => el.nativeElement.focus());
   }
 
   // solo una propiedad del formulario 
@@ -102,10 +137,17 @@ export class LoginComponent {
   //todas 
   onSetValue(){
     this.form.setValue({
-      email: 'test@example.com',
-      password: 'password123'
+      email: '',
+      password: ''
     });
   }
+
+  getError(controlName: string): string {
+    return getErrorMessage(this.form.get(controlName));
+  }
+
+
+
 }
 
 

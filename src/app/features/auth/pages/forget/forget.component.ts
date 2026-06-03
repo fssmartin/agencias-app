@@ -1,39 +1,66 @@
-import { Component, Renderer2, computed, effect, signal } from '@angular/core'; 
+import { Component, Renderer2, computed, effect, inject, signal } from '@angular/core'; 
 import { Router, RouterLink } from '@angular/router'; 
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
+import { CommonModule } from '@angular/common';
+import { createForgetForm } from './forget.form';
 
 @Component({
   selector: 'app-forget',
-  imports: [AuthCardComponent, RouterLink, FormsModule],
+  imports: [AuthCardComponent, RouterLink, FormsModule, ReactiveFormsModule,CommonModule],
   standalone: true,
   template: `
 
-
     <app-auth-card>
 
-      <div header>
-        <h4>Forgot Password</h4>
-        <p>Enter your email to reset your password</p>
+      <div header >
+        <ng-container *ngIf="submitOk===false;">
+          <h4>Forgot Password</h4>
+          <p>Enter your email to reset your password</p>
+        </ng-container>
       </div>
 
-      <div>
-        <form (ngSubmit)="submit()">
+      <div body>
 
-          <input
-            type="email"
-            placeholder="Email"
-            [(ngModel)]="email"
-            name="email"
-            required
-          >
+          <form  
+            *ngIf="submitOk===false;else successTpl" 
+            [formGroup]="form" (ngSubmit)="submit()" class="login" autocomplete="off">
+ 
+              <label for="email">
+                  <span></span> 
+                  <input
+                    type="email"
+                    formControlName="email"
+                    placeholder="Email"
+                    name="email"
+                    id="email"
+                    autocomplete="off"
+                  /> 
+                   
+                  <p *ngIf="getError('email')"  class="inputError">
+                    {{ getError('email') }}
+                  </p>
 
-          <button type="submit">Send reset link</button>
+              </label>
+              <div class="fm_actions">  
+                  <button type="submit" 
+                      [disabled]="form.invalid || form.pristine">Reset
+                  </button>
+              </div>
+               
+          </form>
 
-        </form>
+
+          <ng-template #successTpl>
+            ✅ If an account exists with that email, you will receive a password reset link shortly.
+          </ng-template>
+
+
       </div>
+    
 
-      <div footer>
+      <div footer  style="display:flex;justify-content:space-between;margin:10px 0">
         <p>
           Remembered your password?
           <a routerLink="/auth/login">Back to login</a>
@@ -45,13 +72,20 @@ import { FormsModule } from '@angular/forms';
   `
 })
 export class ForgetComponent { 
-  
 
-  email = '';
+  submitOk:boolean=false
+  private fb = inject(FormBuilder);
+  form:FormGroup = createForgetForm(this.fb);
 
   submit() {
-    console.log('Reset password for:', this.email);
+      console.log('Login:', this.form.value);
+      this.submitOk = true
   }
+
+  getError(controlName: string): string {
+    return getErrorMessage(this.form.get(controlName));
+  }
+
 
 }
 

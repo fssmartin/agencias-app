@@ -24,8 +24,8 @@ import { Component} from '@angular/core';
             </div>
 
             <!-- FOOTER -->
-            <div class="auth-footer">
-              <ng-content select="[footer]"></ng-content>
+            <div class="auth-footer" >
+              <ng-content select="[footer]" class="fm_actions"></ng-content>
             </div>
             
         </div>
