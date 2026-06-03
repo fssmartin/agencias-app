@@ -10,7 +10,7 @@ import { NavbarComponent } from '../../shared/components/layout/navbar/navbar.co
   <div class="container">
     <div class="col">
         <h3>{{titularAdmin}}</h3>      
-        <app-navbar [links]="links" [exact]="exact"></app-navbar>
+        <app-navbar [isHeader]="false" [links]="links" [exact]="true"></app-navbar>
         <main class="main">
           <router-outlet/>
         </main>
@@ -27,8 +27,7 @@ export class AdminLayoutComponent {
     { path: './categories', label: 'Categories' }
   ]
 
-
-  exact = true;
+ 
   constructor( ){ 
 
   } 

@@ -11,10 +11,9 @@ import { FooterComponent } from './shared/components/layout/footer/footer.compon
 })
 export class AppComponent {
   links = [
-    { path: '/home', label: 'Home' },
-    { path: '/admin', label: 'Admin' },
-    { path: '/auth', label: 'Login' },
-    { path: '/about', label: 'About' }
+    { path: '/home',  label: 'Home'  , role:null},
+    { path: '/about', label: 'About' , role:null },
+    { path: '/admin', label: 'Admin' , role:'ADMIN' }
   ]
   title = 'Myapp';
   exact = false;

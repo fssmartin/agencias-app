@@ -4,7 +4,7 @@ import { AppValidators } from '../../../../shared/utils/forms/validators';
 
 export const createLoginForm = (fb: FormBuilder) => {
   return fb.group({
-    email:    ['m',AppValidators.email],
-    password: ['m',AppValidators.password]
+    email:    ['',AppValidators.email],
+    password: ['',AppValidators.password]
   });
 }; 

@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, ElementRef, inject, ViewChild} from '@angular/core';  
-import { RouterLink } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, inject, signal, Signal, ViewChild} from '@angular/core';  
+import { Router, RouterLink } from '@angular/router';
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
 import { createLoginForm } from './login.form';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,8 @@ import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
 
         <!-- BODY -->
         <div body>
+
+          <p>error ? {{error()}}</p>
 
           <form [formGroup]="form" (ngSubmit)="login()" class="login" autocomplete="off">
 
@@ -95,7 +98,14 @@ export class LoginComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
   form:FormGroup = createLoginForm(this.fb);
 
+  error = signal('');
 
+  constructor(
+    private router:Router,
+    private _authService:AuthService
+  ){
+
+  }
 
   ngOnInit(): void { 
     
@@ -109,12 +119,20 @@ export class LoginComponent implements AfterViewInit {
   login() {
  
     console.log('Login:', this.form.value);
+
     if (this.form.invalid) {
         this.form.markAllAsTouched();
         return;
     }
+
+    const { email, password } =  this.form.value;
+    if( this._authService.login(email, password) ) {
+      this.router.navigate(['/home']);
+    } else {
+      this.error.set('Credenciales incorrectas');
+    }
+
     
-  
   }
   
   ngAfterViewInit(): void {  

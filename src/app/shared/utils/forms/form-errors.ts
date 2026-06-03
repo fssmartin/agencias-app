@@ -10,6 +10,9 @@ export function getErrorMessage(control: AbstractControl | null): string {
   if (control.errors['minlength']) {
     return `Mínimo ${control.errors['minlength'].requiredLength} caracteres`;
   }
+  if (control.errors['maxlength']) {
+    return `Máximo ${control.errors['maxlength'].requiredLength} caracteres`;
+  }
 
   if (control.errors['pattern']) {
     return 'Formato incorrecto';

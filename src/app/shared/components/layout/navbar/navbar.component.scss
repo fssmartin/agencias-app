@@ -1,7 +1,20 @@
 .navbar{
   padding: 0 10px;
-  justify-content: left;
-  gap: 10px;
+  justify-content:space-between;
+  ul li{
+    padding: 0 15px;
+    &::after{
+      content:"";
+      position: relative;
+      right: -15px;
+      border-left:1px solid #ccc;
+      width: 1px;
+      height: 100%;
+    }
+    &:last-child::after{
+     display: none;
+    }
+  }
   & a{
     color:black;
     padding: 0 5px;
@@ -15,5 +28,6 @@
       text-decoration: underline;
     }
   }
+  .userLogado{color: orangered;}
 }
 

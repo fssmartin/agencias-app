@@ -1,32 +1,32 @@
-import { Injectable } from "@angular/core";
-import { Permission, User, UserRole } from "../../core/models/users.models";
+import { computed, Injectable, signal } from "@angular/core";
+import { AuthUser, User, UserRole } from "../../core/models/users.models";
 
-    
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
- // private user: User | null = null;
+  currentUser = signal<AuthUser | null>(null);
+  isAdmin  = computed(() => this.currentUser()?.role === UserRole.ADMIN);  
+  isLogged = computed(() => this.currentUser() !== null);
 
-  private user: User = {
-    id: '1',
-    name: 'Fernando',
-    email: 'test@test.com',
-    permissions: [Permission.USERS_READ, Permission.USERS_CREATE],
-    role: UserRole.ADMIN,
-    isActive: true,
-    createdAt: new Date()   
-  };
+  login(email: string, password: string): boolean {
 
-
-  setUser(user: User) {
-    this.user = user;
+      this.currentUser.set({
+        id: '2',
+        name: 'Luis Garcia',
+        email: 'luis.garcia@example.com',
+        role: UserRole.ADMIN
+      });
+      return true;
+  
   }
 
-  getUser(): User | null {
-    return this.user;
+  logout() {
+    this.currentUser.set(null);
   }
-
-  hasPermission(permission: Permission): boolean {
-    return this.user?.permissions?.includes(permission) ?? false;
-  }
+  
+  
+  // hasPermission(permission: Permission): boolean {
+  //   return this.user?.permissions?.includes(permission) ?? false;
+  // }
+  
 }

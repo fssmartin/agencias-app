@@ -1,13 +1,54 @@
 <nav class="navbar container-fluid"> 
-	
-  <a
-    *ngFor="let link of links"
-    [routerLink]="link.path"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: false }"
-  >
-    {{ link.label }}
-	</a> 
+	<ul>
+      <ng-container *ngFor="let link of links">
+        <li *ngIf="link.role === 'ADMIN' &&  authService.isAdmin();else enlaceNormal ">
+          <a
+            routerLinkActive="active"      
+            [routerLink]="link.path"
+            [routerLinkActiveOptions]="{ exact: false }">
+            {{ link.label }}
+          </a> 
+        </li>
+        <ng-template #enlaceNormal>
+            <li *ngIf="link.role != 'ADMIN'">
+              <a 
+                routerLinkActive="active"      
+                [routerLink]="link.path"
+                [routerLinkActiveOptions]="{ exact: false }">
+                {{ link.label }}
+              </a> 
+            </li>
+          </ng-template>
+      </ng-container>
+  </ul>
+
+  <ul *ngIf="isHeader">
+      <li *ngIf="authService.isLogged(); else loggedOut">
+          <span class="userLogado">{{ authService.currentUser()?.name }}</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+          <a (click)="authService.logout()" href="" title="Log Out">
+             Logout
+          </a>
+      </li>
+      <ng-template #loggedOut>
+        <li>
+            <a 
+              routerLinkActive="active"      
+              [routerLink]="['auth/register']"
+              [routerLinkActiveOptions]="{ exact: true }">
+              Sign Up
+            </a> 
+         </li>
+        <li>
+            <a 
+              routerLinkActive="active"      
+              [routerLink]="['auth/login']"
+              [routerLinkActiveOptions]="{ exact: false }">
+              Log In
+            </a> 
+         </li>
+      </ng-template>
+  </ul>
+
 </nav>
  
 

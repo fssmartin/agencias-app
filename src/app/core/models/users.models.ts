@@ -1,9 +1,22 @@
 
+
+// ✅ modelo para autenticación
+//export type AuthUser = Omit<User, 'password'>;
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role?: UserRole;
+}
+
+
 export interface User {
-  id?: string;
+  id: string;
 
   // datos básicos
   name: string;
+  password: string;
   email: string;
 
   // estado

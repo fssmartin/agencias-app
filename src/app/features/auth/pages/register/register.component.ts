@@ -1,5 +1,4 @@
 import { Component, inject} from '@angular/core';  
-import { Router, RouterLink } from '@angular/router'; 
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { createRegisterForm } from './register.form';
@@ -10,7 +9,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register', 
-   imports: [AuthCardComponent, RouterLink, ReactiveFormsModule,CommonModule],
+   imports: [AuthCardComponent, ReactiveFormsModule,CommonModule],
   standalone: true,
   template: `
 

@@ -13,7 +13,8 @@ export class UserService {
   
   public userEmpty: User = {
     id: '', 
-    name: '', 
+    name: '',
+    password:'', 
     email: '', 
     isActive: true,  
     role: UserRole.USER, 
@@ -31,9 +32,9 @@ export class UserService {
   loading$ = this.loadingSubject.asObservable();
 
   private myUsers: User[] = [
-    { id: '1', name: 'Pedro Vila', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
-    { id: '2', name: 'Luis Garcia', email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
-    { id: '3', name: 'Belen Perez', email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
+    { id: '1', name: 'Pedro Vila', password:'123', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
+    { id: '2', name: 'Luis Garcia',password:'123',  email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
+    { id: '3', name: 'Belen Perez',password:'123',  email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
   ]; 
   
  

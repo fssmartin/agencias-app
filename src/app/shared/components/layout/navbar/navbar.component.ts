@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
 import {Component, Input, } from '@angular/core'; 
-import { Observable } from 'rxjs';
  
 import { Router, RouterLink, RouterLinkActive,   } from '@angular/router';
 
-import { UserService } from '../../../../features/admin/users/user.service';
 import { NavLink } from '../../../models/navlink.model';
-import { User } from '../../../../core/models/users.models';
+import { AuthService } from '../../../../features/auth/auth.service';
 
  
 @Component({
@@ -18,11 +16,13 @@ import { User } from '../../../../core/models/users.models';
 })
 export class NavbarComponent  {  
  
+  @Input() isHeader:boolean = false; 
   @Input() links:NavLink[] = []; 
   @Input() exact = false; 
-  
+ 
 
   constructor( 
+    public authService:AuthService,
     private router: Router
   ) {}
 
