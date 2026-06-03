@@ -35,6 +35,7 @@ import { CommonModule } from '@angular/common';
                 id="name"
                 required 
                 role="presentation" required autocomplete="off" autofocus="" /> 
+                <i class="fa fa-user icon"></i>
                 <p *ngIf="getError('name')" class="inputError">
                   {{ getError('name') }}
                 </p>                
@@ -49,6 +50,7 @@ import { CommonModule } from '@angular/common';
                 id="email"
                 required 
                 role="presentation" required autocomplete="of" autofocus="" /> 
+                <i class="fa fa-envelope icon"></i>
                 <p *ngIf="getError('email')" class="inputError">
                   {{ getError('email') }}
                 </p>                
@@ -63,6 +65,7 @@ import { CommonModule } from '@angular/common';
                 id="password"
                 required 
                 role="presentation" required autocomplete="new-password" autofocus="" /> 
+                <i class="fa fa-lock icon"></i>
                 <p *ngIf="getError('password')" class="inputError">
                   {{ getError('password') }}
                 </p>                

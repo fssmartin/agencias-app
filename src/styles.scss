@@ -101,7 +101,7 @@ label {
   flex-wrap: wrap;
   align-items: center;
   gap: 5px 8px;
-
+  position: relative;
   
   & .inputError {
     flex-basis: 100%;
@@ -143,7 +143,21 @@ input:not([type=checkbox], [type=radio], [type=range]) {
   margin: 0;
   padding: 0.2rem 0.5rem;
   height: auto;
+  padding-right: 35px;
+  position: relative;
+  & + .icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: gray;
+    opacity:.5;
+  }
 }
+
+
+
 
 select:not([multiple], [size]) {
   margin: 0;

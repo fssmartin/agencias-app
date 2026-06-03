@@ -21,10 +21,10 @@ import { NavbarComponent } from '../../shared/components/layout/navbar/navbar.co
 export class AdminLayoutComponent {  
   titularAdmin = 'Admin Layout';
   links = [
-    { path: './config', label: 'Configurations' },
-    { path: './questions', label: 'Questions' },
-    { path: './users', label: 'Users' },
-    { path: './categories', label: 'Categories' }
+    { path: './config', label: 'Configurations', role:'ADMIN' },
+    { path: './questions', label: 'Questions', role:'ADMIN' },
+    { path: './users', label: 'Users', role:'ADMIN' },
+    { path: './categories', label: 'Categories', role:'ADMIN' }
   ]
 
  

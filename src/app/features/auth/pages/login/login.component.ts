@@ -31,12 +31,15 @@ import { AuthService } from '../../auth.service';
               <label for="email">
                   <span></span>
                   <input
+                      type="text"
                       formControlName="email"
                       placeholder="Email"
-                      autocomplete="off"  
                       autofocus
-                      #emailInput
+                      name="email"
+                      id="email"
+                      autocomplete="off"  
                       />
+                      <i class="fa fa-envelope icon"></i>
                       <!-- [ngClass]="{ 'error': form.get('email')?.invalid && form.get('email')?.touched }" -->
     
                   <p *ngIf="getError('email')" class="inputError">
@@ -54,6 +57,7 @@ import { AuthService } from '../../auth.service';
                     id="password"
                     autocomplete="new-password"
                     /> 
+                    <i class="fa fa-lock icon"></i>
                       <!-- [ngClass]="{ 'error': form.get('password')?.invalid && form.get('password')?.touched }" -->
                     <!-- 
                     <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched">

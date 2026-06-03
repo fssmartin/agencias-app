@@ -37,7 +37,7 @@ import { createForgetForm } from './forget.form';
                     id="email"
                     autocomplete="off"
                   /> 
-                   
+                  <i class="fa fa-envelope icon"></i>
                   <p *ngIf="getError('email')"  class="inputError">
                     {{ getError('email') }}
                   </p>
