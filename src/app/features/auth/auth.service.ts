@@ -1,12 +1,12 @@
-import { computed, Injectable, signal } from "@angular/core";
+import { computed, Injectable, Signal, signal } from "@angular/core";
 import { AuthUser, User, UserRole } from "../../core/models/users.models";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  currentUser = signal<AuthUser | null>(null);
-  isAdmin  = computed(() => this.currentUser()?.role === UserRole.ADMIN);  
-  isLogged = computed(() => this.currentUser() !== null);
+  currentUser  = signal<AuthUser | null>(null);
+  isAdmin    = computed(() => this.currentUser()?.role === UserRole.ADMIN);  
+  isLogged   = computed(() => this.currentUser() !== null);
   iconByRole = computed(() => {
     const user = this.currentUser();
     if (!user) return '';
@@ -22,14 +22,14 @@ export class AuthService {
 
 
   login(email: string, password: string): boolean {
-
+ 
       this.currentUser.set({
         id: '2',
         name: 'Luis Garcia',
         email: 'luis.garcia@example.com',
         role: UserRole.ADMIN
       });
-
+ 
       return true;
   
   }

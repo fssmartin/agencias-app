@@ -1,14 +1,11 @@
-import { Component} from '@angular/core';  
-
-
-
+import { Component} from '@angular/core';   
 
 @Component({
   selector: 'app-auth-card',
   imports: [],
   standalone: true,
   template: `
-
+  
       <div class="auth-container">
 
           <div class="auth-card">
@@ -36,7 +33,6 @@ import { Component} from '@angular/core';
 })
 export class AuthCardComponent {  
   constructor( ){  }
-
 }
 
 

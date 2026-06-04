@@ -16,15 +16,13 @@ import { AuthService } from '../../auth.service';
     <app-auth-card>
 
         <!-- HEADER -->
-        <div header>
+        <ng-container header>
             <h4>Login</h4>
-            <p>Please enter your credentials</p>
-        </div>
+            <p>Please enter your credentials:</p>
+        </ng-container>
 
         <!-- BODY -->
-        <div body>
-
-          <p>error ? {{error()}}</p>
+        <ng-container body> 
 
           <form [formGroup]="form" (ngSubmit)="login()" class="login" autocomplete="off">
 
@@ -70,18 +68,23 @@ import { AuthService } from '../../auth.service';
                   <p *ngIf="getError('password')"  class="inputError">
                     {{ getError('password') }}
                   </p>
+
               </label>
+
               <div class="fm_actions">  
-                  <button type="submit" 
-                      [disabled]="form.invalid || form.pristine">Login
-                  </button>
+                  <span class="msgError"> {{error()}}</span>
+                  <div class="botones">
+                    <button type="submit" 
+                        [disabled]="form.invalid || form.pristine">Login
+                    </button>
+                  </div>
               </div>
                
           </form>
-        </div>
+        </ng-container>
 
         <!-- FOOTER -->
-        <div footer  style="display:flex;justify-content:space-between">
+        <ng-container footer  style="display:flex;justify-content:space-between">
             <p>
               Don't have an account?
               <a routerLink="/auth/register">Register</a>
@@ -90,7 +93,7 @@ import { AuthService } from '../../auth.service';
               Forgot your password?
               <a routerLink="/auth/forget">Reset it</a> ✅
             </p>
-        </div>
+        </ng-container>
 
     </app-auth-card>
 
