@@ -1,6 +1,8 @@
 .navbar{
-  padding: 0 10px;
-  justify-content:space-between;
+    width: 100%;
+    left: 0;
+    text-align: left; 
+    position: relative;
   ul li{
     padding: 0 15px;
     &::after{
@@ -24,10 +26,20 @@
       color:orangered;
       text-decoration: underline;
     }
-    &:hover{
+    &:hover{      
+      color:orangered;
       text-decoration: underline;
     }
   }
-  .userLogado{color: orangered;}
+  
+  .navbarUser{
+    position: absolute;
+    right: 10px;
+    top: -50px;
+    font-size: 20px;
+    & .userLogado span{
+        color: orangered;
+    }
+  }
 }
 

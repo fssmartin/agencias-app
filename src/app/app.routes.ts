@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard } from './core/guards/auth.guard';
+import { adminGuard, loggedGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './features/public/home/home.component';
 import { NotFoundComponent } from './features/public/not-found/not-found.component';
 
@@ -20,14 +20,20 @@ export const routes: Routes = [
 
     {
         path:'admin',
-        canActivate: [adminGuard], // ✅ evita cargar si no está logueado
+        canActivate: [adminGuard], // ✅ evita cargar si no eres ADMIN
         loadChildren:() => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
     }, 
 
     {
+        path:'profile',
+        loadComponent: () => import('./features/public/profile/profile.component').then(m => m.ProfileComponent),
+        canActivate: [loggedGuard], // ✅ evita cargar si no estas logado
+    },
+
+    {
         path:'about',
         loadComponent: () => import('./features/public/about/about.component').then(m => m.AboutComponent)
-    },
+    },    
 
     {    
         path: '**',

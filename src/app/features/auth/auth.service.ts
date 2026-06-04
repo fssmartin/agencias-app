@@ -7,7 +7,7 @@ export class AuthService implements AuthState {
   currentUser  = signal<AuthUser | null>(null);
   welcomeMessage = signal<boolean>(false);
   isAdmin    = computed(() => this.currentUser()?.role === UserRole.ADMIN);  
-  isLogged   = computed(() => this.currentUser() !== null);
+  isLogged   = computed(() => this.currentUser() !== null); // --> ES LO MISMO  !!this.currentUser());
   iconByRole = computed(() => {
     const user = this.currentUser();
     if (!user) return '';
