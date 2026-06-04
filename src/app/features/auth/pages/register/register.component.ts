@@ -78,8 +78,7 @@ import { Router } from '@angular/router';
             </label>
           
              <div class="fm_actions">  
-                  <span class="msg"
-                  [ngClass]="msgClass()">{{msg()}}</span>
+                  <span class="msg msgError">{{msg()}}</span>
                   <div class="botones">
                     <button type="submit" 
                         [disabled]="form.invalid || form.pristine">Register
@@ -107,8 +106,7 @@ export class RegisterComponent {
   private fb = inject(FormBuilder);
   form:FormGroup = createRegisterForm(this.fb);
 
-  msg = signal('');
-  msgClass = signal('msjOk');
+  msg = signal(''); 
 
   constructor(
     private router:Router,
@@ -140,13 +138,9 @@ export class RegisterComponent {
 
     const { name, email, password } =  this.form.value;
     if( this._authService.register(name,email, password) ) {
-      //this.router.navigate(['/auth']);
-      this.msg.set('Usuario registrado correctamente..');
-      this.msgClass.set('msgOk');
+      this.router.navigate(['/home']);
     } else {
-      this.msg.set('Error a la hora de registro');
-      this.msgClass.set('msgError');
-      
+      this.msg.set('Error a la hora de registro');      
     }
   }
   

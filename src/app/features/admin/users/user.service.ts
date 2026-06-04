@@ -36,7 +36,6 @@ export class UserService {
     { id: '2', name: 'Luis Garcia',password:'123',  email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
     { id: '3', name: 'Belen Perez',password:'123',  email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
   ]; 
-  
  
   users$ = this.reload$.pipe(
     startWith(void 0),

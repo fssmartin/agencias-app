@@ -5,6 +5,7 @@ import { AuthState, AuthUser, User, UserRole } from "../../core/models/users.mod
 export class AuthService implements AuthState {
 
   currentUser  = signal<AuthUser | null>(null);
+  welcomeMessage = signal<boolean>(false);
   isAdmin    = computed(() => this.currentUser()?.role === UserRole.ADMIN);  
   isLogged   = computed(() => this.currentUser() !== null);
   iconByRole = computed(() => {
@@ -31,8 +32,21 @@ export class AuthService implements AuthState {
   }
 
   register(name:string, email: string, password: string): boolean {
-      const id = Date.now() + '-' + Math.random().toString(36).slice(2);
-      console.log("Registro user ok , ",id)
+      const id = crypto.randomUUID();
+      console.log("Registro user ok , ",id);
+
+      // return this.http.post<User>('/api/register', { name, email, password }).pipe(
+      //   tap(user => this.currentUser.set(user)) // ✅ autologin aquí
+      // );
+
+      this.welcomeMessage.set(true);
+      this.currentUser.set({
+        id: id,
+        name: name,
+        email: email,
+        role: UserRole.USER
+      });
+
       return true;
   }
 

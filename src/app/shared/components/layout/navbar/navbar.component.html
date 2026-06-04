@@ -31,26 +31,26 @@
             [queryParams]="{ mode: 'view' }"
           ><span class="userLogado">{{authService.iconByRole()}}{{authService.currentUser()?.name }}</span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a (click)="authService.logout()" href="" title="Log Out">
-             Logout
+             <i class="fa fa-sign-out-alt"></i>
           </a>
       </li>
       <ng-template #loggedOut>
         <li>
             <a 
-              title="Sign Up"
+              title="SIGN UP"
               routerLinkActive="active"      
               [routerLink]="['auth/register']"
-              [routerLinkActiveOptions]="{ exact: true }">
-              Sign Up
+              [routerLinkActiveOptions]="{ exact: true }">               
+              <i class="fa fa-user-plus"></i>
             </a> 
          </li>
         <li>
             <a 
-              title="Log In"
+              title="LOG IN"
               routerLinkActive="active"      
               [routerLink]="['auth/login']"
-              [routerLinkActiveOptions]="{ exact: false }">
-              Log In
+              [routerLinkActiveOptions]="{ exact: false }">               
+              <i class="fa fa-sign-in-alt"></i>
             </a> 
          </li>
       </ng-template>
