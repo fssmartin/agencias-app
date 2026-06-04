@@ -1,10 +1,11 @@
-import { Component, inject} from '@angular/core';  
+import { Component, inject, signal} from '@angular/core';  
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { createRegisterForm } from './register.form';
 import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
 import { CommonModule } from '@angular/common';
-
+import { AuthService } from '../../auth.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -24,7 +25,9 @@ import { CommonModule } from '@angular/common';
         <!-- BODY -->
         <div body>
 
-          <form [formGroup]="form" (ngSubmit)="register()" class="login" autocomplete="off">
+          <form [formGroup]="form" 
+                (ngSubmit)="register()" 
+                class="login" autocomplete="off">
 
             <label for="name">
               <span></span>
@@ -34,6 +37,7 @@ import { CommonModule } from '@angular/common';
                 name="name"
                 id="name"
                 required 
+                 formControlName="name"
                 role="presentation" required autocomplete="off" autofocus="" /> 
                 <i class="fa fa-user icon"></i>
                 <p *ngIf="getError('name')" class="inputError">
@@ -49,6 +53,7 @@ import { CommonModule } from '@angular/common';
                 name="email"
                 id="email"
                 required 
+                formControlName="email"
                 role="presentation" required autocomplete="of" autofocus="" /> 
                 <i class="fa fa-envelope icon"></i>
                 <p *ngIf="getError('email')" class="inputError">
@@ -64,6 +69,7 @@ import { CommonModule } from '@angular/common';
                 name="password"
                 id="password"
                 required 
+                formControlName="password"
                 role="presentation" required autocomplete="new-password" autofocus="" /> 
                 <i class="fa fa-lock icon"></i>
                 <p *ngIf="getError('password')" class="inputError">
@@ -72,9 +78,13 @@ import { CommonModule } from '@angular/common';
             </label>
           
              <div class="fm_actions">  
-                  <button type="submit" 
-                      [disabled]="form.invalid || form.pristine">Register
-                  </button>
+                  <span class="msg"
+                  [ngClass]="msgClass()">{{msg()}}</span>
+                  <div class="botones">
+                    <button type="submit" 
+                        [disabled]="form.invalid || form.pristine">Register
+                    </button>
+                  </div>
               </div>
 
           </form>
@@ -97,10 +107,19 @@ export class RegisterComponent {
   private fb = inject(FormBuilder);
   form:FormGroup = createRegisterForm(this.fb);
 
+  msg = signal('');
+  msgClass = signal('msjOk');
+
+  constructor(
+    private router:Router,
+    private _authService:AuthService
+  ){ }
+
   ngOnInit(): void { 
+    
     this.form.reset({
-      email: '',
       name: '',
+      email: '',
       password: ''
     });
 
@@ -113,9 +132,21 @@ export class RegisterComponent {
 
   register() {
     console.log('Register:', this.form.value);
+
     if (this.form.invalid) {
         this.form.markAllAsTouched();
         return;
+    }
+
+    const { name, email, password } =  this.form.value;
+    if( this._authService.register(name,email, password) ) {
+      //this.router.navigate(['/auth']);
+      this.msg.set('Usuario registrado correctamente..');
+      this.msgClass.set('msgOk');
+    } else {
+      this.msg.set('Error a la hora de registro');
+      this.msgClass.set('msgError');
+      
     }
   }
   

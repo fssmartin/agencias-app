@@ -20,18 +20,20 @@ export class AuthService implements AuthState {
     }
   });
 
-
-  login(email: string, password: string): boolean {
- 
+  login(email: string, password: string): boolean { 
       this.currentUser.set({
         id: '2',
         name: 'Luis Garcia',
         email: 'luis.garcia@example.com',
         role: UserRole.ADMIN
-      });
- 
+      }); 
+      return true;  
+  }
+
+  register(name:string, email: string, password: string): boolean {
+      const id = Date.now() + '-' + Math.random().toString(36).slice(2);
+      console.log("Registro user ok , ",id)
       return true;
-  
   }
 
   logout() {

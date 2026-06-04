@@ -110,9 +110,7 @@ export class LoginComponent implements AfterViewInit {
   constructor(
     private router:Router,
     private _authService:AuthService
-  ){
-
-  }
+  ){ }
 
   ngOnInit(): void { 
     

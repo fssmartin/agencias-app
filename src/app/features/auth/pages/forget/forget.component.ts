@@ -44,9 +44,12 @@ import { createForgetForm } from './forget.form';
 
               </label>
               <div class="fm_actions">  
-                  <button type="submit" 
-                      [disabled]="form.invalid || form.pristine">Reset
-                  </button>
+                  <span class="msgError"> {{error()}}</span>
+                  <div class="botones">
+                    <button type="submit" 
+                        [disabled]="form.invalid || form.pristine">Send
+                    </button>
+                  </div>
               </div>
                
           </form>
@@ -73,9 +76,11 @@ import { createForgetForm } from './forget.form';
 })
 export class ForgetComponent { 
 
-  submitOk:boolean=false
   private fb = inject(FormBuilder);
   form:FormGroup = createForgetForm(this.fb);
+  error = signal('');
+  
+  submitOk:boolean=false;
 
   submit() {
       console.log('Login:', this.form.value);

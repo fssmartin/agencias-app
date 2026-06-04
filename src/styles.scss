@@ -27,7 +27,7 @@ h4{
 .col {
   flex: 1;
   padding: 10px;
-    position: relative;
+  position: relative;
 }
 
 .col+.col::after {
@@ -204,19 +204,16 @@ select:not([multiple], [size]) {
         }
     }
   } 
-
-
-
 }
 
-
-
-.msj{
-  color: green;
+.msg{
   font-size: 1.2rem;
   text-align: center;
   padding: 0;
-  &.msjError{
+  &.msgOk{
+    color: green;
+  }
+  &.msgError{
     color: red; 
   }
 
@@ -227,6 +224,9 @@ select:not([multiple], [size]) {
 }
 
 .auth-header{
-  padding-bottom:1rem;
   & *{margin:0;padding:0}
+}   
+
+.auth-body{
+  margin:3rem 0 1rem 0
 }
