@@ -1,8 +1,8 @@
 import { computed, Injectable, Signal, signal } from "@angular/core";
-import { AuthUser, User, UserRole } from "../../core/models/users.models";
+import { AuthState, AuthUser, User, UserRole } from "../../core/models/users.models";
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+export class AuthService implements AuthState {
 
   currentUser  = signal<AuthUser | null>(null);
   isAdmin    = computed(() => this.currentUser()?.role === UserRole.ADMIN);  

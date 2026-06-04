@@ -3,6 +3,15 @@
 // ✅ modelo para autenticación
 //export type AuthUser = Omit<User, 'password'>;
 
+import { Signal } from "@angular/core";
+
+
+export interface AuthState {
+  currentUser: Signal<AuthUser | null>;
+  isLogged  : Signal<boolean>;
+}
+
+
 export interface AuthUser {
   id: string;
   name: string;
