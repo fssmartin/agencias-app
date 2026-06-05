@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core'; 
 import { UserFormComponent } from '../user-form/user-form.component';
-import { User, UserRole } from '../../../../../core/models/users.models';
-import { USERS_ROUTES } from '../../users.routes';
+import { User } from '../../../../../core/models/users.models';
 import { UserService } from '../../user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserUiStateService } from '../../userState.service';

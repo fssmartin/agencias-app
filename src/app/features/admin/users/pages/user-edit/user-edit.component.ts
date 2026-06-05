@@ -17,21 +17,24 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
   imports: [CommonModule, UserFormComponent, LoadingComponent],
   template: `
 
-    <app-loading *ngIf="loading$ | async"></app-loading>
+    <!-- <app-loading *ngIf="loading$ | async"></app-loading> -->
+    <app-loading *ngIf="loadingSignal()"></app-loading>
 
-    <ng-container *ngIf="!(loading$ | async)">
+    <!-- <ng-container *ngIf="!(loading$ | async)"> con behaviourSubjet -->
+    
+    <ng-container *ngIf="!(loadingSignal())">
 
-        <div *ngIf="error$ | async as error">
-            <div class="msj msjError">{{ error }}</div>
+        <!-- <div *ngIf="error$ | async as error"> -->
+        <div *ngIf="errorSignal()">
+            <div class="msj msjError">{{ errorSignal() }}</div>
         </div>    
 
-        <app-user-form
-          *ngIf="user;"
-          [mode]="mode"
-          [user]="user"
-          [roles]="roles"
-          (save)="onSave($event)"
-          (cancel)="onCancel($event)">
+        <app-user-form *ngIf="user;"
+            [mode]="mode"
+            [user]="user"
+            [roles]="roles"
+            (save)="onSave($event)"
+            (cancel)="onCancel($event)">
         </app-user-form>
 
     </ng-container> 
@@ -46,9 +49,13 @@ export class UserEditComponent {
   id!:string
   user!: User;
 
+  loadingSignal = this.userService.loadingSignal;
+  errorSignal   = this.userService.errorSignal;
+  
   users$ = this.userService.users$;
-  error$ = this.userService.error$;
-  loading$ = this.userService.loading$;
+  //error$ = this.userService.error$;
+  //loading$ = this.userService.loading$();
+
   roles: string[] = [];
   mode:string = 'edit'; // 'view' o 'edit'
 

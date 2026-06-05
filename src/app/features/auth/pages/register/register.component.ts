@@ -18,8 +18,8 @@ import { Router } from '@angular/router';
 
         <!-- HEADER -->
         <div header>
-          <h4>Register</h4>
-          <p>Create your account</p>
+          <h4>Sign up for MyApp</h4>
+          <p>Get started with your free account today</p>
         </div>
 
         <!-- BODY -->
@@ -27,17 +27,17 @@ import { Router } from '@angular/router';
 
           <form [formGroup]="form" 
                 (ngSubmit)="register()" 
-                class="login" autocomplete="off">
+                class="auth" autocomplete="off">
 
             <label for="name">
-              <span></span>
+              <span>Username</span>
               <input
                 type="text"
-                placeholder="Name"
+                placeholder="Jhon Doe"
                 name="name"
                 id="name"
                 required 
-                 formControlName="name"
+                formControlName="name"
                 role="presentation" required autocomplete="off" autofocus="" /> 
                 <i class="fa fa-user icon"></i>
                 <p *ngIf="getError('name')" class="inputError">
@@ -46,10 +46,10 @@ import { Router } from '@angular/router';
             </label>
            
             <label for="email">
-              <span></span>
+              <span>Email</span>
               <input
                 type="email"
-                placeholder="Email"
+                placeholder="m@example.com"
                 name="email"
                 id="email"
                 required 
@@ -62,10 +62,10 @@ import { Router } from '@angular/router';
             </label>
          
             <label for="password">
-              <span></span>
+              <span>Password</span>
               <input
                 type="password"
-                placeholder="Password"
+                placeholder="Create a secure password"
                 name="password"
                 id="password"
                 required 
@@ -77,11 +77,64 @@ import { Router } from '@angular/router';
                 </p>                
             </label>
           
+            <label for="cpassword">
+              <span>Confirm Password</span>
+              <input
+                type="password"
+                placeholder="Confirm your password"
+                name="cpassword"
+                id="cpassword"
+                required  
+                role="presentation" required autocomplete="new-password" autofocus="" /> 
+                <i class="fa fa-lock icon"></i>
+                <!-- <p *ngIf="getError('password')" class="inputError">
+                  {{ getError('password') }}
+                </p>                 -->
+            </label>
+
+            <label for="country">
+              <span>Your Country/Region</span>
+              <select name="country" id="country" required  
+                role="presentation" required   autofocus="">
+                  <option value="AF">Afghanistan</option>
+                  <option value="AX">Åland</option>
+                  <option value="AL">Albania</option>
+                  <option value="DZ">Algeria</option>
+                  <option value="AS">American Samoa</option>
+                  <option value="AD">Andorra</option>
+                  <option value="AO">Angola</option>
+                  <option value="CZ">Czech Republic</option>
+                  <option value="DK">Denmark</option>
+                  <option value="DJ">Djibouti</option>
+                  <option value="DM">Dominica</option>
+                  <option value="DO">Dominican Republic</option>
+                  <option value="EC">Ecuador</option>
+                  <option value="EG">Egypt</option>
+                  <option value="SV">El Salvador</option> 
+                  <option value="SZ">Eswatini</option>
+                  <option value="ET">Ethiopia</option>
+                  <option value="FK">Falkland Islands</option>
+                  <option value="FO">Faroe Islands</option>
+                  <option value="FJ">Fiji</option>
+                  <option value="FI">Finland</option>
+                  <option value="FR">France</option> 
+                  <option value="TF">French Southern Lands</option>
+                  <option value="GA">Gabon</option>
+                  <option value="GM">Gambia</option>
+                  <option value="GE">Georgia</option>
+                  <option value="DE">Germany</option>
+                  <option value="GH">Ghana</option>               
+                </select>                
+                <p class="inputInfo">
+                  For compliance reasons, we're required to collect country information to send you occasional updates and announcements.
+                </p>                
+            </label>            
+                      
              <div class="fm_actions">  
                   <span class="msg msgError">{{msg()}}</span>
                   <div class="botones">
                     <button type="submit" 
-                        [disabled]="form.invalid || form.pristine">Register
+                        [disabled]="form.invalid || form.pristine">Create account
                     </button>
                   </div>
               </div>

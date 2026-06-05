@@ -19,5 +19,4 @@ export class AppComponent {
   title = 'Myapp';
   exact = false;
 
-  pepe = "oaaoaoao";
 }

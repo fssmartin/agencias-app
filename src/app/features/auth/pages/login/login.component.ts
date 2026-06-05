@@ -17,21 +17,21 @@ import { AuthService } from '../../auth.service';
 
         <!-- HEADER -->
         <ng-container header>
-            <h4>Login</h4>
-            <p>Please enter your credentials:</p>
+            <h4>Welcome back</h4>
+            <p>Sign in to Myapp</p>
         </ng-container>
 
         <!-- BODY -->
         <ng-container body> 
 
-          <form [formGroup]="form" (ngSubmit)="login()" class="login" autocomplete="off">
+          <form [formGroup]="form" (ngSubmit)="login()" class="auth" autocomplete="off">
 
               <label for="email">
-                  <span></span>
+                  <span>Email</span>
                   <input
                       type="text"
                       formControlName="email"
-                      placeholder="Email"
+                      placeholder="m@example.com"
                       autofocus
                       name="email"
                       id="email"
@@ -46,11 +46,12 @@ import { AuthService } from '../../auth.service';
               </label>
 
               <label for="password">
-                  <span></span> 
+                  <span>Password</span> 
+                  <a routerLink="/auth/forget" class="linkLabel">Forgot your password?</a>
                   <input
                     type="password"
                     formControlName="password"
-                    placeholder="Password"
+                    placeholder="Create a secure password"
                     name="password"
                     id="password"
                     autocomplete="new-password"
@@ -84,15 +85,11 @@ import { AuthService } from '../../auth.service';
         </ng-container>
 
         <!-- FOOTER -->
-        <ng-container footer  style="display:flex;justify-content:space-between">
+        <ng-container footer>
             <p>
               Don't have an account?
-              <a routerLink="/auth/register">Register</a>
+              <a routerLink="/auth/register">Create an account</a>
             </p> 
-            <p>
-              Forgot your password?
-              <a routerLink="/auth/forget">Reset it</a> ✅
-            </p>
         </ng-container>
 
     </app-auth-card>

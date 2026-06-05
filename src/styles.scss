@@ -102,33 +102,7 @@ table tr:not(:first-child, :last-child):hover{background-color: aquamarine;}
 }
 
  
-label {
 
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 5px 8px;
-  position: relative;
-  
-  & .inputError {
-    flex-basis: 100%;
-    color: red;
-    font-size: 12px;
-    text-align: right;
-    margin: 0;
-  }
-
-  & span{
-    min-width: 100px;
-    padding-right: 10px;
-  }
-  & input,select {
-      width: auto;     /* QUITA el 100% */
-      flex: 1;         /* o usa esto */
-      min-width: 0;    /* evita overflow raro */
-
-  }
-}
 
 
 
@@ -152,8 +126,58 @@ form{
       color:red;
     }
   }
-  &.login{
-    label span{display: none;}
+
+  // &.auth{
+  //   label span{display: none;}
+  // }
+  label {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 0px 8px;
+      position: relative;
+      margin-bottom: 15px;
+      
+      & .inputError {
+        flex-basis: 100%;
+        color: red;
+        font-size: 12px;
+        text-align: right;
+        margin: 0;
+      }
+      & .inputInfo {
+        flex-basis: 100%;
+        margin: 0;
+        line-height: 12px;
+        padding: 2px 0;
+        font-size: 11px;
+      }
+
+      & span{
+        min-width: 100px;
+        padding-right: 10px;
+        font-weight: bold;
+      }
+      & .linkLabel{
+        width: 100%;
+        position: absolute;
+        right: 0;
+        top: 5px;
+        text-decoration: none;
+        text-align: right;
+        font-size: 13px;
+        &:hover{
+          text-decoration: underline;
+        }
+      }
+      & input,select {
+          width: 100%;     /* QUITA el 100% */
+          flex: 1;         /* o usa esto */
+          min-width: 0;    /* evita overflow raro */
+      }
+  }
+  &.auth{    
+    label{flex-direction: column;}
   }
 }
 
@@ -166,11 +190,14 @@ input:not([type=checkbox], [type=radio], [type=range]) {
   & + .icon {
     position: absolute;
     right: 10px;
-    top: 17px;
+    top: 45px;
     transform: translateY(-50%);
     pointer-events: none;
     color: gray;
     opacity:.5;
+  }
+  &::placeholder {
+    font-size: 13px;
   }
 }
 
@@ -236,4 +263,13 @@ select:not([multiple], [size]) {
 
 .auth-body{
   margin:3rem 0 1rem 0
+}
+
+.auth-footer{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  & p{
+    margin:0
+  }
 }

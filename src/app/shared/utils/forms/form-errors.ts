@@ -4,8 +4,8 @@ import { AbstractControl } from '@angular/forms';
 export function getErrorMessage(control: AbstractControl | null): string {
   if (!control || !control.errors || !control.touched) return '';
 
-  if (control.errors['required']) return 'Campo obligatorio';
-  if (control.errors['email']) return 'Email inválido';
+  if (control.errors['required']) return 'Required Field...';
+  if (control.errors['email']) return 'Invalid email..';
 
   if (control.errors['minlength']) {
     return `Mínimo ${control.errors['minlength'].requiredLength} caracteres`;

@@ -16,23 +16,28 @@ import { createForgetForm } from './forget.form';
 
       <div header >
         <ng-container *ngIf="submitOk===false;">
-          <h4>Forgot Password</h4>
-          <p>Enter your email to reset your password</p>
+          <h4>Forgot your password?</h4>
+          <p>Enter your email below to reset your password</p>
         </ng-container>
       </div>
 
       <div body>
 
+<!-- "Reset your password
+Check your email for a link to reset your password. If it doesn’t appear within a few minutes, check your spam folder.
+
+Return to sign in" -->
+
           <form  
             *ngIf="submitOk===false;else successTpl" 
-            [formGroup]="form" (ngSubmit)="submit()" class="login" autocomplete="off">
+            [formGroup]="form" (ngSubmit)="submit()" class="auth" autocomplete="off">
  
               <label for="email">
-                  <span></span> 
+                  <span>Email</span> 
                   <input
                     type="email"
                     formControlName="email"
-                    placeholder="Email"
+                    placeholder="m@example.com"
                     name="email"
                     id="email"
                     autocomplete="off"
@@ -47,7 +52,7 @@ import { createForgetForm } from './forget.form';
                   <span class="msgError"> {{error()}}</span>
                   <div class="botones">
                     <button type="submit" 
-                        [disabled]="form.invalid || form.pristine">Send
+                        [disabled]="form.invalid || form.pristine">Send recovery email
                     </button>
                   </div>
               </div>
@@ -63,11 +68,15 @@ import { createForgetForm } from './forget.form';
       </div>
     
 
-      <div footer  style="display:flex;justify-content:space-between;margin:10px 0">
+      <div footer  >
         <p>
           Remembered your password?
           <a routerLink="/auth/login">Back to login</a>
         </p>
+        <p>
+          Don't have an account?
+          <a routerLink="/auth/register">Sign up</a>
+        </p>                 
       </div>
 
     </app-auth-card>

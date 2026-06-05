@@ -28,9 +28,10 @@ import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
             </div>
     
             <div>
-              <label><span>Nombre</span>
+              <label>
+                <span>Nombre</span>
                 <input type="text" 
-                  placeholder="Insert name"  
+                  placeholder="Jhon Doe"
                   formControlName="name" 
                   autocomplete="off"/>
                 <p *ngIf="getError('name')" class="inputError">
@@ -40,9 +41,10 @@ import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
             </div>
     
             <div>
-              <label><span>Email</span>
+              <label>
+                <span>Email</span>
                 <input type="email" 
-                  placeholder="Insert email"  
+                  placeholder=""  
                   formControlName="email" 
                   autocomplete="off" />
                 <p *ngIf="getError('email')" class="inputError">
@@ -52,7 +54,8 @@ import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
             </div>
     
             <div>
-              <label><span>Rol</span>
+              <label>
+                <span>Rol</span>
                 <select formControlName="role">
                   <option value="">Selecciona un rol</option>
                   <option *ngFor="let role of roles" [value]="role">{{ role | titlecase }}</option>

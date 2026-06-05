@@ -16,19 +16,23 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
   template: `
 
     <h4>User List
-
-      <div *ngIf="successMessage" class="success">
-        <div class="msj msjOk">{{ successMessage }}</div>  
-      </div>
-      <div *ngIf="error$ | async as error">
-          <div class="msj msjError">{{ error }}</div>
-      </div> 
-
+    <div class="msgInfo">
+        <div *ngIf="successMessage" class="success">
+            <div class="msj msjOk">{{ successMessage }}</div>  
+        </div>
+        <!-- <div *ngIf="error$ | async as error" class="error"> -->
+        <div *ngIf="errorSignal()" class="error">
+            <div class="msj msjError">{{ errorSignal() }}</div>
+        </div> 
+    </div>
     </h4> 
 
-    <app-loading *ngIf="loading$ | async"></app-loading>
+    <!-- <app-loading *ngIf="loading$ | async"></app-loading> -->
+    <app-loading *ngIf="loadingSignal()"></app-loading>
+ 
 
-    <ng-container *ngIf="!(loading$ | async)">
+    <!-- <ng-container *ngIf="!(loading$ | async)"> -->
+    <ng-container *ngIf="!loadingSignal()">
 
         <table
           *ngIf="sortedUsers$ | async as users"
@@ -83,20 +87,27 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
   `
 })
 export class UserListComponent {
+  
+  private userService = inject(UserService);
+  
   selectedUser?: User;
   successMessage: string | null = null;
   highlightedUserId: string | null = null;
 
-  private userService = inject(UserService);
-  
+  loadingSignal = this.userService.loadingSignal;
+  errorSignal   = this.userService.errorSignal;
+
   users$ = this.userService.users$;
-  error$ = this.userService.error$;
-  loading$ = this.userService.loading$;
+  // error$ = this.userService.error$;
+
+  
+  //loading$ = this.userService.loading$;
+
   userEmpty?: User = this.userService.userEmpty;
  
  
-    sortField$ = new BehaviorSubject<keyof User>('name');
-    sortDirection$ = new BehaviorSubject<'asc' | 'desc'>('asc');
+  sortField$ = new BehaviorSubject<keyof User>('name');
+  sortDirection$ = new BehaviorSubject<'asc' | 'desc'>('asc');
 
   sortedUsers$ = combineLatest([
     this.users$,
