@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
 import { User, UserRole } from "../../../core/models/users.models";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, catchError, delay, filter, finalize, map, Observable, of, shareReplay, startWith, Subject, switchMap, take, tap, throwError } from "rxjs";
@@ -22,11 +22,16 @@ export class UserService {
     createdAt: new Date() 
   };  
 
-  loadingSignal = signal<boolean>(false);
-  errorSignal = signal<string | null>(null);
+  // private loadingSubject = new BehaviorSubject<boolean>(false)
+  // private errorSubject = new BehaviorSubject<string | null>(null);
 
-  //private loadingSubject = new BehaviorSubject<boolean>(false)
-  private errorSubject = new BehaviorSubject<string | null>(null);
+  private _loadingSignal = signal<boolean>(false);
+  private _errorSignal   = signal<string | null>(null);
+
+  loadingSignal = computed( ()=>{ return this._loadingSignal() });
+  errorSignal   = computed( ()=>{ return this._errorSignal()   });
+
+
 
   // 🔁 Trigger para recargar datos
   private reload$ = new BehaviorSubject<void>(undefined);
@@ -45,20 +50,19 @@ export class UserService {
     delay(0),
     switchMap(() =>{
       //this.loadingSubject.next(true);
-      this.loadingSignal.set( true );
+      this._loadingSignal.set( true );
       return of(this.myUsers).pipe(
         delay(500),
         map(users => users ?? []),
         tap(() => { 
           //this.loadingSubject.next(false);
-          this.loadingSignal.set( false );
-          this.errorSignal.set( '❌ Error cargando usuarios' ); 
+          this._loadingSignal.set( false );
         }),
         catchError(() => {
           //this.loadingSubject.next(false);
           //this.errorSubject.next('Error cargando usuarios');
-          this.loadingSignal.set( false );     
-          this.errorSignal.set( '❌ Error cargando usuarios' ); 
+          this._loadingSignal.set( false );     
+          this._errorSignal.set( '❌ Error cargando usuarios' ); 
 
           return of([]);
         })
@@ -70,8 +74,8 @@ export class UserService {
   clearObservable(loading: boolean=false) {
     //this.loadingSubject.next(loading);
     //this.errorSubject.next(null); 
-    this.loadingSignal.set( loading );
-    this.errorSignal.set(null);
+    this._loadingSignal.set( loading );
+    this._errorSignal.set(null);
   }
 
   // 🔄 trigger manual
@@ -107,8 +111,8 @@ export class UserService {
         // ✅ aquí actualizas el estado global de error
         //this.loadingSubject.next(false); 
         //this.errorSubject.next('❌ Error eliminando usuario');
-        this.loadingSignal.set( false );
-        this.errorSignal.set('❌ Error eliminando usuario');
+        this._loadingSignal.set( false );
+        this._errorSignal.set('❌ Error eliminando usuario');
         // ✅ y decides si propagas o no
         return throwError(() => err);
       })
@@ -146,10 +150,10 @@ export class UserService {
         map(users => users.find(u => u.id === id)  ) ,
         tap((user) => {
           //this.loadingSubject.next(false); 
-          this.loadingSignal.set( false );
+          this._loadingSignal.set( false );
           if(!user){
              //this.errorSubject.next('error, usuario no encontrado'); 
-             this.errorSignal.set( 'error, usuario no encontrado' );
+             this._errorSignal.set( 'error, usuario no encontrado' );
           } 
         }),
         take(1) // ✅ solo lo necesitas una vez
@@ -177,8 +181,8 @@ export class UserService {
       catchError(() => {
         //this.loadingSubject.next(false);
         //this.errorSubject.next('❌ Error actualizando usuario');
-        this.loadingSignal.set( false );
-        this.errorSignal.set( '❌ Error actualizando usuario' );
+        this._loadingSignal.set( false );
+        this._errorSignal.set( '❌ Error actualizando usuario' );
         return throwError(() => new Error('Update failed'));
       })
     );
@@ -216,8 +220,8 @@ export class UserService {
       catchError(() => {
         //this.loadingSubject.next(false);
         // this.errorSubject.next('❌ Error creando usuario');
-        this.loadingSignal.set( false );
-        this.errorSignal.set( '❌ Error creando usuario' );        
+        this._loadingSignal.set( false );
+        this._errorSignal.set( '❌ Error creando usuario' );        
         return throwError(() => new Error('Add failed'));
       })
     );

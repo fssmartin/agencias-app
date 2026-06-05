@@ -15,13 +15,25 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
   imports: [CommonModule, RouterLink, LoadingComponent],
   template: `
 
+<!--
+
+    APRENDER HACER UNA COMPUTED STATE--> Que unifique el loading, error y success..
+
+    y luego pregunte por .state()==='loading'
+                          .state()==='error'
+                          .state()==='success'  
+
+-->
+
+
+
     <h4>User List
     <div class="msgInfo">
-        <div *ngIf="successMessage" class="success">
+        <div *ngIf="!loadingSignal() && successMessage" class="success">
             <div class="msj msjOk">{{ successMessage }}</div>  
         </div>
         <!-- <div *ngIf="error$ | async as error" class="error"> -->
-        <div *ngIf="errorSignal()" class="error">
+        <div *ngIf="!loadingSignal() && errorSignal()" class="error">
             <div class="msj msjError">{{ errorSignal() }}</div>
         </div> 
     </div>
