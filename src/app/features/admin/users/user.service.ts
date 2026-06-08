@@ -28,9 +28,9 @@ export class UserService {
   private _loadingSignal = signal<boolean>(false);
   private _errorSignal   = signal<string | null>(null);
 
-  loadingSignal = computed( ()=>{ return this._loadingSignal() });
-  errorSignal   = computed( ()=>{ return this._errorSignal()   });
 
+  loadingSignal = this._loadingSignal.asReadonly();
+  errorSignal   = this._errorSignal.asReadonly();
 
 
   // 🔁 Trigger para recargar datos

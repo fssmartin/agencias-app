@@ -1,4 +1,5 @@
 import { Component} from '@angular/core';  
+import { UiService } from '../../../core/services/ui.service';
 
 
 
@@ -17,10 +18,13 @@ import { Component} from '@angular/core';
 export class AboutComponent {  
 
 
-  constructor( ){  }
+  constructor(private ui:UiService){  }
 
  
- 
+  ngOninit(){
+    console.log("hola ??")
+    this.ui.showLoading();
+  }
   
 
 

@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
 import {Component, Input, } from '@angular/core'; 
  
-import { Router, RouterLink, RouterLinkActive,   } from '@angular/router';
+import {   RouterLink, RouterLinkActive,   } from '@angular/router';
 
 import { NavLink } from '../../../models/navlink.model';
 import { AuthService } from '../../../../features/auth/auth.service';
+import { NotificationsComponent } from "../notifications/notifications.component";
+import { NotificationUiStateService } from '../../../../core/services/notificactions.service';
 
  
 @Component({
   selector: 'app-navbar', 
   standalone: true,
   templateUrl: './navbar.component.html'  ,
-  imports: [RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterLink, RouterLinkActive, CommonModule, NotificationsComponent,],
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent  {  
@@ -22,8 +24,9 @@ export class NavbarComponent  {
  
 
   constructor( 
-    public authService:AuthService,
-    private router: Router
+    public authService:AuthService ,
+    public notificationService:NotificationUiStateService ,
+    
   ) {}
 
  ngOnInit(): void {

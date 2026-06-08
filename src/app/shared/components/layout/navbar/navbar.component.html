@@ -1,3 +1,12 @@
+
+<!-- <pre>
+
+  {{ authService.currentUser() | json  }}
+  {{ authService.isAdmin() | json  }}
+  {{ authService.isLogged()| json  }}
+
+</pre> -->
+
 <nav class="navbar container-fluid"> 
 	<ul>
       <ng-container *ngFor="let link of links">
@@ -27,12 +36,8 @@
   <ul *ngIf="isHeader" class="navbarUser">
       <ng-container  *ngIf="authService.isLogged(); else loggedOut">        
         <li >
-            <a  href="#ni" title="Notoficaciones">
-               <i class="fa-solid fa-bell"></i>
-              <span class="badge" *ngIf="7 > 0">
-                  {{ 7 }}
-              </span>
-            </a>
+            <app-notifications [count]="notificationService.countNotification"></app-notifications>
+            <!-- le paso la computed sin () pq sino le paso el valor!!  -->
         </li>
         <li >
             <a 
@@ -40,8 +45,9 @@
                 [title]="authService.currentUser()?.name"
                 [routerLink]="['/profile']"
               >
-               <i *ngIf="authService.currentUser()?.role!='ADMIN'" class="fa-solid fa-user-gear"></i>
-               <i *ngIf="authService.currentUser()?.role==='ADMIN'" class="fa-solid fa-user-shield"></i>
+               <i *ngIf="authService.currentUser()?.role==='MANAGER'" class="fa-solid fa-user-pen"></i>
+               <i *ngIf="authService.currentUser()?.role==='USER'"    class="fa-solid fa-user"></i>
+               <i *ngIf="authService.currentUser()?.role==='ADMIN'"   class="fa-solid fa-user-shield"></i>
             </a>
         </li>
         <li >

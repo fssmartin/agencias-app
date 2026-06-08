@@ -10,6 +10,8 @@ import { FooterComponent } from './shared/components/layout/footer/footer.compon
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
+  
+
   links = [
     { path: '/home',    label: 'Home'   , role:null,     icon:"<i class='fa fa-home fa-fw' aria-hidden='true'></i>"},
     { path: '/about',   label: 'About'  , role:null ,    icon:"<i class='fa fa-circle-info'></i>"},

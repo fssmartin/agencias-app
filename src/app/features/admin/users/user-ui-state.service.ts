@@ -3,9 +3,9 @@ import { Injectable } from "@angular/core";
 @Injectable({ providedIn: 'root' })
 export class UserUiStateService {
   private highlightUserId: string | null = null;
-  private action: 'create' | 'update' | null = null;
+  private action: 'create' | 'update' | 'delete' | null = null;
 
-  setState(userId: string, action: 'create' | 'update') {
+  setState(userId: string, action: 'create' | 'update' | 'delete') {
     this.highlightUserId = userId;
     this.action = action;
   }
@@ -17,9 +17,13 @@ export class UserUiStateService {
     };
 
     // ✅ SE LIMPIA automáticamente (clave)
+    this.cleanState();
+    
+    return state;
+  }
+
+  cleanState(){
     this.highlightUserId = null;
     this.action = null;
-
-    return state;
   }
 }

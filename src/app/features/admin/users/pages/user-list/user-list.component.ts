@@ -4,7 +4,7 @@ import { User } from '../../../../../core/models/users.models';
 import { Router, RouterLink } from '@angular/router';
 import { LoadingComponent } from "../../../../../shared/components/ui/loading/loading.component";
 
-import { UserUiStateService } from '../../userState.service';
+import { UserUiStateService } from '../../user-ui-state.service';
 import { UserService } from '../../user.service';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
 
@@ -25,18 +25,17 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
 
 -->
 
-
-
     <h4>User List
-    <div class="msgInfo">
-        <div *ngIf="!loadingSignal() && successMessage" class="success">
-            <div class="msj msjOk">{{ successMessage }}</div>  
+
+        <div class="msgInfo">
+            <div *ngIf="!loadingSignal() && successMessage" class="success">
+                <div class="msj msjOk">{{ successMessage }}</div>  
+            </div>
+            <!-- <div *ngIf="error$ | async as error" class="error"> -->
+            <div *ngIf="!loadingSignal() && errorSignal()" class="error">
+                <div class="msj msjError">{{ errorSignal() }}</div>
+            </div> 
         </div>
-        <!-- <div *ngIf="error$ | async as error" class="error"> -->
-        <div *ngIf="!loadingSignal() && errorSignal()" class="error">
-            <div class="msj msjError">{{ errorSignal() }}</div>
-        </div> 
-    </div>
     </h4> 
 
     <!-- <app-loading *ngIf="loading$ | async"></app-loading> -->
@@ -170,11 +169,13 @@ export class UserListComponent {
       this.highlightedUserId = userId;
       this.successMessage = action === 'create'
         ? '✅ Usuario creado correctamente'
+        : action === 'delete' ? '✅ Usuario borrado correctamente'
         : '✅ Usuario actualizado correctamente';
 
       setTimeout(() => {
         this.successMessage = null;
         this.highlightedUserId = null;
+        this.UserUiStateService.cleanState();
       }, 3000); // desaparece en 3s
  
     }

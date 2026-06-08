@@ -4,7 +4,7 @@ import { User, UserRole } from '../../../../../core/models/users.models';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../user.service';
-import { UserUiStateService } from '../../userState.service'
+import { UserUiStateService } from '../../user-ui-state.service';
 
 import { UserFormComponent } from "../user-form/user-form.component";
 import { filter, map, switchMap } from 'rxjs';
@@ -62,7 +62,7 @@ export class UserEditComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private UserUiStateService: UserUiStateService
+    private userUiStateService: UserUiStateService
   ) {}
 
   ngOnInit(): void {
@@ -109,7 +109,7 @@ export class UserEditComponent {
           // problema, al refresh se sigue persistiendo el state, y no quiero eso, solo quiero que se muestre el mensaje al volver de edit a list, pero si hago refresh en list, no quiero que se siga mostrando el mensaje, para eso tengo que limpiar el state al entrar en list, y lo hago con un metodo del service que me limpia los estados de error y loading
           // mejor usar servicio que el state.
             if(updatedUser?.id){
-              this.UserUiStateService.setState(updatedUser.id, 'update'); // Establece el state global de mensajes al volver a la lista
+              this.userUiStateService.setState(updatedUser.id, 'update'); // Establece el state global de mensajes al volver a la lista
               this.router.navigate(['/admin/users']);
             }
        });
