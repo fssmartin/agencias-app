@@ -25,24 +25,31 @@
   </ul>
  
   <ul *ngIf="isHeader" class="navbarUser">
-      <li *ngIf="authService.isLogged(); else loggedOut">
-          <a  href="#ni" title="Notoficaciones">
-             <i class="fa-solid fa-bell"></i>
-          </a>
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-          <a 
-              class="userLogado"
-              [title]="authService.currentUser()?.name"
-              [routerLink]="['/profile']"
-            >
-             <i *ngIf="authService.currentUser()?.role!='ADMIN'" class="fa-solid fa-user-gear"></i>
-             <i *ngIf="authService.currentUser()?.role==='ADMIN'" class="fa-solid fa-user-shield"></i>
-          </a>
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-          <a (click)="authService.logout()" href="" title="Log Out">
-             <i class="fa fa-sign-out-alt"></i>
-          </a>
-      </li>
+      <ng-container  *ngIf="authService.isLogged(); else loggedOut">        
+        <li >
+            <a  href="#ni" title="Notoficaciones">
+               <i class="fa-solid fa-bell"></i>
+              <span class="badge" *ngIf="7 > 0">
+                  {{ 7 }}
+              </span>
+            </a>
+        </li>
+        <li >
+            <a 
+                class="userLogado"
+                [title]="authService.currentUser()?.name"
+                [routerLink]="['/profile']"
+              >
+               <i *ngIf="authService.currentUser()?.role!='ADMIN'" class="fa-solid fa-user-gear"></i>
+               <i *ngIf="authService.currentUser()?.role==='ADMIN'" class="fa-solid fa-user-shield"></i>
+            </a>
+        </li>
+        <li >
+            <a (click)="authService.logout()" href="" title="Log Out">
+               <i class="fa fa-sign-out-alt"></i>
+            </a>
+        </li>
+      </ng-container>
       <ng-template #loggedOut>
         <li>
             <a 
