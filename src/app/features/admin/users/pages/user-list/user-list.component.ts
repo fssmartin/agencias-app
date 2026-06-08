@@ -17,7 +17,7 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
 
 <!--
 
-    APRENDER HACER UNA COMPUTED STATE--> Que unifique el loading, error y success..
+    APRENDER HACER UNA COMPUTED STATE  -- Que unifique el loading, error y success..
 
     y luego pregunte por .state()==='loading'
                           .state()==='error'
@@ -75,10 +75,13 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
             <td>{{ user.email }}</td>
             <td>
               <button [routerLink]="['/admin/users/edit', user.id]"
-                      [queryParams]="{ mode: 'view' }" title="Show" >  👁️</button>
+                      [queryParams]="{ mode: 'view' }" title="Show">
+                      <i class="fa-solid fa-eye"></i></button>
               <button [routerLink]="['/admin/users/edit', user.id]" 
-                [queryParams]="{ mode: 'edit' }" title="Edit">✏️</button>
-              <button (click)="deleteUser(user)"  class="" >🗑️</button>
+                       [queryParams]="{ mode: 'edit' }" title="Edit">
+                       <i class="fa-solid fa-pencil"></i></button>
+              <button (click)="deleteUser(user)" >
+                      <i class="fa-regular fa-trash-can"></i></button>
             </td>
           </tr>
           <tr *ngIf="users.length > 0; else noUsers">

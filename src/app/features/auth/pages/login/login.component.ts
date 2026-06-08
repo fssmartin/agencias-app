@@ -112,8 +112,8 @@ export class LoginComponent implements AfterViewInit {
   ngOnInit(): void { 
     
       this.form.reset({
-        email: '',
-        password: ''
+        email: 'asd@asd.es',
+        password: 'asd123A11a.'
       });
 
   }

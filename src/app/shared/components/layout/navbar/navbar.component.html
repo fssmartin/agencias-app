@@ -5,18 +5,19 @@
               <a
                   routerLinkActive="active"      
                   [routerLink]="link.path"
+                  [title]="link.label"
                   [routerLinkActiveOptions]="{ exact: false }">
-                  {{ link.label }}
+                  <span [innerHTML]="link.icon"></span>
               </a> 
             </li>
           <ng-template #enlaceUser>
               <li *ngIf="link.role === authService.currentUser()?.role"   >
                 <a 
-                  routerLinkActive="active"      
+                  routerLinkActive="active"       
                   [routerLink]="link.path"
-                  [routerLinkActiveOptions]="{ exact: false }"
-                  [title]="link.label">
-                  {{ link.label }}
+                  [title]="link.label"
+                  [routerLinkActiveOptions]="{ exact: false }">
+                  <span [innerHTML]="link.icon"></span>
                 </a> 
               </li>
           </ng-template>
@@ -25,12 +26,17 @@
  
   <ul *ngIf="isHeader" class="navbarUser">
       <li *ngIf="authService.isLogged(); else loggedOut">
+          <a  href="#ni" title="Notoficaciones">
+             <i class="fa-solid fa-bell"></i>
+          </a>
+            &nbsp;&nbsp;|&nbsp;&nbsp;
           <a 
               class="userLogado"
-              title="View User"
+              [title]="authService.currentUser()?.name"
               [routerLink]="['/profile']"
             >
-            <span>{{authService.iconByRole()}}{{authService.currentUser()?.name }}</span>
+             <i *ngIf="authService.currentUser()?.role!='ADMIN'" class="fa-solid fa-user-gear"></i>
+             <i *ngIf="authService.currentUser()?.role==='ADMIN'" class="fa-solid fa-user-shield"></i>
           </a>
             &nbsp;&nbsp;|&nbsp;&nbsp;
           <a (click)="authService.logout()" href="" title="Log Out">
@@ -44,7 +50,7 @@
               routerLinkActive="active"      
               [routerLink]="['auth/register']"
               [routerLinkActiveOptions]="{ exact: true }">               
-              <i class="fa fa-user-plus"></i>
+              <i class="fa fa-user-plus"></i> 
             </a> 
          </li>
         <li>

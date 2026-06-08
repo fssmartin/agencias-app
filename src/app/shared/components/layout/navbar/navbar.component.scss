@@ -21,10 +21,12 @@
     color:black;
     padding: 0 5px;
     text-decoration: none;
+    font-size: 20px;
     &.active{
       font-weight: bold;
       color:orangered;
       text-decoration: underline;
+      font-size: 24px; 
     }
     &:hover{      
       color:orangered;
@@ -37,8 +39,11 @@
     right: 10px;
     top: -50px;
     font-size: 20px;
-    & .userLogado span{
-        color: orangered;
+    & .userLogado {
+      font-size: 24px;    
+      &  span{
+          color: orangered;
+      }
     }
   }
 }

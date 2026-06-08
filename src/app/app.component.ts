@@ -11,10 +11,10 @@ import { FooterComponent } from './shared/components/layout/footer/footer.compon
 })
 export class AppComponent {
   links = [
-    { path: '/home',    label: 'Home'   , role:null},
-    { path: '/about',   label: 'About'  , role:null },
-    { path: '/profile', label: 'Profile', role:'USER'  },
-    { path: '/admin',   label: 'Admin'  , role:'ADMIN' }
+    { path: '/home',    label: 'Home'   , role:null,     icon:"<i class='fa fa-home fa-fw' aria-hidden='true'></i>"},
+    { path: '/about',   label: 'About'  , role:null ,    icon:"<i class='fa fa-circle-info'></i>"},
+    { path: '/profile', label: 'Profile', role:'USER'  , icon:"<i class='fa fa-address-card'></i>"},
+    { path: '/admin',   label: 'Admin'  , role:'ADMIN' , icon:"<i class='fa fa-gear'></i>"}
   ]
   title = 'Myapp';
   exact = false;
