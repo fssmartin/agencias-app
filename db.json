@@ -1,0 +1,36 @@
+{
+  "usuarios": [
+    {
+      "id": "1",
+      "name": "Pedrito Vila",
+      "email": "pedro.vila@example.com",
+      "isActive": false,
+      "role": "USER",
+      "permissions": null,
+      "createdAt": "2026-06-09T06:11:22.072Z",
+      "updatedAt": "2026-06-09T16:57:43.552Z"
+    },
+    {
+      "id": "2",
+      "name": "Luisss Garcia",
+      "password": "123",
+      "email": "luis.garcia@example.com",
+      "isActive": true,
+      "role": "ADMIN",
+      "createdAt": "2026-06-09T06:11:22.072Z",
+      "permissions": null,
+      "updatedAt": "2026-06-09T17:33:42.144Z"
+    },
+    {
+      "id": "3",
+      "name": "Belen Perez",
+      "email": "belen.perez@example.com",
+      "isActive": true,
+      "role": "ADMIN",
+      "permissions": null,
+      "createdAt": "2026-06-09T06:11:22.072Z",
+      "updatedAt": "2026-06-09T16:53:33.072Z"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

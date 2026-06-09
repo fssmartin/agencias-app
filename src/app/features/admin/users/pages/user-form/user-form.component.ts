@@ -12,13 +12,19 @@ import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
   selector: 'app-user-form',
   standalone: true,
   imports: [CommonModule ,ReactiveFormsModule],
-  template: `
- 
+  template: ` 
+
       <h4>
-        {{ user?.id ?  mode === 'view' ? 'Consulta Usuario' :  'Editar Usuario' : 'Crear Usuario' }}
+          {{ user?.id ?  mode === 'view' ? 'Consulta Usuario' :  'Editar Usuario' : 'Crear Usuario' }}
       </h4>
       
-      <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off">
+      <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off" 
+            [ngClass]="{
+              'form form-view': mode === 'view',
+              'form form-edit': mode === 'edit'
+              }"
+      >
+
         <ng-container *ngIf="mode === 'edit' || mode=== 'create'" >
 
             <div>
@@ -126,10 +132,10 @@ export class UserFormComponent {
       return createUserForm(this.fb,user);
 
     }
-
     
     get value(): User {
-        return this.form.value;
+
+        return { ...this.user ,  ...this.form.value, "updatedAt": new Date() };
     }
     
     submit() {

@@ -6,7 +6,8 @@ import { LoadingComponent } from "../../../../../shared/components/ui/loading/lo
 
 import { UserUiStateService } from '../../user-ui-state.service';
 import { UserService } from '../../user.service';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, delay, map, of, startWith } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 
 @Component({
@@ -24,47 +25,45 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
                           .state()==='success'  
 
 -->
-
     <h4>User List
-
-        <div class="msgInfo">
-            <div *ngIf="!loadingSignal() && successMessage" class="success">
+       <div class="msgInfo">
+            <div *ngIf="!userState()?.loading && successMessage" class="success">
                 <div class="msj msjOk">{{ successMessage }}</div>  
             </div>
             <!-- <div *ngIf="error$ | async as error" class="error"> -->
-            <div *ngIf="!loadingSignal() && errorSignal()" class="error">
-                <div class="msj msjError">{{ errorSignal() }}</div>
+            <div *ngIf="!userState()?.loading && userState()?.error" class="error">
+                <div class="msj msjError">{{ userState()?.error }}</div>
             </div> 
         </div>
     </h4> 
 
     <!-- <app-loading *ngIf="loading$ | async"></app-loading> -->
-    <app-loading *ngIf="loadingSignal()"></app-loading>
+    <app-loading  [texto]="'Usuarios'" *ngIf="userState()?.loading"></app-loading>
  
 
     <!-- <ng-container *ngIf="!(loading$ | async)"> -->
-    <ng-container *ngIf="!loadingSignal()">
+    <ng-container  *ngIf="!userState()?.error && !userState()?.loading">
 
-        <table
-          *ngIf="sortedUsers$ | async as users"
+        <!-- <table *ngIf="sortedUsers$ | async as users" -->
+        <table 
           class="listTable">
           <tr>
             <th></th>
             <th (click)="sortBy('name')">
                 Name
-              <span *ngIf="(sortField$ | async) === 'name'">
+              <!-- <span *ngIf="(sortField$ | async) === 'name'">
                 {{ (sortDirection$ | async) === 'asc' ? '▲' : '▼' }}
-              </span>
+              </span> -->
             </th>
             <th (click)="sortBy('email')">
                 Email
-              <span *ngIf="(sortField$ | async) === 'email'">
+              <!-- <span *ngIf="(sortField$ | async) === 'email'">
                 {{ (sortDirection$ | async) === 'asc' ? '▲' : '▼' }}
-              </span>
+              </span> -->
             </th>
             <th><button routerLink="/admin/users/create"  class="fRight btEnlace btCrear">Crear Usuario</button></th>
           </tr>
-          <tr *ngFor="let user of users; trackBy: trackById"
+          <tr *ngFor="let user of userState()?.data; trackBy: trackById"
               [ngClass]="{ 'highlight-row': user.id === highlightedUserId }">
             <td>
                 {{ user.isActive ? '✅' : '❌' }}
@@ -83,9 +82,9 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
                       <i class="fa-regular fa-trash-can"></i></button>
             </td>
           </tr>
-          <tr *ngIf="users.length > 0; else noUsers">
+          <tr *ngIf="userState()?.data?.length; else noUsers">
             <td></td>
-            <td  colspan="4" text-align="right">Total: <strong>{{ users.length }}</strong></td>
+            <td  colspan="4" text-align="right">Total: <strong>{{ userState()?.data?.length }}</strong></td>
           </tr>
           <ng-template #noUsers>
             <tr>
@@ -97,7 +96,7 @@ import { BehaviorSubject, combineLatest, map } from 'rxjs';
         </table>    
     </ng-container> 
 
-    <!-- <pre>{{ auth.getUser()| json }}</pre> -->
+    <pre>{{userState()| json }}</pre>
   `
 })
 export class UserListComponent {
@@ -108,48 +107,51 @@ export class UserListComponent {
   successMessage: string | null = null;
   highlightedUserId: string | null = null;
 
-  loadingSignal = this.userService.loadingSignal;
-  errorSignal   = this.userService.errorSignal;
-
-  users$ = this.userService.users$;
-  // error$ = this.userService.error$;
-
-  
-  //loading$ = this.userService.loading$;
+  // loadingSignal = this.userService.loadingSignal;
+  // errorSignal   = this.userService.errorSignal;
 
   userEmpty?: User = this.userService.userEmpty;
  
- 
+  public userState = toSignal(
+            this.userService.getUsuarios().pipe(
+              delay(1400),
+              map(data => ({ data, loading: false, error: null })),
+              catchError(err => of({ data: [], loading: false, error: err.message })),
+              // startWith define el estado exacto inicial del componente de manera síncrona
+              startWith({ data: [], loading: true, error: null })
+            )
+  );
+
   sortField$ = new BehaviorSubject<keyof User>('name');
   sortDirection$ = new BehaviorSubject<'asc' | 'desc'>('asc');
 
-  sortedUsers$ = combineLatest([
-    this.users$,
-    this.sortField$,
-    this.sortDirection$
-  ]).pipe(
+  // sortedUsers$ = combineLatest([
+  //   this.users$,
+  //   this.sortField$,
+  //   this.sortDirection$
+  // ]).pipe(
 
-        map(([users, field, direction]) => {
-          return [...users].sort((a, b) => {
-            const valueA = a[field]!;
-            const valueB = b[field]!;
+  //       map(([users, field, direction]) => {
+  //         return [...users].sort((a, b) => {
+  //           const valueA = a[field]!;
+  //           const valueB = b[field]!;
 
-            let result = 0;
+  //           let result = 0;
 
-            if (valueA instanceof Date && valueB instanceof Date) {
-              result = valueA.getTime() - valueB.getTime();
-            } else if (typeof valueA === 'string' && typeof valueB === 'string') {
-              result = valueA.localeCompare(valueB);
-            } else if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
-              result = Number(valueA) - Number(valueB);
-            } else {
-              result = valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-            }
+  //           if (valueA instanceof Date && valueB instanceof Date) {
+  //             result = valueA.getTime() - valueB.getTime();
+  //           } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+  //             result = valueA.localeCompare(valueB);
+  //           } else if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
+  //             result = Number(valueA) - Number(valueB);
+  //           } else {
+  //             result = valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+  //           }
 
-            return direction === 'asc' ? result : -result;
-          })
-        })
-  )  
+  //           return direction === 'asc' ? result : -result;
+  //         })
+  //       })
+  // )  
   
   constructor(
     private UserUiStateService: UserUiStateService,
@@ -177,28 +179,28 @@ export class UserListComponent {
         this.highlightedUserId = null;
         this.UserUiStateService.cleanState();
       }, 3000); // desaparece en 3s
- 
+
+
     }
-    this.userService.clearObservable(false); // Limpia estados al entrar a la lista
+   
   } 
-
-  select(user: User) {
-    this.selectedUser = user;
-  }
-
-  // Solo actualiza los que cambian
-  trackById(index: number, user: User) {
-    return user.id;
-  }
 
   deleteUser(user: User) {
     if(!user.id) return;
     console.log("Usuario a eliminar:", user.id);
     this.userService.deleteById(user.id).subscribe();
-
+    
+  }
+  
+  select(user: User) {
+    this.selectedUser = user;
   }
 
-// Cambiar orden
+  //Solo actualiza los que cambian
+  trackById(index: number, user: User) {
+    return user.id;
+  }
+  //Cambiar orden
   sortBy(field: keyof User) {
     if (this.sortField$.value === field) {
       this.sortDirection$.next(

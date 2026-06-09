@@ -1,7 +1,4 @@
-import { Component} from '@angular/core';  
-import { UiService } from '../../../core/services/ui.service';
-
-
+import { Component} from '@angular/core';   
 
 @Component({
   selector: 'app-about',
@@ -18,12 +15,11 @@ import { UiService } from '../../../core/services/ui.service';
 export class AboutComponent {  
 
 
-  constructor(private ui:UiService){  }
+  constructor( ){  }
 
  
   ngOninit(){
-    console.log("hola ??")
-    this.ui.showLoading();
+    console.log("hola ??") 
   }
   
 

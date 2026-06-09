@@ -6,7 +6,7 @@ import { BehaviorSubject, catchError, delay, filter, finalize, map, Observable, 
 @Injectable({ providedIn: 'root' })
 export class UserService {
 
-  private api = '/api/users';
+  private api = 'http://localhost:3000/usuarios';
 
  // constructor(private http: HttpClient) {}
   private http = inject(HttpClient);
@@ -22,58 +22,35 @@ export class UserService {
     createdAt: new Date() 
   };  
 
-  // private loadingSubject = new BehaviorSubject<boolean>(false)
-  // private errorSubject = new BehaviorSubject<string | null>(null);
-
   private _loadingSignal = signal<boolean>(false);
   private _errorSignal   = signal<string | null>(null);
-
 
   loadingSignal = this._loadingSignal.asReadonly();
   errorSignal   = this._errorSignal.asReadonly();
 
-
-  // 🔁 Trigger para recargar datos
-  private reload$ = new BehaviorSubject<void>(undefined);
-
-  //error$ = this.errorSubject.asObservable();
-  //loading$ = this.loadingSubject.asObservable();
-
+  // hace de base de datos
   private myUsers: User[] = [
     { id: '1', name: 'Pedro Vila', password:'123', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
     { id: '2', name: 'Luis Garcia',password:'123',  email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
     { id: '3', name: 'Belen Perez',password:'123',  email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
-  ]; 
- 
-  users$ = this.reload$.pipe(
-    startWith(void 0),
-    delay(0),
-    switchMap(() =>{
-      //this.loadingSubject.next(true);
-      this._loadingSignal.set( true );
-      return of(this.myUsers).pipe(
-        delay(500),
-        map(users => users ?? []),
-        tap(() => { 
-          //this.loadingSubject.next(false);
-          this._loadingSignal.set( false );
-        }),
-        catchError(() => {
-          //this.loadingSubject.next(false);
-          //this.errorSubject.next('Error cargando usuarios');
-          this._loadingSignal.set( false );     
-          this._errorSignal.set( '❌ Error cargando usuarios' ); 
+  ];  
 
-          return of([]);
-        })
-      )
-    }),
-    shareReplay(0)
-  );
+  getUsuarios():Observable<User[]> {
 
-  clearObservable(loading: boolean=false) {
-    //this.loadingSubject.next(loading);
-    //this.errorSubject.next(null); 
+    this.clearSignals(true);
+    
+    return this.http.get<User[]>(this.api).pipe(
+      catchError((error) => {
+        console.error('Error de red detectado en el servicio:', error);
+        if(error.status===404) 
+            return throwError(() => new Error("❌ Mal la url, Not found"));
+        return throwError(() => new Error('❌ '+error.message));
+      }) 
+    )
+     
+  }
+
+  clearSignals(loading: boolean=false) {
     this._loadingSignal.set( loading );
     this._errorSignal.set(null);
   }
@@ -81,150 +58,89 @@ export class UserService {
   // 🔄 trigger manual
   reload() { 
       console.log('RELOAD CALLED'); // 👈 añade esto
-      this.reload$.next(); 
+      //this.reload$.next(); 
   }
  
 
   deleteById(id: string): Observable<void> {
     
-    // return this.http.delete<void>(`${this.api}/${id}`).pipe(
-      // tap(() => {
-      //   this.loadingSubject.next(true); 
-      //   this.errorSubject.next(''); // Limpia errores previos
-      // }),
-    //   tap(() => this.reload()) 
-    //   catchError(err => {
-    //      this.errorSubject.next('Error eliminando usuario'); 
-    //      return throwError(() => err);  
-    //   })
-    // );
+    this.clearSignals(true);
 
-    return of(void 0).pipe(
-      tap(() => {this.clearObservable(true);}),
-      delay(300),
-      tap(() => {
-        //throw new Error('xxxxxxxxxxxxxxxx');
-        this.myUsers = this.myUsers.filter(u => u.id !== id);
-        this.reload();
-      }),
+    return this.http.delete<void>(`${this.api}/${id}`).pipe(
+      tap(() => this.reload()) ,
       catchError(err => {
-        // ✅ aquí actualizas el estado global de error
-        //this.loadingSubject.next(false); 
-        //this.errorSubject.next('❌ Error eliminando usuario');
-        this._loadingSignal.set( false );
-        this._errorSignal.set('❌ Error eliminando usuario');
-        // ✅ y decides si propagas o no
-        return throwError(() => err);
+         this._errorSignal.set('Error eliminando usuario'); 
+         return throwError(() => err);  
       })
-
     );
+
+    
   }
   
 
- getById(id: string): Observable<User | undefined> {
+ getById(id: string): Observable<User> {
 
-      this.clearObservable(true);
+      //this.clearSignals(true);
 
-      // return this.http.get<User>(`${this.api}/${id}`).pipe(
-      //   tap(user => {
-      //     console.log('USER:', user);
-      //     this.loadingSubject.next(false);
-      //   }),
-      //   catchError(err => {
-      //     this.loadingSubject.next(false);
-
-      //     if (err.status === 404) {
-      //       this.errorSubject.next('Usuario no encontrado');
-      //     } else {
-      //       this.errorSubject.next('Error cargando usuario');
-      //     }
-
-      //     return of(null); // ✅ en vez de error, devuelves null para que el flujo siga
-      //   })
-      // );
- 
-
-      return this.users$.pipe(
-        delay(300),
-        filter(users => users.length > 0),
-        map(users => users.find(u => u.id === id)  ) ,
-        tap((user) => {
-          //this.loadingSubject.next(false); 
-          this._loadingSignal.set( false );
-          if(!user){
-             //this.errorSubject.next('error, usuario no encontrado'); 
-             this._errorSignal.set( 'error, usuario no encontrado' );
-          } 
+      return this.http.get<User>(`${this.api}/${id}`).pipe(
+        tap(user => {
+          console.log('USER:', user);
         }),
-        take(1) // ✅ solo lo necesitas una vez
-      )
-
+        catchError(err => {
+          if (err.status === 404)  
+            return throwError(() => new Error("❌ Usuario no encontrado"));
+          return throwError(() => new Error('❌ Error cargando usuario'));
+        })
+      );  
   }
 
   updateUser(user: User): Observable<User[]> {
 
-    this.clearObservable(true);
+   // this.clearSignals(true);
 
-    return of([]).pipe(
-      delay(100),
-      tap(() => {
-          //      throw new Error('xxxxxxxxxxxxxxxx');
-        user.updatedAt = new Date();
-        this.myUsers = this.myUsers.map(u =>
-          u.id === user.id ? { ...u, ...user } : u
-        );
-      }),
-      
-      tap(() => this.reload()), // dispara reload
-      switchMap(() => this.users$.pipe(take(1))), // ✅ espera datos nuevos
-      map(() => []),
-      catchError(() => {
-        //this.loadingSubject.next(false);
-        //this.errorSubject.next('❌ Error actualizando usuario');
-        this._loadingSignal.set( false );
-        this._errorSignal.set( '❌ Error actualizando usuario' );
-        return throwError(() => new Error('Update failed'));
-      })
-    );
+   
+      return this.http.put<any>(`${this.api}/${user.id}`, user);
+   
+    
 
   }
 
   createUser(user: User): Observable<User> {
-     this.clearObservable(true);
+     this.clearSignals(true);
 
-    // return this.http.post<User>(this.api, user).pipe(
-    //   tap(() => this.reload()), 
-    //   catchError(err => {
-    //     this.loadingSubject.next(false);
-    //     this.errorSubject.next('Error creando usuario');
-    //     return throwError(() => err);
-    //   })
-    // );
-
-    let newUser:User =  this.userEmpty;
-
-    return of(newUser).pipe(
-      delay(100),
-      tap(() => {
-
-        newUser = {
-            ...user,
-            id: Date.now().toString(), // o uuid si quieres
-            createdAt: new Date()
-        }; 
-        this.myUsers = [...this.myUsers, newUser];
-      }),
-      tap(() => this.reload()), // dispara reload
-      switchMap(() => this.users$.pipe(take(1))), // ✅ espera datos nuevos
-      map(() => newUser),
-      catchError(() => {
-        //this.loadingSubject.next(false);
-        // this.errorSubject.next('❌ Error creando usuario');
-        this._loadingSignal.set( false );
-        this._errorSignal.set( '❌ Error creando usuario' );        
-        return throwError(() => new Error('Add failed'));
+   //  let newUser:User =  this.userEmpty;
+ 
+ //    return of(newUser)
+     return this.http.post<User>(this.api, user).pipe(
+      tap(() => this.reload()), 
+      catchError(err => {
+        this._loadingSignal.set(false);
+        this._errorSignal.set('Error creando usuario');
+        return throwError(() => err);
       })
     );
+
+
+    // return of(newUser).pipe(
+    //   delay(100),
+    //   tap(() => {
+
+    //     newUser = {
+    //         ...user,
+    //         id: Date.now().toString(), // o uuid si quieres
+    //         createdAt: new Date()
+    //     }; 
+    //     this.myUsers = [...this.myUsers, newUser];
+    //   }),
+    //   tap(() => this.reload()), // dispara reload
+    //   switchMap(() => this.users$.pipe(take(1))), // ✅ espera datos nuevos
+    //   map(() => newUser),
+    //   catchError(() => {
+    //     this._loadingSignal.set( false );
+    //     this._errorSignal.set( '❌ Error creando usuario' );        
+    //     return throwError(() => new Error('Add failed'));
+    //   })
+    // );
 
   }  
 

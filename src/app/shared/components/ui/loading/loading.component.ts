@@ -10,10 +10,11 @@ import { ChangeDetectionStrategy, Component, Input, Signal } from '@angular/core
   <!-- <div class="spinner-container" *ngIf="loading()"> -->
   <div class="spinner-container">
     <div class="spinner"></div>
-    <p>Loading users...</p>
+    <p>Loading...{{texto}}</p>
 </div>`
   
 })
 export class LoadingComponent {
   //@Input() loading!: Signal<boolean>;
+  @Input() texto:string="";
 }

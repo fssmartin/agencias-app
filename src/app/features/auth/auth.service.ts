@@ -1,5 +1,5 @@
 import { computed, Injectable,   signal } from "@angular/core";
-import { AuthState, AuthStateModel, UserRole } from "../../core/models/users.models";
+import { AuthState, AuthStateModel, User, UserRole } from "../../core/models/users.models";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService implements AuthState {
@@ -32,12 +32,28 @@ export class AuthService implements AuthState {
       this._state.update(state=> ({
           ...state, 
           currentUser:{
-            id:'2', name:'Luis pepe', email:'asd@asd.es', role:UserRole.ADMIN
+            id:'2', 
+            name:'Luis pepe', 
+            email:'asd@asd.es', 
+            role:UserRole.ADMIN
           }
         })
       ) 
       
       return true;  
+  }
+
+  updateUserAuth(user:User){
+      this._state.update(state=> ({
+          ...state, 
+          currentUser:{
+            id:user.id, 
+            name:user.name, 
+            email:user.email, 
+            role:user.role!
+          }
+        })
+      )
   }
 
   register(name:string, email: string, password: string): boolean {
