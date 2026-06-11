@@ -95,23 +95,28 @@ export class UserEditComponent {
   onSave(updatedUser: User) {
       
       this.userService.updateUser(updatedUser)
-       .subscribe(() => {
-          // problema, al refresh se sigue persistiendo el state, y no quiero eso, solo quiero que se muestre el mensaje al volver de edit a list, pero si hago refresh en list, no quiero que se siga mostrando el mensaje, para eso tengo que limpiar el state al entrar en list, y lo hago con un metodo del service que me limpia los estados de error y loading
-          // mejor usar servicio que el state.
-          if(updatedUser?.id){
-              //tengo que actualizar el usuario logeado si es el mismo que el que actualizo
-              if(this.authService.currentUser()?.id === updatedUser?.id) {
-                  this.authService.updateUserAuth(updatedUser);
-              }
-              this.userUiStateService.setState(updatedUser.id, 'update'); // Establece el state global de mensajes al volver a la lista
-              this.router.navigate(['/admin/users']);
-          }
-       });
+        .subscribe(() => {
+            // problema, al refresh se sigue persistiendo el state, y no quiero eso, solo quiero que se muestre el mensaje al volver de edit a list, pero si hago refresh en list, no quiero que se siga mostrando el mensaje, para eso tengo que limpiar el state al entrar en list, y lo hago con un metodo del service que me limpia los estados de error y loading
+            // mejor usar servicio que el state.
+            if(updatedUser?.id){
+                //tengo que actualizar el usuario logeado si es el mismo que el que actualizo
+                if(this.authService.currentUser()?.id === updatedUser?.id) {
+                    this.authService.updateUserAuth({
+                      'id':   updatedUser.id, 
+                      'name': updatedUser.name, 
+                      'email':updatedUser.email, 
+                      'role': this.authService.getRole(updatedUser.role!) 
+                    });
+                }
+                this.userUiStateService.setState(updatedUser.id, 'update'); // Establece el state global de mensajes al volver a la lista
+                this.router.navigate(['/admin/users']);
+            }
+        });
           
   }
 
   onCancel(data: any) {
-          this.router.navigate(['/admin/users']);
+    this.router.navigate(['/admin/users']);
   }
 
 

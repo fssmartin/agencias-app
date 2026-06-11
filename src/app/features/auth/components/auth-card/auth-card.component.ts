@@ -10,6 +10,8 @@ import { Component} from '@angular/core';
 
           <div class="auth-card">
 
+            <!-- <app-loading  *ngIf="userState()?.loading"></app-loading> -->
+
             <!-- HEADER -->
             <div class="auth-header">
               <ng-content select="[header]"></ng-content>
@@ -32,7 +34,7 @@ import { Component} from '@angular/core';
   `
 })
 export class AuthCardComponent {  
-  constructor( ){  }
+ 
 }
 
 

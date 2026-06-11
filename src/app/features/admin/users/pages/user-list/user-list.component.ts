@@ -25,7 +25,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
                           .state()==='success'  
 
 -->
-    <h4>User List
+    <h4><span>User List</span>
        <div class="msgInfo">
             <div *ngIf="!userState()?.loading && successMessage" class="success">
                 <div class="msj msjOk">{{ successMessage }}</div>  
@@ -96,7 +96,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
         </table>    
     </ng-container> 
 
-    <pre>{{userState()| json }}</pre>
+    <!-- <pre>{{userState()| json }}</pre> -->
   `
 })
 export class UserListComponent {

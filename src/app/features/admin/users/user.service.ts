@@ -6,7 +6,7 @@ import { BehaviorSubject, catchError, delay, filter, finalize, map, Observable, 
 @Injectable({ providedIn: 'root' })
 export class UserService {
 
-  private api = 'http://localhost:3000/usuarios';
+  private api = 'http://localhost:3000/users';
 
  // constructor(private http: HttpClient) {}
   private http = inject(HttpClient);
@@ -22,18 +22,21 @@ export class UserService {
     createdAt: new Date() 
   };  
 
+  constructor(){ 
+  }
+
   private _loadingSignal = signal<boolean>(false);
   private _errorSignal   = signal<string | null>(null);
 
   loadingSignal = this._loadingSignal.asReadonly();
   errorSignal   = this._errorSignal.asReadonly();
 
-  // hace de base de datos
-  private myUsers: User[] = [
-    { id: '1', name: 'Pedro Vila', password:'123', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
-    { id: '2', name: 'Luis Garcia',password:'123',  email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
-    { id: '3', name: 'Belen Perez',password:'123',  email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
-  ];  
+  // // hace de base de datos
+  // private myUsers: User[] = [
+  //   { id: '1', name: 'Pedro Vila', password:'123', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
+  //   { id: '2', name: 'Luis Garcia',password:'123',  email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
+  //   { id: '3', name: 'Belen Perez',password:'123',  email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
+  // ];  
 
   getUsuarios():Observable<User[]> {
 
@@ -49,6 +52,7 @@ export class UserService {
     )
      
   }
+  
 
   clearSignals(loading: boolean=false) {
     this._loadingSignal.set( loading );

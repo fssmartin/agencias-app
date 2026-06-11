@@ -15,7 +15,7 @@ import { Question } from '../../models/questions.model';
   template: `
 
 
-    <h4>Questions List</h4> 
+    <h4><span>Questions List</span></h4> 
  
     <ng-container  >
 

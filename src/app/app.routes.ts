@@ -20,7 +20,7 @@ export const routes: Routes = [
 
     {
         path:'admin',
-        canActivate: [adminGuard], // ✅ evita cargar si no eres ADMIN
+        canActivate: [adminGuard],      
         loadChildren:() => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
     }, 
 

@@ -15,7 +15,7 @@ import { AuthService } from '../../auth/auth.service';
   template: `
     <div class="container">
 
-      <div class="col" *ngIf="authService.currentUser()"><p class="wellCome">Wellcome <strong>{{authService.currentUser()?.name}}</strong>, ahora es tu turno</p></div>
+      <!-- <div class="col" *ngIf="authService.currentUser()"><p class="wellCome">Wellcome <strong>{{authService.currentUser()?.name}}</strong>, ahora es tu turno</p></div> -->
 
       <div class="col col50">
         

@@ -13,6 +13,9 @@ h4{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  & span{
+    color: orangered;
+  }
 }
 
 .container {
@@ -212,9 +215,14 @@ select:not([multiple], [size]) {
   padding: 0.2rem 0.5rem;
   height: auto;
 }
-
-table button{
-  background:none; border: none; padding:0;margin:0 .3rem; font-size:0.8rem;color: black;opacity: .6;
+table th button{
+  background:none; border: none; padding:0;margin:0 .3rem; font-size:0.8rem;color: black;
+  &:hover{
+    opacity: 1;
+  }
+}
+table td button{
+  background:none; border: none; padding:0;margin:0 .3rem; font-size:0.8rem;color: black;opacity: .4;
   &:hover{
     opacity: 1;
   }
@@ -302,4 +310,10 @@ table tr:not(:first-child, :last-child):hover{background-color: aquamarine;}
     font-size: 10px;
     font-weight: bold;
   }
+}
+
+.transition-colors {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
 }

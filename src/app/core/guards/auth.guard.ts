@@ -6,24 +6,25 @@ export const adminGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isAdmin()) {
-    return true;
-  }
+  console.log("----- adminGuard: CanActivateFn")
+ 
+  // console.log("IS ADMIN ? CanActivateFn adminGuard -- " , authService.isAdmin())
+ 
+  return authService.isAdmin()
+      ? true
+      : router.createUrlTree(['/home']); 
 
-  // ❌ no es admin → redirigir
-  router.navigate(['/home']);
-  return false;
 };
 
 export const loggedGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
-
+console.log("----- loggedGuard: CanActivateFn")
   if (authService.isLogged()) {
     return true;
   }
 
-  // ❌ no es admin → redirigir
+  // ❌ no esta logado → redirigir
   router.navigate(['/home']);
   return false;
 };

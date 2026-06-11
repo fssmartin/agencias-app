@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, signal, Signal, ViewChild} from '@angular/core';  
+import { AfterViewInit, Component, ElementRef, inject, signal, Signal, ViewChild} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
 import { createLoginForm } from './login.form';
@@ -6,6 +6,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
 import { AuthService } from '../../auth.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, delay, map, of, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +24,7 @@ import { AuthService } from '../../auth.service';
         </ng-container>
 
         <!-- BODY -->
-        <ng-container body> 
+        <ng-container body>
 
           <form [formGroup]="form" (ngSubmit)="login()" class="auth" autocomplete="off">
 
@@ -39,14 +41,14 @@ import { AuthService } from '../../auth.service';
                       />
                       <i class="fa fa-envelope icon"></i>
                       <!-- [ngClass]="{ 'error': form.get('email')?.invalid && form.get('email')?.touched }" -->
-    
+
                   <p *ngIf="getError('email')" class="inputError">
                     {{ getError('email') }}
                   </p>
               </label>
 
               <label for="password">
-                  <span>Password</span> 
+                  <span>Password</span>
                   <a routerLink="/auth/forget" class="linkLabel">Forgot your password?</a>
                   <input
                     type="password"
@@ -54,33 +56,39 @@ import { AuthService } from '../../auth.service';
                     placeholder="Create a secure password"
                     name="password"
                     id="password"
-                    autocomplete="new-password"
-                    /> 
+                    autocomplete="new-password" 
+                    />
                     <i class="fa fa-lock icon"></i>
                       <!-- [ngClass]="{ 'error': form.get('password')?.invalid && form.get('password')?.touched }" -->
-                    <!-- 
+                    <!--
                     <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
                       Email inválido
                     </div>
                     <div *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">
                       Password length must be at least <strong>{{form.get('password')?.errors?.['minlength']?.requiredLength }}</strong> characters
-                    </div> -->  
+                    </div> -->
 
                   <p *ngIf="getError('password')"  class="inputError">
                     {{ getError('password') }}
                   </p>
+                  "password":"1234a.A"
 
               </label>
 
-              <div class="fm_actions">  
-                  <span class="msgError"> {{error()}}</span>
+              <div class="fm_actions">
+                  <span class="msgError"> {{loginState().error}}</span>
                   <div class="botones">
-                    <button type="submit" 
-                        [disabled]="form.invalid || form.pristine">Login
+                    <button type="submit"
+                        [disabled]="form.invalid || form.pristine || loginState().loading">
+                            @if (loginState().loading) {
+                              <i class="fa fa-spinner fa-spin"></i> Checking...
+                            } @else {
+                              Login
+                            }
                     </button>
                   </div>
               </div>
-               
+ 
           </form>
         </ng-container>
 
@@ -89,57 +97,84 @@ import { AuthService } from '../../auth.service';
             <p>
               Don't have an account?
               <a routerLink="/auth/register">Create an account</a>
-            </p> 
+            </p>
         </ng-container>
 
     </app-auth-card>
 
+    <pre>{{ loginState() | json }}</pre>
 
   `
 })
-export class LoginComponent implements AfterViewInit {  
+export class LoginComponent implements AfterViewInit {
 
   private fb = inject(FormBuilder);
   form:FormGroup = createLoginForm(this.fb);
 
-  error = signal('');
+  loginState = signal({ data: {}, loading: false, error: null })
 
   constructor(
     private router:Router,
-    private _authService:AuthService
+    private authService:AuthService
   ){ }
 
-  ngOnInit(): void { 
-    
+  ngOnInit(): void {
+
       this.form.reset({
-        email: 'asd@asd.es',
-        password: 'asd123A11a.'
+        email: 'belen.perez@example.com',
+        password: '1234a.A'
       });
 
   }
-
-  login() {
  
-    console.log('Login:', this.form.value);
+  login() {
 
-    if (this.form.invalid) {
-        this.form.markAllAsTouched();
-        return;
-    }
+      this.loginState.set({
+          data: [],
+          loading: true, 
+          error: null    
+      });
 
-    const { email, password } =  this.form.value;
-    if( this._authService.login(email, password) ) {
-      this.router.navigate(['/home']);
-    } else {
-      this.error.set('Credenciales incorrectas');
-    }
+      console.log('Login:', this.form.value);
 
-    
+      if (this.form.invalid) {
+          this.form.markAllAsTouched();
+          return;
+      }
+
+      const { email, password } =  this.form.value;
+
+      this.authService.login(email, password).pipe(
+        map(data => ({ data, loading: false, error: null }))
+      )
+      .subscribe({
+          next: (request) => {
+            console.log('¡Login correcto!', request);
+            // Redirigimos al panel de administración de forma segura
+            this.loginState.set({
+              data:    request.data,
+              loading: request.loading, 
+              error:   request.error    
+            });            
+            this.router.navigate(['/home']);
+          },
+          error: (err) => {
+            console.log("___________________________error___ component al logarse !!",err)
+            //this.cargando.set(false);
+            // Si json-server-auth detecta datos incorrectos, devuelve un error 400
+            //this.errorLogin.set('Correo o contraseña incorrectos.');
+            this.loginState.set({
+                data:    {},
+                loading: false, 
+                error:   err  
+            });                 
+          }
+      });
   }
-  
-  ngAfterViewInit(): void {  
+
+  ngAfterViewInit(): void {
     //this.onPathValue();
-     
+
    // this.onSetValue();
 
     // this.form.reset({
@@ -148,7 +183,7 @@ export class LoginComponent implements AfterViewInit {
     // });
 
     //this.focusInput(this.emailInput);
-    
+
 
   }
 
@@ -156,7 +191,7 @@ export class LoginComponent implements AfterViewInit {
     setTimeout(() => el.nativeElement.focus());
   }
 
-  // solo una propiedad del formulario 
+  // solo una propiedad del formulario
   // cargar por ejemplo de una api data a un campo del formulario
   onPathValue(){
     this.form.patchValue({
@@ -164,7 +199,7 @@ export class LoginComponent implements AfterViewInit {
     });
   }
 
-  //todas 
+  //todas
   onSetValue(){
     this.form.setValue({
       email: '',
