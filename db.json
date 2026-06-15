@@ -30,6 +30,12 @@
       "permissions": null,
       "createdAt": "2026-06-09T06:11:22.072Z",
       "id": "ysRAocS"
+    },
+    {
+      "email": "asdasdasd@asd.es",
+      "password": "$2a$10$iHHARUg35ji2swpyeRpdIOj9GLEeHjm7W0IaPVDcCmZ6O/SEU0kCW",
+      "name": "asA",
+      "id": "s5EcMbF"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

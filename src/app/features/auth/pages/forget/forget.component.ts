@@ -96,8 +96,13 @@ export class ForgetComponent {
       this.submitOk = true
   }
 
-  getError(controlName: string): string {
-    return getErrorMessage(this.form.get(controlName));
+  getError(controlName: string): string[] {
+//    return getErrorMessage(this.form.get(controlName));
+    const control = this.form.get(controlName);
+    if (!control || !control.errors || !(control.touched || control.dirty)) {
+      return [];
+    }
+    return getErrorMessage(control);
   }
 
 

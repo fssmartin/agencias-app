@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable,   signal } from "@angular/core";
 import { AuthState, AuthStateModel, AuthUser, LoginResponse, User, UserRole } from "../../core/models/users.models";
 import { UserService } from "../admin/users/user.service";
 import { HttpClient } from "@angular/common/http";
-import { catchError, delay, Observable, take, tap, throwError } from "rxjs";
+import { catchError, delay, map, Observable, of, take, tap, throwError } from "rxjs";
 
  
 
@@ -10,6 +10,7 @@ import { catchError, delay, Observable, take, tap, throwError } from "rxjs";
 export class AuthService implements AuthState {
 
   private apiAuth = 'http://localhost:3000/login';
+  private apiRegister = 'http://localhost:3000/register';
 
   private _state = signal<AuthStateModel>({
     currentUser:null
@@ -34,18 +35,6 @@ export class AuthService implements AuthState {
     
     this.initFromStorage();
  
-    /*
-    effect(() => {
-      const user = this._state().currentUser;
-
-      console.log("___ effect constructor USER",user)
-
-      if (!user) {
-        console.log("___ effect constructor LOCALSTORAGE REMOVE")
-        localStorage.removeItem('token');
-      }
-    });
-    */ 
   }
 
     
@@ -95,11 +84,22 @@ export class AuthService implements AuthState {
     }
   }
   
-  isAuthenticated(): boolean {
-    const token = localStorage.getItem('token');
-    if (!token) return false;    
-    return !this.isTokenExpired(token);
-  }
+  // isAuthenticated():boolean{
+  //   const token = this.getToken();
+  //   if(!token){
+  //     return false;
+  //   }
+  //   const payload = JSON.parse(atob(token.split('.')[1]))
+  //   const exp     = payload.exp * 1000;
+  //   return Date.now() < exp; 
+  // }
+  
+
+  // isAuthenticated(): boolean {
+  //   const token = localStorage.getItem('token');
+  //   if (!token) return false;    
+  //   return !this.isTokenExpired(token);
+  // }
 
   private decodeToken(token:string):any{
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -139,7 +139,7 @@ export class AuthService implements AuthState {
         )
   }
 
-  login(email: string, password: string ): Observable<LoginResponse> {
+  login(email: string, password: string ): Observable<any> {
     // Enviamos la petición POST pasándole la URL y el cuerpo con las credenciales
     return this.http.post<LoginResponse>(this.apiAuth, {email,password}).pipe(
       // take(1) asegura que la petición se cierre sola en cuanto responda el servidor
@@ -164,9 +164,11 @@ export class AuthService implements AuthState {
 
         }
       }),
+      map(data => ({request:'ok'}
+      )),
       catchError((error) => {
         console.log('Error de red detectado en el servicio:', error);
-        if(error.statusText==="Unknown Error"){
+        if (error.status === 0){
             return throwError(() => new Error('❌ Problemas con la BD'));
         }
         return throwError(() => new Error('❌ '+error.error));
@@ -175,34 +177,27 @@ export class AuthService implements AuthState {
   } 
 
 
-  register(name:string, email: string, password: string): string {
+  register(name:string, email: string, password: string): Observable<string> {
       const id = crypto.randomUUID();
       console.log("Registro user ok , ",id);
-return ""
-      // return this.http.post<User>('/api/register', { name, email, password }).pipe(
-      //   tap(user =>       
-      //                 this._state.update(state=>({
-      //                 ...state,
-      //                 currentUser : {
-      //                   id: id,
-      //                   name: name,
-      //                   email: email,
-      //                   role: UserRole.USER
-      //               }
-      // }))
-         // ✅ autologin aquí
- 
-      
-      // this._state.update(state=>({
-      //     ...state,
-      //     currentUser : {
-      //       id: id,
-      //       name: name,
-      //       email: email,
-      //       role: UserRole.USER
-      //   }
-      // }))
- 
+      return this.http.post<any>(this.apiRegister,  { name, email, password }).pipe(
+        take(1),
+        delay(1400),
+        tap(user =>       
+              this._state.update(state=>({
+                ...state,
+                currentUser : {
+                  id: id,
+                  name: name,
+                  email: email,
+                  password: password,
+                  createdAt:new Date(),
+                  role: UserRole.USER
+                }
+              })
+         ),
+         map(data=>({ data:'ok' })  )
+    ));
   }
 
   logout() {
@@ -214,17 +209,6 @@ return ""
 
   }
 
-  // isAuthenticated():boolean{
-  //   const token = this.getToken();
-  //   if(!token){
-  //     return false;
-  //   }
-  //   const payload = JSON.parse(atob(token.split('.')[1]))
-  //   const exp     = payload.exp * 1000;
-  //   return Date.now() < exp; 
-  // }
-  
-  
 
   private getIconRole(role:string){
     switch (role) {

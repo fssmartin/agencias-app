@@ -133,8 +133,13 @@ import { Router } from '@angular/router';
              <div class="fm_actions">  
                   <span class="msg msgError">{{msg()}}</span>
                   <div class="botones">
-                    <button type="submit" 
-                        [disabled]="form.invalid || form.pristine">Create account
+                   <button type="submit"
+                        [disabled]="form.invalid || form.pristine || registerState().loading">
+                            @if (registerState().loading) {
+                              <i class="fa fa-spinner fa-spin"></i> Checking...
+                            } @else {
+                              Create Account
+                            }
                     </button>
                   </div>
               </div>
@@ -161,6 +166,8 @@ export class RegisterComponent {
 
   msg = signal(''); 
 
+  registerState = signal({ data: {}, loading: false, error: null })
+
   constructor(
     private router:Router,
     private _authService:AuthService
@@ -184,21 +191,34 @@ export class RegisterComponent {
   register() {
     console.log('Register:', this.form.value);
 
+    this.registerState.set({ data:{}, loading:true,error:null  })
+
     if (this.form.invalid) {
         this.form.markAllAsTouched();
         return;
     }
 
     const { name, email, password } =  this.form.value;
-    if( this._authService.register(name,email, password) ) {
-      this.router.navigate(['/home']);
-    } else {
-      this.msg.set('Error a la hora de registro');      
-    }
+  
+    this._authService.register(name.trim(),email.trim(), password.trim())
+    .subscribe((request) =>{
+        console.log("Usuario registrodo,", request);
+        this.registerState.set({ 'data':request, loading:false,error:null  })
+    })
+  
+  
+  
+    //  this.router.navigate(['/home']);
+  
   }
   
-  getError(controlName: string): string {
-    return getErrorMessage(this.form.get(controlName));
+  getError(controlName: string): string[] {
+    //    return getErrorMessage(this.form.get(controlName));
+    const control = this.form.get(controlName);
+    if (!control || !control.errors || !(control.touched || control.dirty)) {
+      return [];
+    }
+    return getErrorMessage(control);
   }
 
 

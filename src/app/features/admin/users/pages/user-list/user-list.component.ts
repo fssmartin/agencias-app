@@ -8,6 +8,7 @@ import { UserUiStateService } from '../../user-ui-state.service';
 import { UserService } from '../../user.service';
 import { BehaviorSubject, catchError, combineLatest, delay, map, of, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { AuthService } from '../../../../auth/auth.service';
 
 
 @Component({
@@ -78,7 +79,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
               <button [routerLink]="['/admin/users/edit', user.id]" 
                        [queryParams]="{ mode: 'edit' }" title="Edit">
                        <i class="fa-solid fa-pencil"></i></button>
-              <button (click)="deleteUser(user)" >
+              <button (click)="deleteUser(user)" 
+                      [ngClass]="user.id===authService.currentUser()?.id ? 'disabled' : ''"
+                      [disabled]="user.id===authService.currentUser()?.id" >
                       <i class="fa-regular fa-trash-can"></i></button>
             </td>
           </tr>
@@ -102,7 +105,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class UserListComponent {
   
   private userService = inject(UserService);
-  
+ 
   selectedUser?: User;
   successMessage: string | null = null;
   highlightedUserId: string | null = null;
@@ -112,6 +115,7 @@ export class UserListComponent {
 
   userEmpty?: User = this.userService.userEmpty;
  
+
   public userState = toSignal(
             this.userService.getUsuarios().pipe(
               delay(1400),
@@ -155,6 +159,7 @@ export class UserListComponent {
   
   constructor(
     private UserUiStateService: UserUiStateService,
+    public authService:AuthService,
     private router: Router )
   {}
 

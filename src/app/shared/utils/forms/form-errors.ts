@@ -1,22 +1,33 @@
 
 import { AbstractControl } from '@angular/forms';
 
-export function getErrorMessage(control: AbstractControl | null): string {
-  if (!control || !control.errors || !control.touched) return '';
+export function getErrorMessage(control: AbstractControl | null): string[] {
 
-  if (control.errors['required']) return 'Required Field...';
-  if (control.errors['email']) return 'Invalid email..';
+  const messages: string[] = [];
 
-  if (control.errors['minlength']) {
-    return `Mínimo ${control.errors['minlength'].requiredLength} caracteres`;
-  }
-  if (control.errors['maxlength']) {
-    return `Máximo ${control.errors['maxlength'].requiredLength} caracteres`;
-  }
+  if (!control || !control.errors || !control.touched) return [];
 
-  if (control.errors['pattern']) {
-    return 'Formato incorrecto';
-  }
+  if (control.errors['required']) 
+    messages.push('El campo es obligatorio');
+  
+  if (control.errors['email']) 
+    messages.push('El email es invalido');
 
-  return ' Campo inválido';
+  
+  if (control.errors['minlength']) 
+    messages.push(`Mínimo ${control.errors['minlength'].requiredLength} caracteres`);
+  
+  if (control.errors['maxlength']) 
+    messages.push(`Máximo ${control.errors['maxlength'].requiredLength} caracteres`);
+  
+  if (control.errors['hasUpperCase']) 
+    messages.push('Debe contener una mayúscula');
+  
+  if (control.errors['hasNumber']) 
+    messages.push('Debe contener un número');
+  
+  // if (control.errors['pattern']) 
+  //     messages.push('Campo Invalido..');
+
+  return messages;
 }

@@ -3,15 +3,24 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-// import { loadingInterceptor } from './core/interceptor/loading.interceptor';
+import { authInterceptor } from './core/interceptor/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes),
     provideHttpClient(
-      //withFetch()
+      withFetch(),
+      withInterceptors([authInterceptor])
     )
   ]
 };
-// withInterceptors([loadingInterceptor])
+
+// ¿Cuándo NO usar fetch?
+// 👉 Caso típico:
+
+// subir imágenes
+// subir vídeos
+// barra de progreso
+// 👉 📌 Si necesitas progreso → NO uses withFetch()
+// 👉 📌 Si solo haces APIs → puedes usarlo

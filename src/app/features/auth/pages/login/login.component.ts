@@ -144,12 +144,12 @@ export class LoginComponent implements AfterViewInit {
 
       const { email, password } =  this.form.value;
 
-      this.authService.login(email, password).pipe(
+      this.authService.login(email.trim(), password.trim()).pipe(
         map(data => ({ data, loading: false, error: null }))
       )
       .subscribe({
           next: (request) => {
-            console.log('¡Login correcto!', request);
+            console.log('¡Login correcto!', request.data.request);
             // Redirigimos al panel de administración de forma segura
             this.loginState.set({
               data:    request.data,
@@ -160,9 +160,6 @@ export class LoginComponent implements AfterViewInit {
           },
           error: (err) => {
             console.log("___________________________error___ component al logarse !!",err)
-            //this.cargando.set(false);
-            // Si json-server-auth detecta datos incorrectos, devuelve un error 400
-            //this.errorLogin.set('Correo o contraseña incorrectos.');
             this.loginState.set({
                 data:    {},
                 loading: false, 
@@ -183,7 +180,6 @@ export class LoginComponent implements AfterViewInit {
     // });
 
     //this.focusInput(this.emailInput);
-
 
   }
 
@@ -207,8 +203,14 @@ export class LoginComponent implements AfterViewInit {
     });
   }
 
-  getError(controlName: string): string {
-    return getErrorMessage(this.form.get(controlName));
+  getError(controlName: string): string[] {
+//    return getErrorMessage(this.form.get(controlName));
+    const control = this.form.get(controlName);
+    if (!control || !control.errors || !(control.touched || control.dirty)) {
+      return [];
+    }
+    return getErrorMessage(control);
+
   }
 
 

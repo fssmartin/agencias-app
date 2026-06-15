@@ -9,6 +9,9 @@ hr{
     margin:  0;
 }
 
+h2{
+  color: #193CB8;
+}
 h4{
   display: flex;
   justify-content: space-between;
@@ -122,6 +125,7 @@ form{
     margin: 1rem 0;
     &:has(> :nth-child(2)) {
       justify-content: space-between;
+      justify-content: right;
     }
 
     .botones{
@@ -226,9 +230,13 @@ table td button{
   &:hover{
     opacity: 1;
   }
+  &.disabled{
+    color:red;
+    opacity: .5;
+  }
 }
 table td,th{padding: 0;background-color: transparent;}
-table tr:not(:first-child, :last-child):hover{background-color: aquamarine;}
+table tr:not(:first-child, :last-child):hover{background-color: #F7FEE7;}
 
 
 .listTable {

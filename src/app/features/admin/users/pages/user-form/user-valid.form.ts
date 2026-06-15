@@ -8,6 +8,7 @@ export const createUserForm = (fb: FormBuilder,user: User) => {
     id:       [user.id],
     name:     [user.name,AppValidators.name],
     email:    [user.email,AppValidators.email],
+    password: [user.email,AppValidators.password],
     isActive: [user.isActive],
     role:     [user.role],
     permissions: [user.permissions]

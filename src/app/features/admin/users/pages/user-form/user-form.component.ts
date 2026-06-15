@@ -6,12 +6,13 @@ import { UserService } from '../../user.service';
 
 import { createUserForm } from '../user-form/user-valid.form';
 import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
+import { FechaEsPipe } from '../../../../../shared/utils/pipes/fecha-es.pipe';
 
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule ,ReactiveFormsModule],
+  imports: [CommonModule ,ReactiveFormsModule,FechaEsPipe],
   template: ` 
 
       <h4>
@@ -40,9 +41,11 @@ import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
                   placeholder="Jhon Doe"
                   formControlName="name" 
                   autocomplete="off"/>
-                <p *ngIf="getError('name')" class="inputError">
-                      {{ getError('name') }}
-                </p>
+                <div class="divError" style="width:100%;display:flex;justify-content:left;flex-direction:column">
+                  <p *ngFor="let error of getError('name')" class="inputError">
+                    {{ error }}
+                  </p>
+                </div>
               </label>
             </div>
     
@@ -50,14 +53,38 @@ import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
               <label>
                 <span>Email</span>
                 <input type="email" 
-                  placeholder=""  
+                  placeholder="m@example.com"
                   formControlName="email" 
                   autocomplete="off" />
-                <p *ngIf="getError('email')" class="inputError">
-                      {{ getError('email') }}
-                </p>
+                <div class="divError" style="width:100%;display:flex;justify-content:left;flex-direction:column">
+                  <p *ngFor="let error of getError('email')" class="inputError">
+                    {{ error }}
+                  </p>
+                </div>
               </label>
             </div>
+
+            <div>
+              <label>
+                <span>Password</span>
+                <input type="password" 
+                  placeholder="Create a secure password"
+                  formControlName="password" 
+                  autocomplete="off" />
+
+                <!-- <p *ngIf="getError('password')" class="inputError">
+                      {{ getError('password') }}
+                </p> -->
+<!-- muestro varios errores -->
+
+                <div class="divError" style="width:100%;display:flex;justify-content:left;flex-direction:column">
+                  <p *ngFor="let error of getError('password')" class="inputError">
+                    {{ error }}
+                  </p>
+                </div>
+
+              </label>
+            </div>            
     
             <div>
               <label>
@@ -70,10 +97,10 @@ import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
             </div>
     
             <div>
-              <label><span>Created:</span><span>{{user?.createdAt | date:'medium'}}</span></label>
+              <label><span>Created:</span><span>{{user?.createdAt! | fechaEs }}</span></label>
             </div>
             <div *ngIf="user?.updatedAt">
-              <label><span>Modified:</span><span>{{user?.updatedAt | date:'medium'}}</span></label>
+              <label><span>Modified:</span><span>{{user?.updatedAt! | fechaEs }}</span></label>
             </div>
           </ng-container>
 
@@ -109,7 +136,7 @@ export class UserFormComponent {
 
         const userData = this.user || this.userService.userEmpty;
 
-        this.form = this.createFbGroup(userData); // Inicializa el formulario con los valores del usuario vacío
+        this.form = this.createFbGroup(userData); 
     
         this.form.patchValue(userData); 
         // Si se proporciona un usuario, actualiza el formulario con sus valores, 
@@ -118,6 +145,15 @@ export class UserFormComponent {
          // y set mete todos y si no vienen los borra, por eso es mejor patch
          //this.form.patchValue(userData);
          //this.form.setchValue(userData);    
+        if(userData.id==''){
+          this.form.reset({
+            email:'',
+            name:'',
+            password: '',
+            role:'USER'
+        });
+
+        }
     }
     
     createFbGroup(user: User) {
@@ -134,7 +170,6 @@ export class UserFormComponent {
     }
     
     get value(): User {
-
         return { ...this.user ,  ...this.form.value, "updatedAt": new Date() };
     }
     
@@ -149,10 +184,15 @@ export class UserFormComponent {
         this.cancel.emit('cancelado');
     }  
  
-    getError(controlName: string): string {
-      return getErrorMessage(this.form.get(controlName));
-    }
+    // getError(controlName: string): string {
+    //   return getErrorMessage(this.form.get(controlName));
+    // }
 
-
-    
+    getError(controlName: string): string[] {
+      const control = this.form.get(controlName);
+      if (!control || !control.errors || !(control.touched || control.dirty)) {
+        return [];
+      }
+      return getErrorMessage(control);
+    }    
 }
