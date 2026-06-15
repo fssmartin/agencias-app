@@ -25,12 +25,6 @@ export class UserService {
   constructor(){ 
   }
 
-  private _loadingSignal = signal<boolean>(false);
-  private _errorSignal   = signal<string | null>(null);
-
-  loadingSignal = this._loadingSignal.asReadonly();
-  errorSignal   = this._errorSignal.asReadonly();
-
   // // hace de base de datos
   // private myUsers: User[] = [
   //   { id: '1', name: 'Pedro Vila', password:'123', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
@@ -39,112 +33,78 @@ export class UserService {
   // ];  
 
   getUsuarios():Observable<User[]> {
-
-    this.clearSignals(true);
-    
+  
     return this.http.get<User[]>(this.api).pipe(
+      delay(1000),
       catchError((error) => {
-        console.error('Error de red detectado en el servicio:', error);
+        console.error('Error en el servicio:', error.status, error);
         if(error.status===404) 
-            return throwError(() => new Error("❌ Mal la url, Not found"));
+            return throwError(() => new Error("❌ Mal la url, Not found , 404"));
         return throwError(() => new Error('❌ '+error.message));
       }) 
-    )
-     
-  }
-  
+    )   
 
-  clearSignals(loading: boolean=false) {
-    this._loadingSignal.set( loading );
-    this._errorSignal.set(null);
   }
 
-  // 🔄 trigger manual
-  reload() { 
-      console.log('RELOAD CALLED'); // 👈 añade esto
-      //this.reload$.next(); 
-  }
- 
-
-  deleteById(id: string): Observable<void> {
+  deleteById(id: string): Observable<void> {    
     
-    this.clearSignals(true);
-
     return this.http.delete<void>(`${this.api}/${id}`).pipe(
-      tap(() => this.reload()) ,
+      delay(1000),
       catchError(err => {
-         this._errorSignal.set('Error eliminando usuario'); 
          return throwError(() => err);  
       })
-    );
+    );  
 
-    
-  }
-  
-
- getById(id: string): Observable<User> {
-
-      //this.clearSignals(true);
-
-      return this.http.get<User>(`${this.api}/${id}`).pipe(
-        tap(user => {
-          console.log('USER:', user);
-        }),
-        catchError(err => {
-          if (err.status === 404)  
-            return throwError(() => new Error("❌ Usuario no encontrado"));
-          return throwError(() => new Error('❌ Error cargando usuario'));
-        })
-      );  
   }
 
-  updateUser(user: User): Observable<User[]> {
+  getById(id: string): Observable<User> {
 
-   // this.clearSignals(true);
+    return this.http.get<User>(`${this.api}/${id}`).pipe(
+      delay(1000),
+      tap(user => {
+        console.log('USER:', user);
+      }),
+      catchError(err => {
+        if (err.status === 404)  
+          return throwError(() => new Error("❌ Usuario no encontrado"));
+        return throwError(() => new Error('❌ Error cargando usuario'));
+      })
+    );  
 
-   
-      return this.http.put<any>(`${this.api}/${user.id}`, user);
-   
-    
+  }
+
+  updateUser(user: User): Observable<User> {
+
+    return this.http.put<any>(`${this.api}/${user.id}`, user).pipe(
+      delay(1000),
+      tap(user => {
+        console.log('USER modified service',user);
+      }),
+      catchError(err => {
+        if (err.status === 404)  
+          return throwError(() => new Error("❌ Usuario no encontrado"));
+        return throwError(() => new Error('❌ Error modificando usuario'));
+      })
+    );  
 
   }
 
   createUser(user: User): Observable<User> {
-     this.clearSignals(true);
 
-   //  let newUser:User =  this.userEmpty;
- 
- //    return of(newUser)
      return this.http.post<User>(this.api, user).pipe(
-      tap(() => this.reload()), 
+      delay(1000),
+      // map((response: User) => {
+      //   if (!response.id) {
+      //     throw new Error('Usuario no creado correctamente');
+      //   }
+      //   return response;
+      // }),
+
       catchError(err => {
-        this._loadingSignal.set(false);
-        this._errorSignal.set('Error creando usuario');
+        console.log("Error creando ususario", err.message)
         return throwError(() => err);
       })
     );
-
-
-    // return of(newUser).pipe(
-    //   delay(100),
-    //   tap(() => {
-
-    //     newUser = {
-    //         ...user,
-    //         id: Date.now().toString(), // o uuid si quieres
-    //         createdAt: new Date()
-    //     }; 
-    //     this.myUsers = [...this.myUsers, newUser];
-    //   }),
-    //   tap(() => this.reload()), // dispara reload
-    //   switchMap(() => this.users$.pipe(take(1))), // ✅ espera datos nuevos
-    //   map(() => newUser),
-    //   catchError(() => {
-    //     this._loadingSignal.set( false );
-    //     this._errorSignal.set( '❌ Error creando usuario' );        
-    //     return throwError(() => new Error('Add failed'));
-    //   })
-    // );
 
   }  
 

@@ -18,14 +18,34 @@ export class AuthService implements AuthState {
 
   state = this._state.asReadonly();
 
-  currentUser   = computed( ()=> this.state().currentUser );
-  isAdmin       = computed(() => this.state().currentUser?.role === UserRole.ADMIN);  
-  isLogged      = computed(() => this.state().currentUser !== null); // --> ES LO MISMO  !!this.currentUser());
-  countNotified = computed(() => this.state().currentUser ? 12 : 0); 
-  iconByRole    = computed(() => {
+  currentUser      = computed( ()=> this.state().currentUser );
+  isAdmin          = computed(() => this.state().currentUser?.role === UserRole.ADMIN);  
+  isLogged         = computed(() => this.state().currentUser !== null); // --> ES LO MISMO  !!this.currentUser());
+  countNotified    = computed(() => this.state().currentUser ? 12 : 0); 
+  remainingSeconds = computed(() =>  {
+        const user = this.state().currentUser;
+        const now = this._now();
+
+        console.log("user?.exp___________________",user?.exp)
+
+        if (!user?.exp) return 0;
+        return Math.max(0, Math.floor((user.exp * 1000 - now) / 1000));
+  });   
+  remainingFormatted = computed(() => {
+    const seconds = this.remainingSeconds();
+    if (seconds <= 0) return 'Expirado';
+    const minutes = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+
+    return `${minutes}:${sec.toString().padStart(2, '0')}`;
+  });  
+  timeExpired = computed(() => this.remainingSeconds() <= 0);
+  iconByRole  = computed(() => {
        const user = this.state().currentUser;
        return user ? this.getIconRole(user.role) : '👤'
   });
+
+  private _now = signal(Date.now());
  
   private http = inject(HttpClient); 
   private userService = inject(UserService); 
@@ -34,9 +54,15 @@ export class AuthService implements AuthState {
     console.log("___ INIT constructor")
     
     this.initFromStorage();
+
+    
+    setInterval(() => {
+      this._now.set(Date.now());
+    }, 1000);
+
  
   }
-
+ 
     
   private initFromStorage() {
 
@@ -44,7 +70,7 @@ export class AuthService implements AuthState {
 
     console.log("____________initFromStorage___token__",token)
 
-    if ( !token) return;
+    if ( !token ) return;
 
     try {
       // validar token
@@ -54,7 +80,7 @@ export class AuthService implements AuthState {
         return;
       }
 
-     const payload = this.decodeToken(token);
+      const payload = this.decodeToken(token);
    
 
       console.log("_____________ payload ___ ", payload)
@@ -69,7 +95,8 @@ export class AuthService implements AuthState {
                                   "id":    user.id,
                                   "name":  user.name,
                                   "email": user.email,
-                                  "role":  this.getRole(user.role!)
+                                  "role":  this.getRole(user.role!),
+                                  "exp" : payload.exp
                                 }
             }))
           },
@@ -133,7 +160,8 @@ export class AuthService implements AuthState {
               id:   user.id, 
               name: user.name, 
               email:user.email, 
-              role: user.role!
+              role: user.role!,
+              exp : user.exp
             }
           })
         )
@@ -154,7 +182,8 @@ export class AuthService implements AuthState {
               'id':   respuesta.user.id+"", 
               'name': respuesta.user.name, 
               'email':respuesta.user.email, 
-              'role': this.getRole(respuesta.user.role!) 
+              'role': this.getRole(respuesta.user.role!),
+              'exp' : this.getExpToken(respuesta.accessToken)
             }
           );
           
@@ -177,27 +206,37 @@ export class AuthService implements AuthState {
   } 
 
 
-  register(name:string, email: string, password: string): Observable<string> {
-      const id = crypto.randomUUID();
-      console.log("Registro user ok , ",id);
+  register(name:string, email: string, password: string): Observable<any> {
+      // const id = crypto.randomUUID();
+      // console.log("Registro user ok , ",id);
       return this.http.post<any>(this.apiRegister,  { name, email, password }).pipe(
         take(1),
         delay(1400),
-        tap(user =>       
+        tap((request) =>  console.log("USER REGISTRADOOOOO",request) ),
+        tap((request:LoginResponse) => {
               this._state.update(state=>({
                 ...state,
                 currentUser : {
-                  id: id,
+                  id: request.user.id,
                   name: name,
                   email: email,
-                  password: password,
-                  createdAt:new Date(),
-                  role: UserRole.USER
+                  role: UserRole.USER,
+                  exp : this.getExpToken(request.accessToken)
                 }
-              })
-         ),
-         map(data=>({ data:'ok' })  )
-    ));
+              }))
+              localStorage.setItem('token', request.accessToken);
+              console.log('Sesión guardada en el servicio con éxito.', request);
+            }
+        ),
+        map(data=>({ data:'ok' })  ),
+        catchError((error) => {
+            console.log('Error registro usuario:', error);
+            if (error.status === 0){
+                return throwError(() => new Error('❌ Problemas con la BD'));
+            }
+            return throwError(() => new Error('❌ '+error.error));
+        })           
+    );
   }
 
   logout() {
@@ -225,6 +264,15 @@ export class AuthService implements AuthState {
       default:return UserRole.USER;
     }
   } 
+
+  getExpToken(token:string):number{
+      const payload = this.decodeToken(token);
+      console.log("____isTokenExpired___", payload )
+      // ✅ Campo estándar del JWT (en segundos)
+      const exp = payload.exp;
+      if (!exp) return 0; // si no hay exp → inválido      
+      return exp;
+  }
 
   // hasPermission(permission: Permission): boolean {
   //   return this.user?.permissions?.includes(permission) ?? false;

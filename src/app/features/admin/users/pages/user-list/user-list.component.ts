@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { User } from '../../../../../core/models/users.models';
 import { Router, RouterLink } from '@angular/router';
 import { LoadingComponent } from "../../../../../shared/components/ui/loading/loading.component";
@@ -9,6 +9,7 @@ import { UserService } from '../../user.service';
 import { BehaviorSubject, catchError, combineLatest, delay, map, of, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../../auth/auth.service';
+import { UserStore } from '../../user.store';
 
 
 @Component({
@@ -17,19 +18,13 @@ import { AuthService } from '../../../../auth/auth.service';
   imports: [CommonModule, RouterLink, LoadingComponent],
   template: `
 
-<!--
+<!-- <pre>{{ userState().selectedUser | json  }}</pre>  -->
 
-    APRENDER HACER UNA COMPUTED STATE  -- Que unifique el loading, error y success..
-
-    y luego pregunte por .state()==='loading'
-                          .state()==='error'
-                          .state()==='success'  
-
--->
-    <h4><span>User List</span>
-       <div class="msgInfo">
-            <div *ngIf="!userState()?.loading && successMessage" class="success">
-                <div class="msj msjOk">{{ successMessage }}</div>  
+    <h4 *ngIf="!userState()?.loading">
+      <span>User List</span>
+       <div class="msgInfo" [ngClass]="{ 'hidden': hideMsg }">
+            <div *ngIf="!userState()?.loading && userState()?.msg" class="success">
+                <div class="msj msjOk">{{ userState()?.msg }}</div>  
             </div>
             <!-- <div *ngIf="error$ | async as error" class="error"> -->
             <div *ngIf="!userState()?.loading && userState()?.error" class="error">
@@ -39,11 +34,11 @@ import { AuthService } from '../../../../auth/auth.service';
     </h4> 
 
     <!-- <app-loading *ngIf="loading$ | async"></app-loading> -->
-    <app-loading  [texto]="'Usuarios'" *ngIf="userState()?.loading"></app-loading>
+    <app-loading  [texto]="msgLoad" *ngIf="userState()?.loading"></app-loading>
  
 
     <!-- <ng-container *ngIf="!(loading$ | async)"> -->
-    <ng-container  *ngIf="!userState()?.error && !userState()?.loading">
+    <ng-container  *ngIf=" !userState()?.loading">
 
         <!-- <table *ngIf="sortedUsers$ | async as users" -->
         <table 
@@ -65,13 +60,13 @@ import { AuthService } from '../../../../auth/auth.service';
             <th><button routerLink="/admin/users/create"  class="fRight btEnlace btCrear">Crear Usuario</button></th>
           </tr>
           <tr *ngFor="let user of userState()?.data; trackBy: trackById"
-              [ngClass]="{ 'highlight-row': user.id === highlightedUserId }">
+              [ngClass]="{ 'highlight-row': user.id === selectedUser?.id}">
             <td>
                 {{ user.isActive ? '✅' : '❌' }}
                 {{ user.role === 'ADMIN' ? '🛡️' : user.role === 'MANAGER' ? '📊' : '👤' }}
             </td>
             <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
+            <td>{{ user.email }}-{{ user.id }}</td>
             <td>
               <button [routerLink]="['/admin/users/edit', user.id]"
                       [queryParams]="{ mode: 'view' }" title="Show">
@@ -105,26 +100,30 @@ import { AuthService } from '../../../../auth/auth.service';
 export class UserListComponent {
   
   private userService = inject(UserService);
- 
-  selectedUser?: User;
-  successMessage: string | null = null;
-  highlightedUserId: string | null = null;
+  private userStore = inject(UserStore);
 
+  hideMsg:boolean = false;
+
+  msgLoad :string = "Cargando Lista Usuarios";
+ 
+  selectedUser: User = this.userService.userEmpty;
+
+  // successMessage: string | null = null;
+  highlightedUserId: string | null = null;
   // loadingSignal = this.userService.loadingSignal;
   // errorSignal   = this.userService.errorSignal;
 
-  userEmpty?: User = this.userService.userEmpty;
- 
+  readonly userState = this.userStore.state;
 
-  public userState = toSignal(
-            this.userService.getUsuarios().pipe(
-              delay(1400),
-              map(data => ({ data, loading: false, error: null })),
-              catchError(err => of({ data: [], loading: false, error: err.message })),
-              // startWith define el estado exacto inicial del componente de manera síncrona
-              startWith({ data: [], loading: true, error: null })
-            )
-  );
+  // public userState = toSignal(
+  //           this.userService.getUsuarios().pipe(
+  //             delay(1400),
+  //             map(data => ({ data, loading: false, error: null })),
+  //             catchError(err => of({ data: [], loading: false, error: err.message })),
+  //             // startWith define el estado exacto inicial del componente de manera síncrona
+  //             startWith({ data: [], loading: true, error: null })
+  //           )
+  // );
 
   sortField$ = new BehaviorSubject<keyof User>('name');
   sortDirection$ = new BehaviorSubject<'asc' | 'desc'>('asc');
@@ -159,9 +158,28 @@ export class UserListComponent {
   
   constructor(
     private UserUiStateService: UserUiStateService,
-    public authService:AuthService,
-    private router: Router )
-  {}
+    public authService:AuthService )
+  {    
+        effect(()=>{
+          const msg = this.userState().msg;
+          const error = this.userState().error
+          const userSelec = this.userState().selectedUser
+          this.hideMsg = false
+          if(msg || error ){ 
+            setTimeout(() => {
+              this.hideMsg = true
+            }, 3000);
+          }
+          if(userSelec){ 
+            this.selectedUser = userSelec;
+            setTimeout(() => {
+              this.selectedUser = this.userService.userEmpty
+              this.msgLoad = 'Cargando Lista Usuarios'
+            }, 3000);
+          }
+
+        })
+  }
 
   ngOnInit(): void {
  
@@ -169,34 +187,45 @@ export class UserListComponent {
     //const { userId, action } = history.state || {};
     // console.log('UserListComponent ngOnInit - history.state:', history.state);
 
-   const { userId, action } = this.UserUiStateService.consumeState() || {};   
+   this.userStore.getUsers();
 
-    if ( userId && action) {  
-          
-      this.highlightedUserId = userId;
-      this.successMessage = action === 'create'
-        ? '✅ Usuario creado correctamente'
-        : action === 'delete' ? '✅ Usuario borrado correctamente'
-        : '✅ Usuario actualizado correctamente';
-
-      setTimeout(() => {
-        this.successMessage = null;
-        this.highlightedUserId = null;
-        this.UserUiStateService.cleanState();
-      }, 3000); // desaparece en 3s
+    // const { userId, action } = this.UserUiStateService.consumeState() || {};   
+    // if ( userId && action) {             
+    //     this.showMessageState({userId ,action})
+    // } 
 
 
-    }
    
   } 
 
   deleteUser(user: User) {
     if(!user.id) return;
-    console.log("Usuario a eliminar:", user.id);
-    this.userService.deleteById(user.id).subscribe();
-    
-  }
+        
+    if (confirm('¿Está usted seguro de borrar este usuario?')) {
+      console.log("Usuario a eliminar:", user.id);
+      this.msgLoad = "Deleting User"
+      this.userStore.deleteUser(user.id);
+    }
+
+  } 
+
   
+  // no vale ya
+  // showMessageState(state:any){
+  //     this.highlightedUserId = state.userId;
+  //     this.successMessage = state.action === 'create'
+  //       ? '✅ Usuario creado correctamente'
+  //       : state.action === 'delete' ? '✅ Usuario borrado correctamente'
+  //       : '✅ Usuario actualizado correctamente';
+
+  //     setTimeout(() => {
+  //       this.successMessage = null;
+  //       this.highlightedUserId = null;
+  //       this.UserUiStateService.cleanState();
+  //     }, 3000); // desaparece en 3s
+  // }
+
+
   select(user: User) {
     this.selectedUser = user;
   }

@@ -109,7 +109,7 @@ import { FechaEsPipe } from '../../../../../shared/utils/pipes/fecha-es.pipe';
         <PRE>{{this.user | json}}</PRE>
         
         <div class="fm_actions">
-          <button type="button" (click)="cancelar()">Cancelar</button>
+          <button type="button" (click)="cancelar()">Volver</button>
           <button *ngIf="mode != 'view'" type="submit" [disabled]="form.invalid || form.pristine">    
             {{ user?.id ? 'Modificar' : 'Guardar' }}
           </button>
@@ -180,7 +180,6 @@ export class UserFormComponent {
     }  
 
     cancelar() {
-        console.log("cancelar")
         this.cancel.emit('cancelado');
     }  
  

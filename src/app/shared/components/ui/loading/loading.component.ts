@@ -10,7 +10,7 @@ import { ChangeDetectionStrategy, Component, Input, Signal } from '@angular/core
   <!-- <div class="spinner-container" *ngIf="loading()"> -->
   <div class="spinner-container">
     <div class="spinner"></div>
-    <p>Loading...{{texto}}</p>
+    <p>{{texto}}...</p>
 </div>`
   
 })

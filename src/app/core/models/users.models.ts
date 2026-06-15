@@ -23,6 +23,7 @@ export interface AuthUser {
   name: string;
   email: string;
   role: UserRole;
+  exp:number
 }
 
 export interface LoginResponse {
@@ -65,4 +66,13 @@ export enum Permission {
   USERS_CREATE = 'users.create',
   USERS_DELETE = 'users.delete'
 }
+
+
+export interface UserState  {
+  data: User[];
+  selectedUser: User | null;
+  loading: boolean;
+  error: string | null;
+  msg:string | null;
+};
 
