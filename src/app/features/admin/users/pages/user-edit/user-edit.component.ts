@@ -4,7 +4,7 @@ import { AuthState, User, UserRole } from '../../../../../core/models/users.mode
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../user.service';
-import { UserUiStateService } from '../../user-ui-state.service';
+//import { UserUiStateService } from '../../user-ui-state.service';
 
 import { UserFormComponent } from "../user-form/user-form.component";
 import { catchError, delay, filter, map, of, switchMap, tap } from 'rxjs';
@@ -25,24 +25,21 @@ import { UserStore } from '../../user.store';
 
     <!-- <ng-container *ngIf="!(loading$ | async)"> con behaviourSubjet -->
     
-    <ng-container *ngIf="!userState().loading">
-
-        <!-- <div *ngIf="error$ | async as error"> -->
-        <!-- <div *ngIf="errorSignal()">
-            <div class="msj msjError">{{ errorSignal() }}</div>
-        </div>     -->
-
-        <app-user-form 
-            *ngIf="userState().selectedUser;"
-            [mode]="mode"
-            [user]="userState().selectedUser!"
-            [roles]="roles"
-            (save)="onSave($event)"
-            (cancel)="onCancel($event)">
-        </app-user-form>
-
-    </ng-container> 
  
+    <!-- <div *ngIf="error$ | async as error"> -->
+    <!-- <div *ngIf="errorSignal()">
+        <div class="msj msjError">{{ errorSignal() }}</div>
+    </div>     -->
+
+    <app-user-form 
+        *ngIf="!userState().loading"
+        [mode]="mode"
+        [user]="userState().selectedUser!"
+        [roles]="roles"
+        (save)="onSave($event)"
+        (cancel)="onCancel($event)">
+    </app-user-form>
+
   `
 
 })
@@ -51,16 +48,16 @@ export class UserEditComponent {
   private userService = inject(UserService);
   private userStore = inject(UserStore);
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   id!:string
 
   roles: string[] = [];
   mode:string = 'edit'; // 'view' o 'edit'
-  msgLoading : string = 'Cargando data del Usuario';
+  msgLoading : string = this.userStore.state().selectedUser ? 'Cargando data del Usuario' : 'Cargando';
 
   // public loadingSignal = signal<boolean>(true);
 
   readonly userState = this.userStore.state;
+  readonly userEmpty = this.userService.userEmpty;
   
   // public usuario = toSignal(
   //     this.route.paramMap.pipe(
@@ -79,31 +76,30 @@ export class UserEditComponent {
   //       { initialValue: this.userService.userEmpty }
   // );
 
-  constructor(
-    private userUiStateService: UserUiStateService,
-    private authService:AuthService ) {}
+  constructor( ) {}
 
   ngOnInit(): void {
     console.log("--- ngOnInit UserEditComponent");
     
-
+    // 
     this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+      const id = params.get('id');      
       if (id) this.userStore.getUserById(id);
+      this.mode='create'
     });
 
     this.roles = this.route.snapshot.data['roles'];
     // y esta para el modo
+    
     this.route.queryParamMap
           .pipe(map(params => params.get('mode')))
           .subscribe(mode => {
-            this.mode = mode === 'view' ? 'view' : 'edit';
-            //this.msgLoading = mode === 'view' ? '' : 'Actualizando datos Usuario'
-          });
-
+            this.mode = mode!;
+           });
+           console.log("_______userState().selectedUser_____",this.userState().selectedUser)
   }
  
-  onSave(updatedUser: User) {
+  onSave(user: User) {
       
       // this.userService.updateUser(updatedUser)
       //   .subscribe(() => {
@@ -124,17 +120,19 @@ export class UserEditComponent {
       //       }
       //   });
 
-      this.msgLoading = 'Actualizando data'
+      if(this.userStore.state().selectedUser){
+        this.msgLoading = 'Actualizando data'
+        this.userStore.updateUser(user);
+      }else{
+        this.msgLoading = 'Insertando Usuario';
+        this.userStore.createUser(user);
+      }
 
-      this.userStore.updateUser(updatedUser);
           
   }
 
   onCancel(data: any) {
-    this.userStore.cleanMsgState()  
-  }
-
-
-    
+    this.userStore.cleanMsgState(true)  
+  } 
     
 }

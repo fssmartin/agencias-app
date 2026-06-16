@@ -4,10 +4,10 @@ import { User } from '../../../../../core/models/users.models';
 import { Router, RouterLink } from '@angular/router';
 import { LoadingComponent } from "../../../../../shared/components/ui/loading/loading.component";
 
-import { UserUiStateService } from '../../user-ui-state.service';
+//import { UserUiStateService } from '../../user-ui-state.service';
 import { UserService } from '../../user.service';
 import { BehaviorSubject, catchError, combineLatest, delay, map, of, startWith } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+//import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../../auth/auth.service';
 import { UserStore } from '../../user.store';
 
@@ -21,8 +21,8 @@ import { UserStore } from '../../user.store';
 <!-- <pre>{{ userState().selectedUser | json  }}</pre>  -->
 
     <h4 *ngIf="!userState()?.loading">
-      <span>User List</span>
-       <div class="msgInfo" [ngClass]="{ 'hidden': hideMsg }">
+       <span>User List</span>
+       <div class="msgInfo">
             <div *ngIf="!userState()?.loading && userState()?.msg" class="success">
                 <div class="msj msjOk">{{ userState()?.msg }}</div>  
             </div>
@@ -57,7 +57,10 @@ import { UserStore } from '../../user.store';
                 {{ (sortDirection$ | async) === 'asc' ? '▲' : '▼' }}
               </span> -->
             </th>
-            <th><button routerLink="/admin/users/create"  class="fRight btEnlace btCrear">Crear Usuario</button></th>
+            <th><button 
+                  routerLink="/admin/users/edit"  
+                  [queryParams]="{ mode: 'create' }"
+                  class="fRight btEnlace btCrear">Crear Usuario</button></th>
           </tr>
           <tr *ngFor="let user of userState()?.data; trackBy: trackById"
               [ngClass]="{ 'highlight-row': user.id === selectedUser?.id}">
@@ -80,7 +83,7 @@ import { UserStore } from '../../user.store';
                       <i class="fa-regular fa-trash-can"></i></button>
             </td>
           </tr>
-          <tr *ngIf="userState()?.data?.length; else noUsers">
+          <tr *ngIf="userState()?.data; else noUsers">
             <td></td>
             <td  colspan="4" text-align="right">Total: <strong>{{ userState()?.data?.length }}</strong></td>
           </tr>
@@ -102,8 +105,8 @@ export class UserListComponent {
   private userService = inject(UserService);
   private userStore = inject(UserStore);
 
-  hideMsg:boolean = false;
-
+  readonly userState = this.userStore.state;
+  
   msgLoad :string = "Cargando Lista Usuarios";
  
   selectedUser: User = this.userService.userEmpty;
@@ -113,7 +116,7 @@ export class UserListComponent {
   // loadingSignal = this.userService.loadingSignal;
   // errorSignal   = this.userService.errorSignal;
 
-  readonly userState = this.userStore.state;
+  
 
   // public userState = toSignal(
   //           this.userService.getUsuarios().pipe(
@@ -157,24 +160,27 @@ export class UserListComponent {
   // )  
   
   constructor(
-    private UserUiStateService: UserUiStateService,
+   // private UserUiStateService: UserUiStateService,
     public authService:AuthService )
   {    
         effect(()=>{
-          const msg = this.userState().msg;
-          const error = this.userState().error
-          const userSelec = this.userState().selectedUser
-          this.hideMsg = false
+          const msg       = this.userState().msg;
+          const error     = this.userState().error;
+          const userSelec = this.userState().selectedUser;
+          
           if(msg || error ){ 
             setTimeout(() => {
-              this.hideMsg = true
+              //this.hideMsg = true
+           //   this.userStore.cleanMsgState(false);
             }, 3000);
           }
           if(userSelec){ 
             this.selectedUser = userSelec;
             setTimeout(() => {
+              //this.userStore.cleanMsgState(false);
               this.selectedUser = this.userService.userEmpty
               this.msgLoad = 'Cargando Lista Usuarios'
+              console.log("entro aqui no ?????")
             }, 3000);
           }
 
@@ -187,6 +193,8 @@ export class UserListComponent {
     //const { userId, action } = history.state || {};
     // console.log('UserListComponent ngOnInit - history.state:', history.state);
 
+
+  // tenemos ahora un store que limpia el componente de funcionalidad...  
    this.userStore.getUsers();
 
     // const { userId, action } = this.UserUiStateService.consumeState() || {};   
@@ -199,6 +207,7 @@ export class UserListComponent {
   } 
 
   deleteUser(user: User) {
+
     if(!user.id) return;
         
     if (confirm('¿Está usted seguro de borrar este usuario?')) {

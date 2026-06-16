@@ -2,9 +2,10 @@ import { computed, inject, Injectable, signal } from "@angular/core";
 import { User, UserRole } from "../../../core/models/users.models";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, catchError, delay, filter, finalize, map, Observable, of, shareReplay, startWith, Subject, switchMap, take, tap, throwError } from "rxjs";
+import { BaseService } from "../../../core/services/base.service";
 
 @Injectable({ providedIn: 'root' })
-export class UserService {
+export class UserService extends BaseService{
 
   private api = 'http://localhost:3000/users';
 
@@ -22,9 +23,6 @@ export class UserService {
     createdAt: new Date() 
   };  
 
-  constructor(){ 
-  }
-
   // // hace de base de datos
   // private myUsers: User[] = [
   //   { id: '1', name: 'Pedro Vila', password:'123', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
@@ -36,12 +34,13 @@ export class UserService {
   
     return this.http.get<User[]>(this.api).pipe(
       delay(1000),
-      catchError((error) => {
-        console.error('Error en el servicio:', error.status, error);
-        if(error.status===404) 
-            return throwError(() => new Error("❌ Mal la url, Not found , 404"));
-        return throwError(() => new Error('❌ '+error.message));
-      }) 
+      catchError(this.handleError('getUsuarios'))
+      // catchError((error) => {
+      //   console.error('Error en el servicio:', error.status, error);
+      //   if(error.status===404) 
+      //       return throwError(() => new Error("❌ Mal la url, Not found , 404"));
+      //   return throwError(() => new Error('❌ '+error.message));
+      // }) 
     )   
 
   }
@@ -50,9 +49,10 @@ export class UserService {
     
     return this.http.delete<void>(`${this.api}/${id}`).pipe(
       delay(1000),
-      catchError(err => {
-         return throwError(() => err);  
-      })
+      catchError(this.handleError('deleteById'))
+      // catchError(err => {
+      //    return throwError(() => err);  
+      // })
     );  
 
   }
@@ -64,11 +64,12 @@ export class UserService {
       tap(user => {
         console.log('USER:', user);
       }),
-      catchError(err => {
-        if (err.status === 404)  
-          return throwError(() => new Error("❌ Usuario no encontrado"));
-        return throwError(() => new Error('❌ Error cargando usuario'));
-      })
+      catchError(this.handleError('getById'))
+      // catchError(err => {
+      //   if (err.status === 404)  
+      //     return throwError(() => new Error("❌ Usuario no encontrado"));
+      //   return throwError(() => new Error('❌ Error cargando usuario'));
+      // })
     );  
 
   }
@@ -80,11 +81,12 @@ export class UserService {
       tap(user => {
         console.log('USER modified service',user);
       }),
-      catchError(err => {
-        if (err.status === 404)  
-          return throwError(() => new Error("❌ Usuario no encontrado"));
-        return throwError(() => new Error('❌ Error modificando usuario'));
-      })
+      catchError(this.handleError('updateUser'))
+      // catchError(err => {
+      //   if (err.status === 404)  
+      //     return throwError(() => new Error("❌ Usuario no encontrado"));
+      //   return throwError(() => new Error('❌ Error modificando usuario'));
+      // })
     );  
 
   }
@@ -99,11 +101,11 @@ export class UserService {
       //   }
       //   return response;
       // }),
-
-      catchError(err => {
-        console.log("Error creando ususario", err.message)
-        return throwError(() => err);
-      })
+      catchError(this.handleError('updateUser'))
+      // catchError(err => {
+      //   console.log("Error creando ususario", err.message)
+      //   return throwError(() => err);
+      // })
     );
 
   }  

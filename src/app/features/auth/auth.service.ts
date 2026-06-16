@@ -3,11 +3,12 @@ import { AuthState, AuthStateModel, AuthUser, LoginResponse, User, UserRole } fr
 import { UserService } from "../admin/users/user.service";
 import { HttpClient } from "@angular/common/http";
 import { catchError, delay, map, Observable, of, take, tap, throwError } from "rxjs";
+import { BaseService } from "../../core/services/base.service";
 
  
 
 @Injectable({ providedIn: 'root' })
-export class AuthService implements AuthState {
+export class AuthService extends BaseService implements AuthState {
 
   private apiAuth = 'http://localhost:3000/login';
   private apiRegister = 'http://localhost:3000/register';
@@ -22,28 +23,29 @@ export class AuthService implements AuthState {
   isAdmin          = computed(() => this.state().currentUser?.role === UserRole.ADMIN);  
   isLogged         = computed(() => this.state().currentUser !== null); // --> ES LO MISMO  !!this.currentUser());
   countNotified    = computed(() => this.state().currentUser ? 12 : 0); 
-  remainingSeconds = computed(() =>  {
-        const user = this.state().currentUser;
-        const now = this._now();
 
-        console.log("user?.exp___________________",user?.exp)
+  // remainingSeconds = computed(() =>  {
+  //       const user = this.state().currentUser;
+  //       const now = this._now();
 
-        if (!user?.exp) return 0;
-        return Math.max(0, Math.floor((user.exp * 1000 - now) / 1000));
-  });   
-  remainingFormatted = computed(() => {
-    const seconds = this.remainingSeconds();
-    if (seconds <= 0) return 'Expirado';
-    const minutes = Math.floor(seconds / 60);
-    const sec = seconds % 60;
+  //       console.log("user?.exp___________________",user?.exp)
 
-    return `${minutes}:${sec.toString().padStart(2, '0')}`;
-  });  
-  timeExpired = computed(() => this.remainingSeconds() <= 0);
-  iconByRole  = computed(() => {
-       const user = this.state().currentUser;
-       return user ? this.getIconRole(user.role) : '👤'
-  });
+  //       if (!user?.exp) return 0;
+  //       return Math.max(0, Math.floor((user.exp * 1000 - now) / 1000));
+  // });   
+  // remainingFormatted = computed(() => {
+  //   const seconds = this.remainingSeconds();
+  //   if (seconds <= 0) return 'Expirado';
+  //   const minutes = Math.floor(seconds / 60);
+  //   const sec = seconds % 60;
+
+  //   return `${minutes}:${sec.toString().padStart(2, '0')}`;
+  // });  
+  // timeExpired = computed(() => this.remainingSeconds() <= 0);
+  // iconByRole  = computed(() => {
+  //      const user = this.state().currentUser;
+  //      return user ? this.getIconRole(user.role) : '👤'
+  // });
 
   private _now = signal(Date.now());
  
@@ -51,14 +53,15 @@ export class AuthService implements AuthState {
   private userService = inject(UserService); 
  
   constructor() {
-    console.log("___ INIT constructor")
+    super();
+    console.log("___ AUTH INIT  constructor")
     
     this.initFromStorage();
 
     
-    setInterval(() => {
-      this._now.set(Date.now());
-    }, 1000);
+    // setInterval(() => {
+    //   this._now.set(Date.now());
+    // }, 1000);
 
  
   }
@@ -68,14 +71,14 @@ export class AuthService implements AuthState {
 
     const token = localStorage.getItem('token');
 
-    console.log("____________initFromStorage___token__",token)
+    console.log("___ AUTH ____________initFromStorage___token__",token)
 
     if ( !token ) return;
 
     try {
       // validar token
       if (this.isTokenExpired(token)) {
-        console.log("____________this.isTokenExpired(token)")
+        console.log("___ AUTH ____________this.isTokenExpired(token)")
         localStorage.removeItem('token');
         return;
       }
@@ -83,7 +86,7 @@ export class AuthService implements AuthState {
       const payload = this.decodeToken(token);
    
 
-      console.log("_____________ payload ___ ", payload)
+      console.log("___ AUTH ____________payload ___ ", payload)
 
       //    ⚡ opción buena: cargar usuario desde backend
         this.userService.getById(payload.sub).subscribe({
@@ -130,7 +133,7 @@ export class AuthService implements AuthState {
 
   private decodeToken(token:string):any{
       const payload = JSON.parse(atob(token.split('.')[1]));
-      console.log("____TOKEN DECODE___", payload )
+      console.log("___ AUTH____TOKEN DECODE___", payload )
      return payload;
   }
 
@@ -138,7 +141,7 @@ export class AuthService implements AuthState {
     try {
       // ✅ Obtener payload del JWT
       const payload = this.decodeToken(token);
-      console.log("____isTokenExpired___", payload )
+      console.log("___ AUTH____isTokenExpired___", payload )
       // ✅ Campo estándar del JWT (en segundos)
       const exp = payload.exp;
       if (!exp) return true; // si no hay exp → inválido      
@@ -195,16 +198,16 @@ export class AuthService implements AuthState {
       }),
       map(data => ({request:'ok'}
       )),
-      catchError((error) => {
-        console.log('Error de red detectado en el servicio:', error);
-        if (error.status === 0){
-            return throwError(() => new Error('❌ Problemas con la BD'));
-        }
-        return throwError(() => new Error('❌ '+error.error));
-      })       
+      catchError(this.handleError('loginUser'))      
+      // catchError((error) => {
+      //   console.log('Error de red detectado en el servicio:', error);
+      //   if (error.status === 0){
+      //       return throwError(() => new Error('❌ Problemas con la BD'));
+      //   }
+      //   return throwError(() => new Error('❌ '+error.error));
+      // })       
     );
   } 
-
 
   register(name:string, email: string, password: string): Observable<any> {
       // const id = crypto.randomUUID();
@@ -212,7 +215,7 @@ export class AuthService implements AuthState {
       return this.http.post<any>(this.apiRegister,  { name, email, password }).pipe(
         take(1),
         delay(1400),
-        tap((request) =>  console.log("USER REGISTRADOOOOO",request) ),
+        tap((request) =>  console.log("___ AUTH ____ USER REGISTRADOOOOO",request) ),
         tap((request:LoginResponse) => {
               this._state.update(state=>({
                 ...state,
@@ -229,13 +232,14 @@ export class AuthService implements AuthState {
             }
         ),
         map(data=>({ data:'ok' })  ),
-        catchError((error) => {
-            console.log('Error registro usuario:', error);
-            if (error.status === 0){
-                return throwError(() => new Error('❌ Problemas con la BD'));
-            }
-            return throwError(() => new Error('❌ '+error.error));
-        })           
+        catchError(this.handleError('registerUser'))
+        // catchError((error) => {
+        //     console.log('Error registro usuario:', error);
+        //     if (error.status === 0){
+        //         return throwError(() => new Error('❌ Problemas con la BD'));
+        //     }
+        //     return throwError(() => new Error('❌ '+error.error));
+        // })           
     );
   }
 
@@ -247,7 +251,6 @@ export class AuthService implements AuthState {
         localStorage.removeItem('token');
 
   }
-
 
   private getIconRole(role:string){
     switch (role) {
@@ -267,7 +270,7 @@ export class AuthService implements AuthState {
 
   getExpToken(token:string):number{
       const payload = this.decodeToken(token);
-      console.log("____isTokenExpired___", payload )
+      console.log("___ AUTH____getExpToken___", payload )
       // ✅ Campo estándar del JWT (en segundos)
       const exp = payload.exp;
       if (!exp) return 0; // si no hay exp → inválido      

@@ -109,6 +109,10 @@ input:focus {
       content: "+ ";
     } 
   }
+  &.btCancel{
+    background-color: #e6f2f8;
+    color: #0172ad;
+  }
 }
 
  
@@ -150,7 +154,7 @@ form{
   label {
       display: flex;
       flex-wrap: wrap;
-      align-items: flex-start;
+      align-items: center;
       gap: 0px 8px;
       position: relative;
       margin-bottom: 15px;
@@ -171,7 +175,7 @@ form{
       }
 
       & span{
-        min-width: 80px;
+        min-width: 86px;
         padding-right: 10px;
         font-weight: bold;
       }
@@ -194,7 +198,10 @@ form{
       }
   }
   &.auth{    
-    label{flex-direction: column;}
+    label{
+      flex-direction: column;
+      align-items: flex-start;      
+    }
   }
 }
 
@@ -331,4 +338,12 @@ table tr:not(:first-child, :last-child):hover{background-color: #F7FEE7;}
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
+}
+
+.msgInfo{
+  font-size: 14px;
+  .success{
+    color: green;
+    font-weight: normal;
+  }
 }

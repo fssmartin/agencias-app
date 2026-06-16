@@ -25,7 +25,7 @@
           <ng-template #enlaceUser>
               <li *ngIf="link.role === authService.currentUser()?.role"   >
                 <a 
-                  routerLinkActive="active"       
+                  routerLinkActive="active"        
                   [routerLink]="link.path"
                   [title]="link.label"
                   [routerLinkActiveOptions]="{ exact: false }">

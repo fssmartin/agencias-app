@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core'; 
-import { UserFormComponent } from '../user-form/user-form.component';
 import { User } from '../../../../../core/models/users.models';
 import { UserService } from '../../user.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserUiStateService } from '../../user-ui-state.service';
 import { UserStore } from '../../user.store';
-import { LoadingComponent } from '../../../../../shared/components/ui/loading/loading.component';
- 
 
+import { LoadingComponent } from '../../../../../shared/components/ui/loading/loading.component';
+import { UserFormComponent } from '../user-form/user-form.component';
+
+//import { UserUiStateService } from '../../user-ui-state.service';
+ 
 
 @Component({
   selector: 'app-user-create',
@@ -39,15 +40,14 @@ export class UserCreateComponent {
   msgLoading : string = "Cargando"
 
   constructor(
-    private userService: UserService,
-    // private userStateService: UserUiStateService, 
+    private userService: UserService, 
     private route: ActivatedRoute,
     private router: Router,
-    private userUiStateService: UserUiStateService,
+ //   private userUiStateService: UserUiStateService,
   ) { 
   } 
 
-  ngOnInit(): void {  
+  ngOnInit(): void {
     this.user = this.userService.userEmpty;
     this.roles = this.route.snapshot.data['roles'];
   }
@@ -55,8 +55,10 @@ export class UserCreateComponent {
   onSave(newUser: User) {
 
 
-    this.msgLoading = 'Insertando Usuario'
-      this.userStore.createUser(newUser)
+    this.msgLoading = 'Insertando Usuario';
+    this.userStore.createUser(newUser);
+
+    
       // this.userService.createUser(newUser)
       //  .subscribe((userNew:User) => {
       //     //volver a la lista y le paso info de lo que se ha actualizado para mostrar un mensaje o algo

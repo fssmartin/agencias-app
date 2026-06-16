@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core'; 
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core'; 
 import { User, UserRole } from '../../../../../core/models/users.models';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../user.service';
@@ -7,6 +7,7 @@ import { UserService } from '../../user.service';
 import { createUserForm } from '../user-form/user-valid.form';
 import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
 import { FechaEsPipe } from '../../../../../shared/utils/pipes/fecha-es.pipe';
+import { UserStore } from '../../user.store';
 
 
 @Component({
@@ -17,12 +18,18 @@ import { FechaEsPipe } from '../../../../../shared/utils/pipes/fecha-es.pipe';
 
       <h4>
           <span>{{ user?.id ?  mode === 'view' ? 'Consulta Usuario' :  'Editar Usuario' : 'Crear Usuario' }}</span>
+          <div class="msgInfo">
+                <div *ngIf="!userState()?.loading && userState()?.msg" class="success">
+                    <div class="msj msjOk">{{ userState()?.msg }}</div>  
+                </div>
+            </div>          
       </h4>
       
       <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off" 
             [ngClass]="{
               'form form-view': mode === 'view',
-              'form form-edit': mode === 'edit'
+              'form form-edit': mode === 'edit',
+              'form form-create': mode === 'create'
               }"
       >
 
@@ -109,7 +116,7 @@ import { FechaEsPipe } from '../../../../../shared/utils/pipes/fecha-es.pipe';
         <PRE>{{this.user | json}}</PRE>
         
         <div class="fm_actions">
-          <button type="button" (click)="cancelar()">Volver</button>
+          <button type="button" (click)="cancelar()" class="btCancel">Volver</button>
           <button *ngIf="mode != 'view'" type="submit" [disabled]="form.invalid || form.pristine">    
             {{ user?.id ? 'Modificar' : 'Guardar' }}
           </button>
@@ -128,6 +135,8 @@ export class UserFormComponent {
     @Output() cancel = new EventEmitter<string>();
     form!: FormGroup;
     
+    private userStore = inject(UserStore);
+    readonly userState = this.userStore.state;
     constructor(private fb: FormBuilder,private userService: UserService) {}
     
     ngOnInit(): void {

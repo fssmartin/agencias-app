@@ -2,14 +2,14 @@
   "users": [
     {
       "email": "luis.garcia@example.com",
-      "password": "$2a$10$AQEc8Mz1WPWDXDqnRWlD9.JruMTAG0IrV.SUMWoikT9rvHGaDLuq6",
+      "password": "$2a$10$BmysERiTJZjTabQfOjfvPeyBS9oPUb7zCOVXfGphVgq1SpYsdlzzG",
       "name": "Luis Garcia",
       "role": "USER",
-      "isActive": true,
+      "isActive": false,
       "permissions": null,
       "createdAt": "2026-06-09T06:11:22.072Z",
       "id": "2",
-      "updatedAt": "2026-06-15T13:38:38.067Z"
+      "updatedAt": "2026-06-16T16:02:02.253Z"
     },
     {
       "email": "pedro.vila@example.com",
@@ -31,28 +31,6 @@
       "permissions": null,
       "createdAt": "2026-06-09T06:11:22.072Z",
       "id": "ysRAocS"
-    },
-    {
-      "email": "asd@asd.es",
-      "password": "$2a$10$dT.gnGXS8/dYxKfJlrM/bOUI5HFq8ByxNFqUTWdA63R46qrTi2Q2.",
-      "id": "LxFPj1f",
-      "name": "AASa",
-      "isActive": true,
-      "role": "USER",
-      "permissions": null,
-      "createdAt": "2026-06-15T13:46:05.799Z",
-      "updatedAt": "2026-06-15T13:46:34.052Z"
-    },
-    {
-      "email": "qqqq@asd.es",
-      "password": "$2a$10$VyhH3B1mjUaKmIBMG8nrcufTB8sFHZ0SbklH1GlSDIvlUtibn4b8K",
-      "id": "jrr8LMn",
-      "name": "sssA",
-      "isActive": true,
-      "role": "USER",
-      "permissions": null,
-      "createdAt": "2026-06-15T13:59:58.837Z",
-      "updatedAt": "2026-06-15T14:00:30.101Z"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

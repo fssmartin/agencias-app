@@ -95,22 +95,7 @@ import { Router } from '@angular/router';
             <label for="country">
               <span>Your Country/Region</span>
               <select name="country" id="country" required  
-                role="presentation" required   autofocus="">
-                  <option value="AF">Afghanistan</option>
-                  <option value="AX">Åland</option>
-                  <option value="AL">Albania</option>
-                  <option value="DZ">Algeria</option>
-                  <option value="AS">American Samoa</option>
-                  <option value="AD">Andorra</option>
-                  <option value="AO">Angola</option>
-                  <option value="CZ">Czech Republic</option>
-                  <option value="DK">Denmark</option>
-                  <option value="DJ">Djibouti</option>
-                  <option value="DM">Dominica</option>
-                  <option value="DO">Dominican Republic</option>
-                  <option value="EC">Ecuador</option>
-                  <option value="EG">Egypt</option>
-                  <option value="SV">El Salvador</option> 
+                role="presentation" required   autofocus=""> 
                   <option value="SZ">Eswatini</option>
                   <option value="ET">Ethiopia</option>
                   <option value="FK">Falkland Islands</option>
@@ -169,7 +154,6 @@ export class RegisterComponent {
   registerState = signal({ data: {}, loading: false, error: null })
 
   constructor(
-    private router:Router,
     private _authService:AuthService
   ){ }
 
@@ -189,24 +173,23 @@ export class RegisterComponent {
   }
 
   register() {
-    console.log('Register:', this.form.value);
 
-    this.registerState.set({ data:{}, loading:true,error:null  })
+      console.log('Register:', this.form.value);
 
-    if (this.form.invalid) {
-        this.form.markAllAsTouched();
-        return;
-    }
+      this.registerState.set({ data:{}, loading:true,error:null  })
 
-    const { name, email, password } =  this.form.value;
-  
-    this._authService.register(name.trim(),email.trim(), password.trim())
-    .subscribe((request) =>{
-        console.log("Usuario registrodo,", request);
-        this.registerState.set({ 'data':request, loading:false,error:null  })
-    })
-  
-  
+      if (this.form.invalid) {
+          this.form.markAllAsTouched();
+          return;
+      }
+
+      const { name, email, password } =  this.form.value;
+    
+      this._authService.register(name.trim(),email.trim(), password.trim())
+      .subscribe((request) =>{
+          console.log("Usuario registrodo,", request);
+          this.registerState.set({ 'data':request, loading:false,error:null  })
+      }) 
   
     //  this.router.navigate(['/home']);
   

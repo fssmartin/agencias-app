@@ -92,7 +92,7 @@ export class UserStore {
                             u.id === request.id ? request : u
                         )                      
                     }));
-                this.router.navigate(['/admin/users']);    
+                this.router.navigate(['/admin/users']);
             },
             error:(err)=>{
                 this._state.set({selectedUser:null,data: previous,loading:false,error:err.message,msg:null})
@@ -123,9 +123,9 @@ export class UserStore {
         }) 
   }
 
-  cleanMsgState(){
-    this._state.update(s=>({...s,selectedUser:null, loading:true,error:null,msg:''}))
-    this.router.navigate(['/admin/users']);  
+  cleanMsgState(reload:boolean){    
+    this._state.update(s=>({...s,selectedUser:null, loading:reload,error:null,msg:''}))
+    if(reload) this.router.navigate(['/admin/users']);  
   }
 
 }

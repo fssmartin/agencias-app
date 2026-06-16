@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, CanDeactivateFn, Router } from '@angular/router';
 import { AuthService } from '../../features/auth/auth.service';
+import { UserStore } from '../../features/admin/users/user.store';
 
 export const adminGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
@@ -28,3 +29,5 @@ console.log("----- loggedGuard: CanActivateFn")
   router.navigate(['/home']);
   return false;
 };
+
+ 
