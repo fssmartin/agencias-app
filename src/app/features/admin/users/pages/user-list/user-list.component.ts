@@ -40,26 +40,26 @@ import { NotificationsComponent } from "../../../../../shared/components/ui/noti
             <th></th>
             <th (click)="sortBy('name')">
                 Name
-              <!-- <span *ngIf="(sortField$ | async) === 'name'">
-                {{ (sortDirection$ | async) === 'asc' ? '▲' : '▼' }}
-              </span> -->
+              <span *ngIf="( userStore.fieldState() ) === 'name'">
+                {{  userStore.direcState() === 'asc' ? '▲' : '▼' }}
+              </span> 
             </th>
             <th (click)="sortBy('email')">
-                Email
-              <!-- <span *ngIf="(sortField$ | async) === 'email'">
-                {{ (sortDirection$ | async) === 'asc' ? '▲' : '▼' }}
-              </span> -->
+                Email  
+              <span *ngIf="( userStore.fieldState() ) === 'email'">
+                {{  userStore.direcState() === 'asc' ? '▲' : '▼' }}
+              </span>
             </th>
             <th><button 
                   routerLink="/admin/users/edit"  
                   [queryParams]="{ mode: 'create' }"
                   class="fRight btEnlace btCrear">Crear Usuario</button></th>
           </tr>
-          <tr *ngFor="let user of userState()?.data; trackBy: trackById"
+          <tr *ngFor="let user of userStore.orderState(); trackBy: trackById"
               [ngClass]="{ 'highlight-row': user.id === selectedUser?.id}">
             <td>
-                {{ user.isActive ? '✅' : '❌' }}
-                {{ user.role === 'ADMIN' ? '🛡️' : user.role === 'MANAGER' ? '📊' : '👤' }}
+                <span [title]="user.isActive + ' Usuario'">{{ user.isActive ? '✅' : '❌' }}</span>
+                <span [title]="user.role">{{ user.role === 'ADMIN' ? '🛡️' : user.role === 'MANAGER' ? '📊' : '👤' }}</span>
             </td>
             <td>{{ user.name }}</td>
             <td>{{ user.email }}-{{ user.id }}</td>
@@ -87,7 +87,8 @@ import { NotificationsComponent } from "../../../../../shared/components/ui/noti
               </td>
             </tr>
           </ng-template>
-        </table>    
+        </table>   
+         
     </ng-container> 
 
     <!-- <pre>{{userState()| json }}</pre> -->
@@ -96,13 +97,15 @@ import { NotificationsComponent } from "../../../../../shared/components/ui/noti
 export class UserListComponent {
   
   private userService = inject(UserService);
-  private userStore = inject(UserStore);
+  public userStore = inject(UserStore);
 
-  readonly userState = this.userStore.state;
+  userState = this.userStore.state;
   
   msgLoad :string = "Cargando Lista Usuarios";
  
   selectedUser: User = this.userService.userEmpty;
+
+  
 
   highlightedUserId: string | null = null;
   // successMessage: string | null = null;
@@ -121,8 +124,8 @@ export class UserListComponent {
   //           )
   // );
 
-  sortField$ = new BehaviorSubject<keyof User>('name');
-  sortDirection$ = new BehaviorSubject<'asc' | 'desc'>('asc');
+  // sortField$ = new BehaviorSubject<keyof User>('name');
+  // sortDirection$ = new BehaviorSubject<'asc' | 'desc'>('asc');
 
   // sortedUsers$ = combineLatest([
   //   this.users$,
@@ -155,7 +158,6 @@ export class UserListComponent {
   private timeoutId: any;
 
   constructor(
-   // private UserUiStateService: UserUiStateService,
     public authService:AuthService ){    
 
      effect(()=>{
@@ -239,16 +241,12 @@ export class UserListComponent {
   trackById(index: number, user: User) {
     return user.id;
   }
+
   //Cambiar orden
-  sortBy(field: keyof User) {
-    if (this.sortField$.value === field) {
-      this.sortDirection$.next(
-        this.sortDirection$.value === 'asc' ? 'desc' : 'asc'
-      );
-    } else {
-      this.sortField$.next(field);
-      this.sortDirection$.next('asc');
-    }
+  sortBy(field: keyof User) { 
+ 
+      this.userStore.sortUser.set({field:field,dir: this.userStore.direcState() ===  'asc' ? 'desc' : 'asc'})
+ 
   }
 
 

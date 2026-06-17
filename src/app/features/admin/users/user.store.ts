@@ -1,4 +1,4 @@
-import { Injectable, signal } from "@angular/core";
+import { computed, Injectable, signal } from "@angular/core";
 import { User, UserState } from "../../../core/models/users.models";
 import { UserService } from "./user.service";
 import { Router } from "@angular/router";
@@ -7,16 +7,44 @@ import { NotificationUiService } from "../../../core/services/notificactions.ser
 @Injectable({ providedIn: 'root' })
 export class UserStore {
 
-  private  _state = signal<UserState>({
-    selectedUser : null,
-    data: [],
-    loading: false,
-    error: false,
-//    msg: null as string | null
-  });
+    private  _state = signal<UserState>({
+        selectedUser : null,
+        data: [],
+        loading: false,
+        error: false,
+    //    msg: null as string | null
+    });
 
-  // 👇 Expones el estado como readonly
-  readonly state = this._state.asReadonly();
+    
+    // 👇 Expones el estado como readonly
+    readonly state = this._state.asReadonly();
+
+    sortUser   = signal<any>({field:'name',dir:'asc'})
+
+    direcState = computed(() => this.sortUser().dir );
+    fieldState = computed(() => this.sortUser().field );   
+
+    orderState = computed(() =>  {
+        const users = this._state().data;
+        return [...users].sort((a, b) => {
+        const valueA:any = a["name"]!;
+        const valueB:any = b["name"]!;
+
+        let result = 0;
+
+        if (valueA instanceof Date && valueB instanceof Date) {
+            result = valueA.getTime() - valueB.getTime();
+        } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+            result = valueA.localeCompare(valueB);
+        } else if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
+            result = Number(valueA) - Number(valueB);
+        } else {
+            result = valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+        }
+        
+        return this.sortUser().dir === 'asc' ? result : -result;
+        })
+    });   
 
   constructor(private userService: UserService,
     private router: Router,
@@ -27,7 +55,7 @@ export class UserStore {
 
     console.log("__ store getUsers");
 
-    this._state.update(s=>({...s, loading:true,}));
+    this._state.update(s=>({...s, loading:true}));
     // solo cambio el loading.. el userSelected a null no , pq aqui entra la primera vez como cuando, editas o creas.. para seleccionar en listado
 
     this.userService.getUsuarios()

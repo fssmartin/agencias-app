@@ -233,6 +233,7 @@ select:not([multiple], [size]) {
   padding: 0.2rem 0.5rem;
   height: auto;
 }
+
 table th button{
   background:none; border: none; padding:0;margin:0 .3rem; font-size:0.8rem;color: black;
   &:hover{
@@ -259,6 +260,7 @@ table tr:not(:first-child, :last-child):hover{background-color: #F7FEE7;}
     cursor: pointer;
     user-select: none;
     font-weight: bold;
+    font-size: 14px;
     & span {
       margin-left: 5px;
       font-size: 12px;
@@ -277,6 +279,7 @@ table tr:not(:first-child, :last-child):hover{background-color: #F7FEE7;}
     }
   
     & td{
+        font-size: 13px;
         &:last-child{  
           text-align: right;
         }
