@@ -2,25 +2,25 @@
   "users": [
     {
       "email": "luis.garcia@example.com",
-      "password": "$2a$10$BmysERiTJZjTabQfOjfvPeyBS9oPUb7zCOVXfGphVgq1SpYsdlzzG",
+      "password": "$2a$10$IoAXn/4AFpa9PfEwu5ri3.wsfzfE40Qb6EE0JYa7xd55VIcO6ZnF6",
       "name": "Luis Garcia",
       "role": "USER",
       "isActive": false,
       "permissions": null,
       "createdAt": "2026-06-09T06:11:22.072Z",
       "id": "2",
-      "updatedAt": "2026-06-16T16:02:02.253Z"
+      "updatedAt": "2026-06-17T12:07:23.957Z"
     },
     {
       "email": "pedro.vila@example.com",
-      "password": "$2a$10$cJP4y5WRBwNeVes5ystEMOHG0sR3ZjE.zlBC3vy4dzzucQRikRQvC",
+      "password": "$2a$10$e.UK7xf2g6jgCpThSMUHEud1Y/52vbXITIeGIcMZQU0Qk.LzyUzYu",
       "name": "Pedro Vilaaa",
       "role": "MANAGER",
-      "isActive": true,
+      "isActive": false,
       "permissions": null,
       "createdAt": "2026-06-09T06:11:22.072Z",
       "id": "3",
-      "updatedAt": "2026-06-15T10:18:24.276Z"
+      "updatedAt": "2026-06-17T11:26:13.909Z"
     },
     {
       "email": "belen.perez@example.com",
@@ -31,6 +31,16 @@
       "permissions": null,
       "createdAt": "2026-06-09T06:11:22.072Z",
       "id": "ysRAocS"
+    },
+    {
+      "email": "asd@asd.es",
+      "password": "$2a$10$A6.dTPTEJPRo9foduh9mZuCR4qPlqXlqTswtIx1yIsqAhOOJT5V5S",
+      "id": "9qyJfdL",
+      "name": "aaA",
+      "isActive": true,
+      "role": "USER",
+      "permissions": null,
+      "updatedAt": "2026-06-17T11:15:14.725Z"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

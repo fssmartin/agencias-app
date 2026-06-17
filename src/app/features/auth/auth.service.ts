@@ -47,7 +47,7 @@ export class AuthService extends BaseService implements AuthState {
   //      return user ? this.getIconRole(user.role) : '👤'
   // });
 
-  private _now = signal(Date.now());
+  // private _now = signal(Date.now());
  
   private http = inject(HttpClient); 
   private userService = inject(UserService); 

@@ -1,5 +1,5 @@
 
  
 export interface NotificacionUiState {
-  currentNotification: number ;
+  msg: string
 };

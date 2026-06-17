@@ -39,7 +39,10 @@
   <ul *ngIf="isHeader" class="navbarUser">
       <ng-container  *ngIf="authService.isLogged(); else loggedOut">        
         <li >
-            <app-notifications [count]="notificationService.countNotification"></app-notifications>
+            <div class="notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span class="badge">4</span>
+            </div>
             <!-- le paso la computed sin () pq sino le paso el valor!!  -->
         </li>
         <li >

@@ -5,32 +5,25 @@ import { Router, RouterLink } from '@angular/router';
 import { LoadingComponent } from "../../../../../shared/components/ui/loading/loading.component";
 
 //import { UserUiStateService } from '../../user-ui-state.service';
+//import { toSignal } from '@angular/core/rxjs-interop';
 import { UserService } from '../../user.service';
 import { BehaviorSubject, catchError, combineLatest, delay, map, of, startWith } from 'rxjs';
-//import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../../auth/auth.service';
 import { UserStore } from '../../user.store';
+import { NotificationsComponent } from "../../../../../shared/components/ui/notifications/notifications.component";
 
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, LoadingComponent],
+  imports: [CommonModule, RouterLink, LoadingComponent, NotificationsComponent],
   template: `
 
 <!-- <pre>{{ userState().selectedUser | json  }}</pre>  -->
 
     <h4 *ngIf="!userState()?.loading">
        <span>User List</span>
-       <div class="msgInfo">
-            <div *ngIf="!userState()?.loading && userState()?.msg" class="success">
-                <div class="msj msjOk">{{ userState()?.msg }}</div>  
-            </div>
-            <!-- <div *ngIf="error$ | async as error" class="error"> -->
-            <div *ngIf="!userState()?.loading && userState()?.error" class="error">
-                <div class="msj msjError">{{ userState()?.error }}</div>
-            </div> 
-        </div>
+       <app-notifications></app-notifications>
     </h4> 
 
     <!-- <app-loading *ngIf="loading$ | async"></app-loading> -->
@@ -111,8 +104,8 @@ export class UserListComponent {
  
   selectedUser: User = this.userService.userEmpty;
 
-  // successMessage: string | null = null;
   highlightedUserId: string | null = null;
+  // successMessage: string | null = null;
   // loadingSignal = this.userService.loadingSignal;
   // errorSignal   = this.userService.errorSignal;
 
@@ -159,28 +152,34 @@ export class UserListComponent {
   //       })
   // )  
   
+  private timeoutId: any;
+
   constructor(
    // private UserUiStateService: UserUiStateService,
-    public authService:AuthService )
-  {    
-        effect(()=>{
-          const msg       = this.userState().msg;
+    public authService:AuthService ){    
+
+     effect(()=>{
+//          const msg       = this.userState().msg;
           const error     = this.userState().error;
           const userSelec = this.userState().selectedUser;
           
-          if(msg || error ){ 
-            setTimeout(() => {
-              //this.hideMsg = true
-           //   this.userStore.cleanMsgState(false);
-            }, 3000);
-          }
+          // if(msg || error ){ 
+          //   setTimeout(() => {
+          //      this.userStore.cleanMsgState(false);
+          //   }, 3000);
+          // }
+          if(!userSelec) return;
+
           if(userSelec){ 
+
             this.selectedUser = userSelec;
-            setTimeout(() => {
-              //this.userStore.cleanMsgState(false);
+            
+            clearTimeout(this.timeoutId);
+
+            this.timeoutId = setTimeout(() => {
+              this.userStore.cleanMsgState(false);
               this.selectedUser = this.userService.userEmpty
               this.msgLoad = 'Cargando Lista Usuarios'
-              console.log("entro aqui no ?????")
             }, 3000);
           }
 
@@ -189,32 +188,29 @@ export class UserListComponent {
 
   ngOnInit(): void {
  
-    // me viene de edit , y se cual ha sido el id actualizado para hacer algun efecto jejeje       
-    //const { userId, action } = history.state || {};
-    // console.log('UserListComponent ngOnInit - history.state:', history.state);
+        // me viene de edit o create, y se cual ha sido el id actualizado para hacer algun efecto jejeje       
+        //const { userId, action } = history.state || {};
+        // console.log('UserListComponent ngOnInit - history.state:', history.state);
 
 
-  // tenemos ahora un store que limpia el componente de funcionalidad...  
-   this.userStore.getUsers();
+      // tenemos ahora un store que limpia el componente de funcionalidad...  
+      this.userStore.getUsers();
 
-    // const { userId, action } = this.UserUiStateService.consumeState() || {};   
-    // if ( userId && action) {             
-    //     this.showMessageState({userId ,action})
-    // } 
+        // const { userId, action } = this.UserUiStateService.consumeState() || {};   
+        // if ( userId && action) {             
+        //     this.showMessageState({userId ,action})
+        // } 
 
-
-   
   } 
 
   deleteUser(user: User) {
 
-    if(!user.id) return;
-        
-    if (confirm('¿Está usted seguro de borrar este usuario?')) {
-      console.log("Usuario a eliminar:", user.id);
-      this.msgLoad = "Deleting User"
-      this.userStore.deleteUser(user.id);
-    }
+      if(!user.id) return;
+          
+      if (confirm('¿Está usted seguro de borrar este usuario?')) {
+          this.msgLoad = "Deleting User"
+          this.userStore.deleteUser(user.id);
+      }
 
   } 
 

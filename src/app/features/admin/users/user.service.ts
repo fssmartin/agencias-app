@@ -34,7 +34,7 @@ export class UserService extends BaseService{
   
     return this.http.get<User[]>(this.api).pipe(
       delay(1000),
-      catchError(this.handleError('getUsuarios'))
+      catchError(this.handleError('getUsuarios'))  // es comun para toda la aplicacion
       // catchError((error) => {
       //   console.error('Error en el servicio:', error.status, error);
       //   if(error.status===404) 

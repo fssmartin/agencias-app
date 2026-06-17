@@ -72,7 +72,7 @@ export interface UserState  {
   data: User[];
   selectedUser: User | null;
   loading: boolean;
-  error: string | null;
-  msg:string | null;
+  error: boolean;
+  //msg:string | null;
 };
 

@@ -96,7 +96,7 @@ export class UserEditComponent {
           .subscribe(mode => {
             this.mode = mode!;
            });
-           console.log("_______userState().selectedUser_____",this.userState().selectedUser)
+           console.log("_______userState().selectedUser_____",this.mode,this.userState().selectedUser)
   }
  
   onSave(user: User) {

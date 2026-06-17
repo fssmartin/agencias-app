@@ -18,11 +18,11 @@ import { UserStore } from '../../user.store';
 
       <h4>
           <span>{{ user?.id ?  mode === 'view' ? 'Consulta Usuario' :  'Editar Usuario' : 'Crear Usuario' }}</span>
-          <div class="msgInfo">
+          <!-- <div class="msgInfo">
                 <div *ngIf="!userState()?.loading && userState()?.msg" class="success">
                     <div class="msj msjOk">{{ userState()?.msg }}</div>  
                 </div>
-            </div>          
+          </div>           -->
       </h4>
       
       <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off" 
@@ -37,7 +37,7 @@ import { UserStore } from '../../user.store';
 
             <div>
               <label><span>Activo</span>
-                <input type="checkbox" formControlName="isActive" />
+                <input type="checkbox" formControlName="isActive"/>
               </label> 
             </div>
     
@@ -142,27 +142,29 @@ export class UserFormComponent {
     ngOnInit(): void {
 
         console.log("user en form", this.user);
-
-        const userData = this.user || this.userService.userEmpty;
+        this.user = this.user && this.mode!='create'? this.user : this.userService.userEmpty
+        const userData = this.user;
+       // userData.password = '';
 
         this.form = this.createFbGroup(userData); 
     
-        this.form.patchValue(userData); 
+        this.form.patchValue(userData);
+
         // Si se proporciona un usuario, actualiza el formulario con sus valores, 
         // de lo contrario, usa el usuario vacío
          // los dos son iguales , pero patch mete en el form los que vengan 
          // y set mete todos y si no vienen los borra, por eso es mejor patch
          //this.form.patchValue(userData);
          //this.form.setchValue(userData);    
-        if(userData.id==''){
-          this.form.reset({
-            email:'',
-            name:'',
-            password: '',
-            role:'USER'
-        });
-
-        }
+         
+        // if(userData.id=='' || this.mode==='create' ){
+        //       this.form.reset({
+        //         email:'',
+        //         name:'',
+        //         password: '',
+        //         role:'ADMIN'
+        //     }); 
+        // }
     }
     
     createFbGroup(user: User) {
