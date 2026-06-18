@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core'; 
-import { User, UserRole } from '../../../../../core/models/users.models';
+import { User, UserRole } from '../../../../../../core/models/users.models';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../user.service';
 
-import { createUserForm } from '../user-form/user-valid.form';
-import { getErrorMessage } from '../../../../../shared/utils/forms/form-errors';
-import { FechaEsPipe } from '../../../../../shared/utils/pipes/fecha-es.pipe';
+import { createUserForm } from './user-valid.form';
+import { getErrorMessage } from '../../../../../../shared/utils/forms/form-errors';
+import { FechaEsPipe } from '../../../../../../shared/utils/pipes/fecha-es.pipe';
 import { UserStore } from '../../user.store';
 
 

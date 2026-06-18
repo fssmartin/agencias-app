@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable,   signal } from "@angular/core";
 import { AuthState, AuthStateModel, AuthUser, LoginResponse, User, UserRole } from "../../core/models/users.models";
-import { UserService } from "../admin/users/user.service";
+import { UserService } from "../admin/pages/users/user.service";
 import { HttpClient } from "@angular/common/http";
 import { catchError, delay, map, Observable, of, take, tap, throwError } from "rxjs";
 import { BaseService } from "../../core/services/base.service";

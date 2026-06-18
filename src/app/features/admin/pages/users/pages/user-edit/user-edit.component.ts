@@ -1,6 +1,6 @@
 import { Component, inject, Input, signal } from '@angular/core'; 
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { AuthState, User, UserRole } from '../../../../../core/models/users.models';
+import { AuthState, User, UserRole } from '../../../../../../core/models/users.models';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../user.service';
@@ -8,9 +8,9 @@ import { UserService } from '../../user.service';
 
 import { UserFormComponent } from "../user-form/user-form.component";
 import { catchError, delay, filter, map, of, switchMap, tap } from 'rxjs';
-import { LoadingComponent } from "../../../../../shared/components/ui/loading/loading.component";
+import { LoadingComponent } from "../../../../../../shared/components/ui/loading/loading.component";
 import { toSignal } from '@angular/core/rxjs-interop';
-import { AuthService } from '../../../../auth/auth.service';
+import { AuthService } from '../../../../../auth/auth.service';
 import { UserStore } from '../../user.store';
 
 
@@ -52,7 +52,7 @@ export class UserEditComponent {
 
   roles: string[] = [];
   mode:string = 'edit'; // 'view' o 'edit'
-  msgLoading : string = this.userStore.state().selectedUser ? 'Cargando data del Usuario' : 'Cargando';
+  msgLoading : string = 'Cargando';
 
   // public loadingSignal = signal<boolean>(true);
 
@@ -84,8 +84,11 @@ export class UserEditComponent {
     // 
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');      
-      if (id) this.userStore.getUserById(id);
       this.mode='create'
+      if (id) {
+          this.userStore.getUserById(id);
+          this.msgLoading = 'Cargando data del Usuario'
+      }
     });
 
     this.roles = this.route.snapshot.data['roles'];

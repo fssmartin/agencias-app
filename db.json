@@ -13,14 +13,14 @@
     },
     {
       "email": "pedro.vila@example.com",
-      "password": "$2a$10$e.UK7xf2g6jgCpThSMUHEud1Y/52vbXITIeGIcMZQU0Qk.LzyUzYu",
+      "password": "$2a$10$hKa0oW6oQXY5y3j5sOywQuUpglPOJBiTw2xmjQmFDcgZegvmUJnkm",
       "name": "Pedro Vilaaa",
       "role": "MANAGER",
-      "isActive": false,
+      "isActive": true,
       "permissions": null,
       "createdAt": "2026-06-09T06:11:22.072Z",
       "id": "3",
-      "updatedAt": "2026-06-17T11:26:13.909Z"
+      "updatedAt": "2026-06-18T15:16:13.616Z"
     },
     {
       "email": "belen.perez@example.com",
@@ -33,14 +33,37 @@
       "id": "ysRAocS"
     },
     {
+      "email": "asdasd@asd.es",
+      "password": "$2a$10$tbFeFm7YmtkApGl5gzwEuu7MQwnjQ6ZcbG2fIlDK5vRK8HKeyEEpW",
+      "id": "wgB4Sx1",
+      "name": "Aaaaaa",
+      "isActive": false,
+      "role": "USER",
+      "permissions": [],
+      "createdAt": "2026-06-18T11:59:32.885Z",
+      "updatedAt": "2026-06-18T15:15:41.680Z"
+    },
+    {
       "email": "asd@asd.es",
-      "password": "$2a$10$A6.dTPTEJPRo9foduh9mZuCR4qPlqXlqTswtIx1yIsqAhOOJT5V5S",
-      "id": "9qyJfdL",
-      "name": "aaA",
+      "password": "$2a$10$A7Ajk34nYkNXdKz1OTwtROFMwyeMb08ZDI5elztmIPPuv9xbBn2by",
+      "id": "MgGQpVt",
+      "name": "ddddA",
       "isActive": true,
       "role": "USER",
-      "permissions": null,
-      "updatedAt": "2026-06-17T11:15:14.725Z"
+      "permissions": [],
+      "createdAt": "2026-06-18T11:59:32.885Z",
+      "updatedAt": "2026-06-18T12:00:39.445Z"
+    },
+    {
+      "email": "aass@asd.es",
+      "password": "$2a$10$CpElRmSU5b976cvZcQMBSObs/35l9N0/rZwxNJdPvFHOvO9lP4lmK",
+      "id": "RtBaFhy",
+      "name": "dddA",
+      "isActive": true,
+      "role": "USER",
+      "permissions": [],
+      "createdAt": "2026-06-18T12:01:51.901Z",
+      "updatedAt": "2026-06-18T15:19:47.041Z"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

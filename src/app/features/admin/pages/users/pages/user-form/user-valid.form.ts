@@ -1,7 +1,7 @@
 
 import {FormBuilder } from '@angular/forms';
-import { AppValidators } from '../../../../../shared/utils/forms/validators';
-import { User } from '../../../../../core/models/users.models';
+import { AppValidators } from '../../../../../../shared/utils/forms/validators';
+import { User } from '../../../../../../core/models/users.models';
 
 export const createUserForm = (fb: FormBuilder,user: User) => {
   return fb.group({

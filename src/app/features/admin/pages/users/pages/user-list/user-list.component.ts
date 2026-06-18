@@ -1,25 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, inject } from '@angular/core';
-import { User } from '../../../../../core/models/users.models';
+import { User } from '../../../../../../core/models/users.models';
 import { Router, RouterLink } from '@angular/router';
-import { LoadingComponent } from "../../../../../shared/components/ui/loading/loading.component";
+import { LoadingComponent } from "../../../../../../shared/components/ui/loading/loading.component";
 
 //import { UserUiStateService } from '../../user-ui-state.service';
 //import { toSignal } from '@angular/core/rxjs-interop';
 import { UserService } from '../../user.service';
 import { BehaviorSubject, catchError, combineLatest, delay, map, of, startWith } from 'rxjs';
-import { AuthService } from '../../../../auth/auth.service';
+import { AuthService } from '../../../../../auth/auth.service';
 import { UserStore } from '../../user.store';
-import { NotificationsComponent } from "../../../../../shared/components/ui/notifications/notifications.component";
+import { NotificationsComponent } from "../../../../../../shared/components/ui/notifications/notifications.component";
+import { TableListComponent } from "../../../../components/table-list/table-list.component";
 
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, LoadingComponent, NotificationsComponent],
+  imports: [CommonModule, RouterLink, LoadingComponent, NotificationsComponent, TableListComponent],
   template: `
 
-<!-- <pre>{{ userState().selectedUser | json  }}</pre>  -->
+<pre>{{ userState().selectedUser | json  }}</pre> 
 
     <h4 *ngIf="!userState()?.loading">
        <span>User List</span>
@@ -33,30 +34,45 @@ import { NotificationsComponent } from "../../../../../shared/components/ui/noti
     <!-- <ng-container *ngIf="!(loading$ | async)"> -->
     <ng-container  *ngIf=" !userState()?.loading">
 
+        <app-table-list 
+            (sort)="onSortBy($event)"
+            (delete)="onDelete($event)"
+            [fieldOrder] = userStore.fieldOrderState()
+            [direcOrder] = userStore.direcOrderState()
+            [data]=userStore.orderDataState()
+            [columns]="[
+              { key: 'isActive', label: '' ,      type :'boolean' },
+              { key: 'role',     label: '' ,      type :'role' },
+              { key: 'name',     label: 'Name' ,  type :'text' },
+              { key: 'email',    label: 'Email' , type :'text'}
+            ]"
+        ></app-table-list>
+
+
         <!-- <table *ngIf="sortedUsers$ | async as users" -->
         <table 
           class="listTable">
           <tr>
             <th></th>
-            <th (click)="sortBy('name')">
+            <th (click)="onSortBy('name')">
                 Name
-              <span *ngIf="( userStore.fieldState() ) === 'name'">
-                {{  userStore.direcState() === 'asc' ? '▲' : '▼' }}
+              <span *ngIf="( userStore.fieldOrderState() ) === 'name'">
+                {{  userStore.direcOrderState() === 'asc' ? '▲' : '▼' }}
               </span> 
             </th>
-            <th (click)="sortBy('email')">
+            <th (click)="onSortBy('email')">
                 Email  
-              <span *ngIf="( userStore.fieldState() ) === 'email'">
-                {{  userStore.direcState() === 'asc' ? '▲' : '▼' }}
+              <span *ngIf="( userStore.fieldOrderState() ) === 'email'">
+                {{  userStore.direcOrderState() === 'asc' ? '▲' : '▼' }}
               </span>
             </th>
             <th><button 
-                  routerLink="/admin/users/edit"  
+                  routerLink="edit"  
                   [queryParams]="{ mode: 'create' }"
                   class="fRight btEnlace btCrear">Crear Usuario</button></th>
           </tr>
-          <tr *ngFor="let user of userStore.orderState(); trackBy: trackById"
-              [ngClass]="{ 'highlight-row': user.id === selectedUser?.id}">
+          <tr *ngFor="let user of userStore.orderDataState(); trackBy: trackById"
+              [ngClass]="{ 'highlight-row': user.id === this.userState().selectedUser?.id}">
             <td>
                 <span [title]="user.isActive + ' Usuario'">{{ user.isActive ? '✅' : '❌' }}</span>
                 <span [title]="user.role">{{ user.role === 'ADMIN' ? '🛡️' : user.role === 'MANAGER' ? '📊' : '👤' }}</span>
@@ -64,10 +80,10 @@ import { NotificationsComponent } from "../../../../../shared/components/ui/noti
             <td>{{ user.name }}</td>
             <td>{{ user.email }}-{{ user.id }}</td>
             <td>
-              <button [routerLink]="['/admin/users/edit', user.id]"
+              <button [routerLink]="['edit', user.id]"
                       [queryParams]="{ mode: 'view' }" title="Show">
                       <i class="fa-solid fa-eye"></i></button>
-              <button [routerLink]="['/admin/users/edit', user.id]" 
+              <button [routerLink]="['edit', user.id]" 
                        [queryParams]="{ mode: 'edit' }" title="Edit">
                        <i class="fa-solid fa-pencil"></i></button>
               <button (click)="deleteUser(user)" 
@@ -103,11 +119,9 @@ export class UserListComponent {
   
   msgLoad :string = "Cargando Lista Usuarios";
  
-  selectedUser: User = this.userService.userEmpty;
+  //selectedUser: User = this.userService.userEmpty;
 
-  
-
-  highlightedUserId: string | null = null;
+  // highlightedUserId: string | null = null;
   // successMessage: string | null = null;
   // loadingSignal = this.userService.loadingSignal;
   // errorSignal   = this.userService.errorSignal;
@@ -164,23 +178,17 @@ export class UserListComponent {
 //          const msg       = this.userState().msg;
           const error     = this.userState().error;
           const userSelec = this.userState().selectedUser;
-          
-          // if(msg || error ){ 
-          //   setTimeout(() => {
-          //      this.userStore.cleanMsgState(false);
-          //   }, 3000);
-          // }
+ 
           if(!userSelec) return;
 
           if(userSelec){ 
 
-            this.selectedUser = userSelec;
+           // this.selectedUser = userSelec;
             
             clearTimeout(this.timeoutId);
 
             this.timeoutId = setTimeout(() => {
               this.userStore.cleanMsgState(false);
-              this.selectedUser = this.userService.userEmpty
               this.msgLoad = 'Cargando Lista Usuarios'
             }, 3000);
           }
@@ -204,7 +212,30 @@ export class UserListComponent {
         // } 
 
   } 
-
+ 
+ 
+  //Cambiar orden
+  onSortBy(field: keyof User) { 
+ 
+      this.userStore.sortState.set(
+          {
+            field:field,
+            dir: this.userStore.direcOrderState() ===  'asc' ? 'desc' : 'asc'
+          }
+        )
+ 
+  }
+  // de la tabla generica , OUTPUT
+  onDelete(user:User){
+    console.log("user a borrar", user)
+    if(!user.id) return;
+        
+    if (confirm('¿Está usted seguro de borrar este usuario?')) {
+        this.msgLoad = "Deleting User";
+        this.userStore.deleteUser(user.id);
+    }    
+  } 
+  
   deleteUser(user: User) {
 
       if(!user.id) return;
@@ -215,7 +246,6 @@ export class UserListComponent {
       }
 
   } 
-
   
   // no vale ya
   // showMessageState(state:any){
@@ -233,21 +263,11 @@ export class UserListComponent {
   // }
 
 
-  select(user: User) {
-    this.selectedUser = user;
-  }
-
   //Solo actualiza los que cambian
   trackById(index: number, user: User) {
     return user.id;
   }
 
-  //Cambiar orden
-  sortBy(field: keyof User) { 
- 
-      this.userStore.sortUser.set({field:field,dir: this.userStore.direcState() ===  'asc' ? 'desc' : 'asc'})
- 
-  }
 
 
 

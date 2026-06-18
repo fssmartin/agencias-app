@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, CanDeactivateFn, Router } from '@angular/router';
 import { AuthService } from '../../features/auth/auth.service';
-import { UserStore } from '../../features/admin/users/user.store';
+import { UserStore } from '../../features/admin/pages/users/user.store';
 
 export const adminGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
@@ -18,16 +18,28 @@ export const adminGuard: CanActivateFn = () => {
 };
 
 export const loggedGuard: CanActivateFn = () => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-console.log("----- loggedGuard: CanActivateFn")
-  if (authService.isLogged()) {
-    return true;
-  }
+    const authService = inject(AuthService);
+    const router = inject(Router);
+    
+    console.log("----- loggedGuard: CanActivateFn")
+    if (authService.isLogged()) {
+      return true;
+    }
 
-  // ❌ no esta logado → redirigir
-  router.navigate(['/home']);
-  return false;
+    // ❌ no esta logado → redirigir
+    router.navigate(['/home']);
+    return false;
 };
+
+
+
+export const canDeactivateGuard: CanDeactivateFn<any> =
+  (component, currentRoute, currentState, nextState) => {
+
+    //tengo que limpiar todos los stores de admin cuando se salgan !
+     const userStore = inject(UserStore);
+     userStore.cleanMsgState(false);
+    return true;
+  };
 
  

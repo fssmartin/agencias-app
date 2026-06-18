@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core'; 
+import { Component, inject } from '@angular/core'; 
 // import { Question} from '../../models/questions.models';
-import { AuthService } from '../../../../auth/auth.service';
+// import { AuthService } from '../../../../../auth/auth.service';
 import { RouterLink } from '@angular/router';
 import { QuestionService } from '../../question.service';
 import { Question } from '../../models/questions.model';
+import { TableListComponent } from '../../../../components/table-list/table-list.component';
  
 
 
 @Component({
   selector: 'app-question-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TableListComponent],
   template: `
 
 
@@ -19,7 +20,16 @@ import { Question } from '../../models/questions.model';
  
     <ng-container  >
 
-        <table
+        <app-table-list 
+            [data]=questions
+            [columns]="[
+              { key: 'descripcion', label: 'Descripcion', type:'text' },
+              { key: 'createdAt', label: 'CreatedAt', type:'date' }
+            ]"
+            [crear] = "'Crear Question'"
+        ></app-table-list>
+
+        <!-- <table
           *ngIf="questions"
           class="listTable">
           <tr>
@@ -49,14 +59,23 @@ import { Question } from '../../models/questions.model';
               </td>
             </tr>
           </ng-template>
-        </table>    
+        </table>   -->
+
     </ng-container> 
     
 
   `
 })
 export class QuestionListComponent {  
-  selected?: any;
+
+  private questionService = inject(QuestionService);
+  // public questionStore = inject(QuestionStore);
+
+  // userState = this.questionStore.state;
+  
+  msgLoad :string = "Cargando Lista Questions";
+ 
+  // selectedItem: Question = this.questionService.questionEmpty;
 
     questions: Question[] = [
       { id: '1', descripcion: '¿Cuál es tu color favorito?', isActive: true, createdAt: new Date() },
@@ -70,20 +89,24 @@ export class QuestionListComponent {
   ngOnInit(): void {  
   
   }
-
-  select(question: any) {
-    this.selected = question;
-  }
+ 
 
   // Solo actualiza los que cambian
   trackById(index: number, question: any) {
     return question.id;
   }
 
-  deleteQuestion(question: any) {
-    console.log("Pregunta a eliminar:", question.id);
-     
+  // de la tabla generica , OUTPUT
+  onDelete(question:Question){
+    console.log("question a borrar", question)
+    if(!question.id) return;
+        
+    if (confirm('¿Está usted seguro de borrar esta question?')) {
+        this.msgLoad = "Deleting question";
+        // this.questionStore.deleteUser(question.id);
+    }    
   }
+  
    
     
 }

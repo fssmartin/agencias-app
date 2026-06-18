@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core'; 
-import { User } from '../../../../../core/models/users.models';
+import { User } from '../../../../../../core/models/users.models';
 import { UserService } from '../../user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserStore } from '../../user.store';
 
-import { LoadingComponent } from '../../../../../shared/components/ui/loading/loading.component';
+import { LoadingComponent } from '../../../../../../shared/components/ui/loading/loading.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 //import { UserUiStateService } from '../../user-ui-state.service';

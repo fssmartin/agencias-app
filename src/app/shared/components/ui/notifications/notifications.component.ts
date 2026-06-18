@@ -7,29 +7,11 @@ import { NotificationUiService } from '../../../../core/services/notificactions.
   standalone: true,
   imports: [CommonModule],  
   template:`
-
-
-       <div class="msgInfo" >
-
-            <div class="msj" [ngClass]="notificationUi.state()?.type">{{notificationUi.state()?.message}}</div>  
-       
-            <!-- <div  class="success">
-                <div class="msj msjOk">el mensajeeee</div>  
-            </div> -->
-
-            <!-- <div *ngIf="" class="error">
-                <div class="msj msjError">{{notificationUi}}</div>
-            </div> -->
-        </div>
-
-
-
+    <div class="msgInfo" >
+        <div class="msj" [ngClass]="notificationUi.state()?.type">{{notificationUi.state()?.message}}</div>  
+    </div>
 `
 })
-export class NotificationsComponent { 
-  
+export class NotificationsComponent {   
     public notificationUi = inject(NotificationUiService)
-
-
-
 }

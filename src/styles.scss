@@ -283,6 +283,12 @@ table tr:not(:first-child, :last-child):hover{background-color: #F7FEE7;}
         &:last-child{  
           text-align: right;
         }
+        &.boolean, &.role{
+          text-align: center;
+          margin:0;padding: 0;line-height: normal;          
+          width: 1%;
+          white-space: nowrap;
+        }
     }
   } 
 }

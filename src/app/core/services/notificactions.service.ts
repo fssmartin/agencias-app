@@ -31,7 +31,7 @@ export class NotificationUiService {
   } 
 
   cleanNotify():void{
-    console.log("____ CLEAN NOTIFYYYY")
+    console.log("____ CLEAN NOTIFYYYY msg success | error")
     this._state.set(null);    
   }
 

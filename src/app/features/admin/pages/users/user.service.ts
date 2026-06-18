@@ -1,8 +1,8 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
-import { User, UserRole } from "../../../core/models/users.models";
+import { User, UserRole } from "../../../../core/models/users.models";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, catchError, delay, filter, finalize, map, Observable, of, shareReplay, startWith, Subject, switchMap, take, tap, throwError } from "rxjs";
-import { BaseService } from "../../../core/services/base.service";
+import { BaseService } from "../../../../core/services/base.service";
 
 @Injectable({ providedIn: 'root' })
 export class UserService extends BaseService{
@@ -62,7 +62,7 @@ export class UserService extends BaseService{
     return this.http.get<User>(`${this.api}/${id}`).pipe(
       delay(1000),
       tap(user => {
-        console.log('USER:', user);
+        //console.log('USER:', user);
       }),
       catchError(this.handleError('getById'))
       // catchError(err => {
@@ -79,7 +79,7 @@ export class UserService extends BaseService{
     return this.http.put<any>(`${this.api}/${user.id}`, user).pipe(
       delay(1000),
       tap(user => {
-        console.log('USER modified service',user);
+       // console.log('USER modified service',user);
       }),
       catchError(this.handleError('updateUser'))
       // catchError(err => {
