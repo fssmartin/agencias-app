@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
+    <h4>Detail:</h4>
     <table>
       <tr>
         <td>{{category?.id}}</td>

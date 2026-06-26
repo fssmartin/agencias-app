@@ -1,8 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core'; 
-// import { Question} from '../../models/questions.models';
-// import { AuthService } from '../../../../../auth/auth.service';
-import { RouterLink } from '@angular/router';
 import { QuestionService } from '../../question.service';
 import { Question } from '../../models/questions.model';
 import { TableListComponent } from '../../../../components/table-list/table-list.component';
@@ -12,7 +9,7 @@ import { TableListComponent } from '../../../../components/table-list/table-list
 @Component({
   selector: 'app-question-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, TableListComponent],
+  imports: [CommonModule,  TableListComponent],
   template: `
 
 
@@ -23,8 +20,8 @@ import { TableListComponent } from '../../../../components/table-list/table-list
         <app-table-list 
             [data]=questions
             [columns]="[
-              { key: 'descripcion', label: 'Descripcion', type:'text' },
-              { key: 'createdAt', label: 'CreatedAt', type:'date' }
+              { key: ['descripcion'], label: 'Descripcion', type:'text' },
+              { key: ['createdAt'], label: 'CreatedAt', type:'date' }
             ]"
             [crear] = "'Crear Question'"
         ></app-table-list>

@@ -14,25 +14,42 @@ export const USERS_ROUTES: Routes = [
         loadComponent: () =>
           import('./pages/user-list/user-list.component')
             .then(m => m.UserListComponent)
+      }, 
+      {
+        path: 'create',
+        data: { mode: 'create' },
+        loadComponent: () =>
+          import('./pages/user-edit/user-edit.component')
+            .then(m => m.UserEditComponent)
       },
+      {
+        path: ':id',
+        data: { mode: 'view' },
+        loadComponent: () =>
+          import('./pages/user-edit/user-edit.component')
+            .then(m => m.UserEditComponent)
+      },
+      {
+        path: ':id/edit',
+        data: { mode: 'edit' },
+        loadComponent: () =>
+          import('./pages/user-edit/user-edit.component')
+            .then(m => m.UserEditComponent)
+      },
+
       // {
-      //   path: 'create',
+      //   path: 'edit/:id',
+      //   data: { mode: 'create' },        
       //   loadComponent: () =>
-      //     import('./pages/user-create/user-create.component')
-      //       .then(m => m.UserCreateComponent)
+      //     import('./pages/user-edit/user-edit.component')
+      //       .then(m => m.UserEditComponent)
       // },
-      {
-        path: 'edit/:id',
-        loadComponent: () =>
-          import('./pages/user-edit/user-edit.component')
-            .then(m => m.UserEditComponent)
-      },
-      {
-        path: 'edit',
-        loadComponent: () =>
-          import('./pages/user-edit/user-edit.component')
-            .then(m => m.UserEditComponent)
-      }
+      // {
+      //   path: 'edit',
+      //   loadComponent: () =>
+      //     import('./pages/user-edit/user-edit.component')
+      //       .then(m => m.UserEditComponent)
+      // }
     ]
   }
 ];

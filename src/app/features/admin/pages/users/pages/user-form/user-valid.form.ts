@@ -1,16 +1,32 @@
 
 import {FormBuilder } from '@angular/forms';
 import { AppValidators } from '../../../../../../shared/utils/forms/validators';
-import { User } from '../../../../../../core/models/users.models';
+import { ActionUser } from '../../models/user.model';
 
-export const createUserForm = (fb: FormBuilder,user: User) => {
-  return fb.group({
-    id:       [user.id],
-    name:     [user.name , AppValidators.name],
-    email:    [user.email, AppValidators.email],
-    password: [user.password , AppValidators.password],
-    isActive: [user.isActive],
-    role:     [user.role],
-    permissions: [user.permissions]
-  });
+export const createUserForm = (fb: FormBuilder,user: ActionUser) => {
+  if(user.id){
+    // update SIN password
+    return fb.group({
+      id:        [user.id],
+      username:  [user.username , AppValidators.name],
+      firstname: [user.firstname , AppValidators.name],
+      lastname:  [user.lastname , AppValidators.name],
+      email:     [user.email, AppValidators.email],
+      isActive:  [user.isActive],
+      role:      [user.role],
+      //permissions: [user.permissions]
+      //permissions: [user.permissions || []]
+    });
+  }else{
+    return fb.group({
+      id:        [user.id],
+      username:  [user.username , AppValidators.name],
+      firstname: [user.firstname , AppValidators.name],
+      lastname:  [user.lastname , AppValidators.name],
+      email:     [user.email, AppValidators.email],
+      isActive:  [user.isActive],
+      role:      [user.role],
+      password:  [ '' , AppValidators.password],
+    });
+  }
 };

@@ -15,7 +15,9 @@ export class FechaEsPipe implements PipeTransform {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
+      hour: 'numeric',
+      minute:'numeric'
     }).format(fecha);
 
     // Primera letra en mayúscula

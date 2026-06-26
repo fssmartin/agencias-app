@@ -1,7 +1,7 @@
 import { Component} from '@angular/core';  
 import { AuthService } from '../../auth/auth.service';
 import { CommonModule } from '@angular/common';
-
+ 
 
 
 @Component({
@@ -13,7 +13,9 @@ import { CommonModule } from '@angular/common';
         <div class="col">
             <h3>Profile</h3>
             <p>This is the profile page of the application.</p>   
-            <pre>{{ authService.currentUser() | json }}</pre>               
+            <pre>{{ authService.currentUser() | json }}</pre>    
+            
+                 
         </div>
     </div>     
   `

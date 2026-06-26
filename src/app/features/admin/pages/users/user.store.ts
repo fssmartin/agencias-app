@@ -1,8 +1,9 @@
-import { computed, Injectable, signal } from "@angular/core";
-import { User, UserState } from "../../../../core/models/users.models";
+import { computed, DestroyRef, inject, Injectable, signal } from "@angular/core";
 import { UserService } from "./user.service";
 import { Router } from "@angular/router";
 import { NotificationUiService } from "../../../../core/services/notificactions.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActionUser, UserState } from "./models/user.model";
 
 @Injectable({ providedIn: 'root' })
 export class UserStore {
@@ -12,7 +13,6 @@ export class UserStore {
         data: [],
         loading: false,
         error: false,
-    //    msg: null as string | null
     });
 
     
@@ -34,7 +34,6 @@ export class UserStore {
         const valueA = (a as any)[field];
         const valueB = (b as any)[field];
 
-
         let result = 0;
 
         if (valueA instanceof Date && valueB instanceof Date) {
@@ -51,6 +50,9 @@ export class UserStore {
         })
     });   
 
+    private destroyRef = inject(DestroyRef); // ✅ CLAVE
+
+
     constructor(private userService: UserService,
         private router: Router,
         private notificationUi:NotificationUiService
@@ -64,19 +66,44 @@ export class UserStore {
         // solo cambio el loading.. el userSelected a null no , pq aqui entra la primera vez como cuando, editas o creas.. para seleccionar en listado
 
         this.userService.getUsuarios()
+        .pipe(takeUntilDestroyed(this.destroyRef)) 
         .subscribe({
-                next:(data)=>{
-                    this._state.update(s=> ({...s, data: data,loading:false,error:false}))
-                },
-                error:(err)=>{
-                    this._state.update(s=> ({...s, data: [], loading:false,error:true}))
-                    this.notificationUi.error(err.message);
-                },
-                complete:()=>{
-                    this.notificationUi.show();// para el setTimeout y ocultar..
-                }
+            next:(data)=>{
+                console.log("ok ")
+                this._state.update(s=> ({...s, data: data,loading:false,error:false}))
+            },
+            error:(err)=>{
+                console.log("error ")
+                this._state.update(s=> ({...s, data: [], loading:false,error:true}))
+                this.notificationUi.error(err.message);
+            },
+            complete:()=>{
+                console.log("complete ",this._state())
+                this.notificationUi.show();// para el setTimeout y ocultar..
+            }
         })
 
+    }
+
+    getUserById(id:string):void{
+
+        console.log("__ store getUserById,",id)
+        
+        this.initState();
+
+        this.userService.getById(id)
+        .pipe(takeUntilDestroyed(this.destroyRef)) 
+        .subscribe({
+            next:(data)=>{    
+                console.log("__ok",data)
+                this._state.update(s=>({...s, selectedUser:data ,loading:false,error:false}))
+            },
+            error:(err)=>{
+                console.log("__error")
+                this._state.update(s=>({...s, selectedUser:null ,loading:false,error:true}))
+                this.notificationUi.error(err.message);
+            }
+        })  
     }
 
     deleteUser(id:string):void{
@@ -89,38 +116,21 @@ export class UserStore {
         const previous = this._state().data;
 
         this.userService.deleteById(id)
+        .pipe(takeUntilDestroyed(this.destroyRef)) // ✅ ahora 
         .subscribe({
                 next:(data)=>{    
                     //no llamo de nuevo a getUser a back... modifico el array            
-                    this._state.update(s=>({...s,data: s.data.filter(u => u.id !== id),loading:false}))
+                    this._state.update(s=>({...s,selectedUser:null,data: s.data.filter(u => u.id !== id),loading:false}))
                     this.notificationUi.success('✅ Usuario borrado correctamente');
                 },
                 error:(err)=>{
-                    this._state.set({selectedUser:null,data: previous,loading:false,error:true})
+                    this._state.update(s=>({...s,data: previous,loading:false,error:true}))
                     this.notificationUi.error(err.message);
                 }
             }) 
     }
 
-    getUserById(id:string):void{
-
-        console.log("__ store getUserById")
-        
-        this.initState();
-
-        this.userService.getById(id)
-        .subscribe({
-            next:(data)=>{    
-                this._state.update(s=>({...s, selectedUser:data ,loading:false,error:false}))
-            },
-            error:(err)=>{
-                this._state.update(s=>({...s, selectedUser:null ,loading:false,error:true}))
-                this.notificationUi.error(err.message);
-            }
-        })  
-    }
-
-    updateUser(user:User):void{
+    updateUser(user:ActionUser):void{
 
         console.log("__ store updateUser")
 
@@ -128,49 +138,59 @@ export class UserStore {
 
         this.initState();
 
+        user.updatedAt = new Date();
+
         this.userService.updateUser(user)
         .subscribe({
-                next:(request)=>{
-                    //actualizo el usuario en la signal con el user que me trae ..
-                    this._state.update(s => ({
-                            ...s,
-                            selectedUser:request,
-                            data: s.data.map(u =>
-                                u.id === request.id ? request : u
-                            )
-                    }));
-                    this.notificationUi.success('✅ Usuario actualizado correctamente');
-                    this.router.navigate(['/admin/users']);
-                },
-                error:(err)=>{
-                    this._state.set({selectedUser:null,data: previous,loading:false,error:true})
-                    this.notificationUi.error(err.message);            }
-            })
-
+            next:({userSelect,userList})=>{
+                //actualizo el usuario en la signal con el user que me trae ..
+                this._state.update(s => ({
+                        ...s,
+                        selectedUser:{...userSelect},
+                        data: s.data.map(u =>
+                            u.id === userList.id ?  userList : u
+                        )
+                }));
+                this.notificationUi.success('✅ Usuario actualizado correctamente');
+                this.router.navigate(['/admin/users']);
+            },
+            error:(err)=>{
+                this._state.set({selectedUser:null,data: previous,loading:false,error:true})
+                this.notificationUi.error(err.message);
+            }
+        })
     }
 
-    createUser(user:User):void{
+    createUser(user:ActionUser):void{
 
-        console.log("__ store createUser")
+        console.log("_____________________________________ store createUser", user)
 
         const previous = this._state().data;
         
+        user.updatedAt = undefined;
+        user.createdAt = new Date();
+
+        // limpio mensajes de todo tipo
         this.initState();
 
         this.userService.createUser(user)
         .subscribe({
-                next:(request)=>{
+                next:({userSelect, userList })=>{
                     //actualizo el usuario en la signal con el user que me trae ..
                     this._state.update(s => ({
                             ...s,
-                            selectedUser:request,
-                            data: [...s.data, request]
+                            selectedUser:{...userSelect},
+                            data: [...s.data, userList]
                     }));
                     this.notificationUi.success('✅ Usuario creado correctamente');
                     this.router.navigate(['/admin/users']); 
                 },
                 error:(err)=>{
-                    this._state.set({selectedUser:null,data: previous,loading:false,error:true})
+                    this._state.update(s => ({
+                            ...s,
+                            selectedUser:user,
+                            loading:false,
+                            error:true}));
                     this.notificationUi.error(err.message);
                 }
             }) 

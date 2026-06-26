@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
+    <h4>List categorias:</h4>
     <ul>
         <li *ngFor="let cat of categories; trackBy: trackById" 
               (click)="select(cat)"

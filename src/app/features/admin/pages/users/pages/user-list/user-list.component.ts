@@ -1,27 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, inject } from '@angular/core';
-import { User } from '../../../../../../core/models/users.models';
-import { Router, RouterLink } from '@angular/router';
 import { LoadingComponent } from "../../../../../../shared/components/ui/loading/loading.component";
-
-//import { UserUiStateService } from '../../user-ui-state.service';
-//import { toSignal } from '@angular/core/rxjs-interop';
-import { UserService } from '../../user.service';
-import { BehaviorSubject, catchError, combineLatest, delay, map, of, startWith } from 'rxjs';
-import { AuthService } from '../../../../../auth/auth.service';
+ 
+import { UserService } from '../../user.service'; 
+// import { AuthService } from '../../../../../auth/auth.service';
 import { UserStore } from '../../user.store';
 import { NotificationsComponent } from "../../../../../../shared/components/ui/notifications/notifications.component";
 import { TableListComponent } from "../../../../components/table-list/table-list.component";
+import { User } from '../../models/user.model';
+import { ListUser } from '../../models/list-user.model';
 
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, LoadingComponent, NotificationsComponent, TableListComponent],
+  imports: [CommonModule,  LoadingComponent, NotificationsComponent, TableListComponent],
   template: `
-
-<pre>{{ userState().selectedUser | json  }}</pre> 
-
+ 
     <h4 *ngIf="!userState()?.loading">
        <span>User List</span>
        <app-notifications></app-notifications>
@@ -32,24 +27,24 @@ import { TableListComponent } from "../../../../components/table-list/table-list
  
 
     <!-- <ng-container *ngIf="!(loading$ | async)"> -->
-    <ng-container  *ngIf=" !userState()?.loading">
+    <ng-container  *ngIf="!userState()?.loading">
 
-        <app-table-list 
-            (sort)="onSortBy($event)"
-            (delete)="onDelete($event)"
-            [fieldOrder] = userStore.fieldOrderState()
-            [direcOrder] = userStore.direcOrderState()
-            [data]=userStore.orderDataState()
-            [columns]="[
-              { key: 'isActive', label: '' ,      type :'boolean' },
-              { key: 'role',     label: '' ,      type :'role' },
-              { key: 'name',     label: 'Name' ,  type :'text' },
-              { key: 'email',    label: 'Email' , type :'text'}
-            ]"
-        ></app-table-list>
+      <app-table-list 
+          (sort)="onSortBy($event)"
+          (delete)="onDelete($event)"
+          [fieldOrder] = userStore.fieldOrderState()
+          [direcOrder] = userStore.direcOrderState()
+          [itemSelected] = this.userState().selectedUser?.id          
+          [data]=userStore.orderDataState()
+          [columns]="[
+            { key: ['isActive'],  label: '' ,      type :'boolean' },
+            { key: ['role'],      label: '' ,      type :'role' },
+            { key: ['fullName'],  label: 'Name' ,  type :'text' },
+            { key: ['email'],     label: 'Email' , type :'text'}
+          ]">
+      </app-table-list>
 
-
-        <!-- <table *ngIf="sortedUsers$ | async as users" -->
+        <!-- <table *ngIf="sortedUsers$ | async as users" 
         <table 
           class="listTable">
           <tr>
@@ -104,7 +99,7 @@ import { TableListComponent } from "../../../../components/table-list/table-list
             </tr>
           </ng-template>
         </table>   
-         
+         -->
     </ng-container> 
 
     <!-- <pre>{{userState()| json }}</pre> -->
@@ -112,7 +107,7 @@ import { TableListComponent } from "../../../../components/table-list/table-list
 })
 export class UserListComponent {
   
-  private userService = inject(UserService);
+  // private userService = inject(UserService);
   public userStore = inject(UserStore);
 
   userState = this.userStore.state;
@@ -172,28 +167,27 @@ export class UserListComponent {
   private timeoutId: any;
 
   constructor(
-    public authService:AuthService ){    
+    // public authService:AuthService 
+  ){    
 
-     effect(()=>{
-//          const msg       = this.userState().msg;
+    effect(()=>{
           const error     = this.userState().error;
           const userSelec = this.userState().selectedUser;
- 
+
+          console.log("EFFECT ---- userSelec, ",userSelec)
+
           if(!userSelec) return;
-
-          if(userSelec){ 
-
-           // this.selectedUser = userSelec;
             
-            clearTimeout(this.timeoutId);
+          clearTimeout(this.timeoutId);
 
-            this.timeoutId = setTimeout(() => {
-              this.userStore.cleanMsgState(false);
-              this.msgLoad = 'Cargando Lista Usuarios'
-            }, 3000);
-          }
+          this.timeoutId = setTimeout(() => {
+            console.log("________________________________________ setTimeout LISTADO")
+            this.userStore.cleanMsgState(false);
+            this.msgLoad = 'Cargando Lista Usuarios'
+          }, 3000);
+          
+    })
 
-        })
   }
 
   ngOnInit(): void {
@@ -215,7 +209,7 @@ export class UserListComponent {
  
  
   //Cambiar orden
-  onSortBy(field: keyof User) { 
+  onSortBy(field: keyof ListUser) { 
  
       this.userStore.sortState.set(
           {
@@ -225,24 +219,25 @@ export class UserListComponent {
         )
  
   }
+
   // de la tabla generica , OUTPUT
-  onDelete(user:User){
-    console.log("user a borrar", user)
-    if(!user.id) return;
+  onDelete(id:string){
+    console.log("user a borrar", id)
+    if(!id) return;
         
     if (confirm('¿Está usted seguro de borrar este usuario?')) {
         this.msgLoad = "Deleting User";
-        this.userStore.deleteUser(user.id);
+        this.userStore.deleteUser(id);
     }    
   } 
   
-  deleteUser(user: User) {
+  deleteUser(id: string) {
 
-      if(!user.id) return;
-          
-      if (confirm('¿Está usted seguro de borrar este usuario?')) {
-          this.msgLoad = "Deleting User"
-          this.userStore.deleteUser(user.id);
+      if(!id) return;
+           
+      if (confirm('¿ Está usted seguro de borrar este usuario ?')) {
+          this.msgLoad = "Deleting User !!!"
+          this.userStore.deleteUser(id);    
       }
 
   } 
@@ -264,12 +259,8 @@ export class UserListComponent {
 
 
   //Solo actualiza los que cambian
-  trackById(index: number, user: User) {
-    return user.id;
-  }
-
-
-
-
-
+  // trackById(index: number, user: User) {
+  //   return user.id;
+  // }
+  
 }

@@ -1,5 +1,11 @@
+:host, :root {
+
+  background-color: #ccc;
+
+}
+
 /* You can add global styles to this file, and also import other style files */
-body{padding: 15px;margin:0 auto;max-width: 800px;}
+body{padding: 15px;margin:0 auto;max-width: 800px;background-color:#ccc;color: black;}
 
 main{
     padding: 15px;
@@ -8,7 +14,7 @@ main{
 hr{
     margin:  0;
 }
-
+h1, h2, h3, h4, h5, h6{color: black;}
 h2{
   color: #193CB8;
 }
@@ -17,8 +23,12 @@ h4{
   justify-content: space-between;
   align-items: center;
   & span{
-    color: orangered;
+    color: brown;
   }
+}
+
+pre{
+  background-color: #b9b9b9;
 }
 
 .hidden{
@@ -50,10 +60,11 @@ h4{
     top: 0;
     height: 100%;
     width: 1px;
-    background: #ccc;
+    background: #b1b1b1;
   }
 }
 
+nav ol:first-of-type, nav ul:first-of-type{margin:0!important}
 
 .fRight{
   float: right;
@@ -66,12 +77,16 @@ h4{
  font-weight: bold;
 }
 
+.disabled{
+  pointer-events: none;
+}
+
 input.ng-invalid.ng-touched:not(:focus) { 
   border: 1px solid red;
 }
 
 input.ng-valid.ng-touched:not(.ng-pristine) {
-  border: 1px solid green;
+  border: 1px solid #ceed88;
 }
 
 input:focus { 
@@ -115,10 +130,14 @@ input:focus {
   }
 }
 
- 
+ul{
+  li{
+    color: black;
+  }
+}
 
 
-
+address, blockquote, dl, ol, p, pre, table, ul{color: black;}
 
 form{
   padding: 0 1rem;
@@ -158,6 +177,7 @@ form{
       gap: 0px 8px;
       position: relative;
       margin-bottom: 15px;
+      color: black;
       
       & .inputError {
         flex-basis: 100%;
@@ -175,9 +195,8 @@ form{
       }
 
       & span{
-        min-width: 86px;
-        padding-right: 10px;
-        font-weight: bold;
+        min-width: 100px;
+        padding-right: 10px; 
       }
       & .linkLabel{
         width: 100%;
@@ -250,8 +269,8 @@ table td button{
     opacity: .5;
   }
 }
-table td,th{padding: 0;background-color: transparent;}
-table tr:not(:first-child, :last-child):hover{background-color: #F7FEE7;}
+table td,th{padding: 0;background-color: transparent;color:black;}
+table tr:not(:first-child, :last-child):hover{background-color: #ceed88;}
 
 
 .listTable {
@@ -261,6 +280,8 @@ table tr:not(:first-child, :last-child):hover{background-color: #F7FEE7;}
     user-select: none;
     font-weight: bold;
     font-size: 14px;
+    color: black;
+    border-bottom:1px solid #a7a7a7;
     & span {
       margin-left: 5px;
       font-size: 12px;
@@ -280,6 +301,8 @@ table tr:not(:first-child, :last-child):hover{background-color: #F7FEE7;}
   
     & td{
         font-size: 13px;
+        color: black;
+        border-bottom:1px solid #a7a7a7;
         &:last-child{  
           text-align: right;
         }
@@ -298,7 +321,7 @@ table tr:not(:first-child, :last-child):hover{background-color: #F7FEE7;}
   text-align: center;
   padding: 0;
   &.msgOk{
-    color: green;
+    color: #ceed88;
   }
   &.msgError{
     color: red; 

@@ -1,8 +1,11 @@
-import { computed, inject, Injectable, signal } from "@angular/core";
-import { User, UserRole } from "../../../../core/models/users.models";
+import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, catchError, delay, filter, finalize, map, Observable, of, shareReplay, startWith, Subject, switchMap, take, tap, throwError } from "rxjs";
+import {  catchError, delay, map, Observable, tap } from "rxjs";
 import { BaseService } from "../../../../core/services/base.service";
+import { ActionUserDto, userAccessDto, UserDto } from "../../../../core/dto/user.dto";
+import { UserMapper } from "./mappers/user.mapper";
+import { ActionUser, UserActionUC, UserRole } from "./models/user.model";
+import { ListUser } from "./models/list-user.model";
 
 @Injectable({ providedIn: 'root' })
 export class UserService extends BaseService{
@@ -12,36 +15,75 @@ export class UserService extends BaseService{
  // constructor(private http: HttpClient) {}
   private http = inject(HttpClient);
   
-  public userEmpty: User = {
+  public userEmpty: ActionUser = {
     id: '', 
-    name: '',
-    password:'', 
+    username: '',
+    firstname: '',
+    lastname: '',
     email: '', 
     isActive: true,  
     role: UserRole.USER, 
-    permissions: [],
-    createdAt: new Date() 
+    //sin fechas
   };  
 
-  // // hace de base de datos
-  // private myUsers: User[] = [
-  //   { id: '1', name: 'Pedro Vila', password:'123', email: 'pedro.vila@example.com', isActive: true, role: UserRole.USER, createdAt: new Date() },
-  //   { id: '2', name: 'Luis Garcia',password:'123',  email: 'luis.garcia@example.com', isActive: true, role: UserRole.ADMIN, createdAt: new Date() },
-  //   { id: '3', name: 'Belen Perez',password:'123',  email: 'belen.perez@example.com', isActive: false, role: UserRole.MANAGER, createdAt: new Date() }
-  // ];  
+ 
 
-  getUsuarios():Observable<User[]> {
+  // solo para listado....
+  getUsuarios():Observable<ListUser[]> {
   
-    return this.http.get<User[]>(this.api).pipe(
-      delay(1000),
+    return this.http.get<UserDto[]>(this.api).pipe(
+      delay(1000),   
+
+      // USANDO UN MAPPER !
+      map((data) =>
+        data.map(dto => UserMapper.toLister(dto))
+      ),
+ 
+      // map((data: UserDto[]) =>
+      //   data.map((user: UserDto) => ({
+      //     id: user.id,
+      //     fullName: `${user.first_name} ${user.last_name}`, 
+      //     email: user.email,
+      //     isActive: user.is_active,
+      //     role: user.role
+      //   }))
+      // ), 
       catchError(this.handleError('getUsuarios'))  // es comun para toda la aplicacion
-      // catchError((error) => {
-      //   console.error('Error en el servicio:', error.status, error);
-      //   if(error.status===404) 
-      //       return throwError(() => new Error("❌ Mal la url, Not found , 404"));
-      //   return throwError(() => new Error('❌ '+error.message));
-      // }) 
+   
     )   
+
+  }
+
+  getById(id: string): Observable<ActionUser> {
+
+    return this.http.get<UserDto>(`${this.api}/${id}`).pipe(
+      delay(1000),
+      tap(user => {
+        //console.log('USER:', user);
+      }),
+      map((user: UserDto) => ({
+        id: user.id,
+        username : user.user_name, 
+        firstname: user.first_name,
+        lastname : user.last_name,
+        email:     user.email,
+        isActive:  user.is_active,
+        role:      user.role as UserRole,
+        createdAt: user.created_at 
+                    ? new Date(user.created_at) 
+                        : undefined
+        ,
+        updatedAt: user.updated_at 
+                    ? new Date(user.updated_at) 
+                        : undefined
+      })),       
+      catchError(this.handleError('getById'))
+      // catchError(err => {
+      //   if (err.status === 404)  
+      //     return throwError(() => new Error("❌ Usuario no encontrado"));
+      //   return throwError(() => new Error('❌ Error cargando usuario'));
+      // })
+    );  
 
   }
 
@@ -57,30 +99,27 @@ export class UserService extends BaseService{
 
   }
 
-  getById(id: string): Observable<User> {
+  updateUser(user: ActionUser): Observable<UserActionUC> {
 
-    return this.http.get<User>(`${this.api}/${id}`).pipe(
+    const userDto : ActionUserDto = UserMapper.toUpdateDto(user);
+
+    return this.http.patch<any>(`${this.api}/${user.id}`, userDto).pipe(
       delay(1000),
-      tap(user => {
-        //console.log('USER:', user);
+      tap(data => {
+       console.log('service --> USER modified service',data);
       }),
-      catchError(this.handleError('getById'))
-      // catchError(err => {
-      //   if (err.status === 404)  
-      //     return throwError(() => new Error("❌ Usuario no encontrado"));
-      //   return throwError(() => new Error('❌ Error cargando usuario'));
-      // })
-    );  
-
-  }
-
-  updateUser(user: User): Observable<User> {
-
-    return this.http.put<any>(`${this.api}/${user.id}`, user).pipe(
-      delay(1000),
-      tap(user => {
-       // console.log('USER modified service',user);
-      }),
+    // USANDO UN MAPPER ! de model A DTO back    
+    // PARA DEVOLVER
+      map(x  => UserMapper.toActionUser(x)),            
+      // map((user) => ({
+      //   id: user.id,
+      //   username: user.username,
+      //   firstname : user.firstname,
+      //   lastname:user.lastname,
+      //   email: user.email,
+      //   isActive: user.isActive,
+      //   role: user.role,
+      // })),       
       catchError(this.handleError('updateUser'))
       // catchError(err => {
       //   if (err.status === 404)  
@@ -91,21 +130,31 @@ export class UserService extends BaseService{
 
   }
 
-  createUser(user: User): Observable<User> {
+  createUser(user: ActionUser): Observable<UserActionUC> {
 
-     return this.http.post<User>(this.api, user).pipe(
+     const userDto : ActionUserDto = UserMapper.toCreateDto(user);
+
+     return this.http.post<userAccessDto>(this.api, userDto).pipe(
       delay(1000),
-      // map((response: User) => {
-      //   if (!response.id) {
-      //     throw new Error('Usuario no creado correctamente');
-      //   }
-      //   return response;
-      // }),
-      catchError(this.handleError('updateUser'))
-      // catchError(err => {
-      //   console.log("Error creando ususario", err.message)
-      //   return throwError(() => err);
-      // })
+      tap(data => {
+        console.log('__________________USER CREADO______________________',data);
+      }),
+      // USANDO UN MAPPER ! de model A DTO back
+      // envio 2 objetos de vuelta ... 
+      // PARA DEVOLVER
+      map(({user}) => UserMapper.toActionUser(user)),            
+      // map(({user}) => ({
+      //   id: user.id,
+      //   username: user.user_name,
+      //   firstname : user.first_name,
+      //   lastname:user.last_name,
+      //   email: user.email,
+      //   isActive: user.is_active,
+      //   role: user.role,
+      // })),       
+     //devuelvo lo que necesito, no accestoken ,  user {....}
+      catchError(this.handleError('createUser'))
+   
     );
 
   }  

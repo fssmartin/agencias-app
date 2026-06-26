@@ -17,25 +17,21 @@ import { AuthService } from '../../auth/auth.service';
 
       <div class="col" *ngIf="authService.currentUser()"><p class="wellCome">Wellcome <strong>{{authService.currentUser()?.name}}</strong>, ahora es tu turno</p></div>
 
-      <div class="col col50">
-        
-        <h3>List categorias:</h3>
+      <div class="col col50"> 
         
         <app-category-list
             [categories]="categories"
             (selectCategory)="onSelectCategoria($event)">
         </app-category-list>
-
+  
       </div>
 
       <div class="col col50">
-        
-        <h3>Detail:</h3>
 
         <app-category-detail 
             [category]="categoriaSeleccionada">
         </app-category-detail>
-      
+
       </div>
 
     </div>  

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core'; 
-import { User, UserRole } from '../../../../../../core/models/users.models';
+import { Component, EventEmitter, inject, Input, Output , input, effect } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../user.service';
 
@@ -8,6 +7,7 @@ import { createUserForm } from './user-valid.form';
 import { getErrorMessage } from '../../../../../../shared/utils/forms/form-errors';
 import { FechaEsPipe } from '../../../../../../shared/utils/pipes/fecha-es.pipe';
 import { UserStore } from '../../user.store';
+import { ActionUser, User } from '../../models/user.model';
 
 
 @Component({
@@ -16,80 +16,96 @@ import { UserStore } from '../../user.store';
   imports: [CommonModule ,ReactiveFormsModule,FechaEsPipe],
   template: ` 
 
-      <h4>
-          <span>{{ user?.id ?  mode === 'view' ? 'Consulta Usuario' :  'Editar Usuario' : 'Crear Usuario' }}</span>
-          <!-- <div class="msgInfo">
-                <div *ngIf="!userState()?.loading && userState()?.msg" class="success">
-                    <div class="msj msjOk">{{ userState()?.msg }}</div>  
-                </div>
-          </div>           -->
-      </h4>
-      
+ 
+
       <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="off" 
             [ngClass]="{
-              'form form-view': mode === 'view',
-              'form form-edit': mode === 'edit',
-              'form form-create': mode === 'create'
+              'form form-view': mode() === 'view',
+              'form form-edit': mode() === 'edit',
+              'form form-create': mode() === 'create'
               }"
       >
 
-        <ng-container *ngIf="mode === 'edit' || mode=== 'create'" >
+        <ng-container *ngIf="mode() === 'edit' || mode()=== 'create'" >
 
             <div>
-              <label><span>Activo</span>
+              <label><span>Active</span>
                 <input type="checkbox" formControlName="isActive"/>
               </label> 
             </div>
-    
+
             <div>
               <label>
-                <span>Nombre</span>
+                <span>Nick</span>
                 <input type="text" 
-                  placeholder="Jhon Doe"
-                  formControlName="name" 
+                  placeholder="JhonDereck"
+                  formControlName="username" 
                   autocomplete="off"/>
                 <div class="divError" style="width:100%;display:flex;justify-content:left;flex-direction:column">
-                  <p *ngFor="let error of getError('name')" class="inputError">
-                    {{ error }}
+                  <p *ngFor="let errorField of getError('username')" class="inputError">
+                    {{ errorField }}
+                  </p>
+                </div>
+              </label>
+            </div>            
+
+            <div>
+              <label>
+                <span>First Name</span>
+                <input type="text" 
+                  placeholder="Jhon"
+                  formControlName="firstname" 
+                  autocomplete="off"/>
+                <div class="divError" style="width:100%;display:flex;justify-content:left;flex-direction:column">
+                  <p *ngFor="let errorField of getError('firstname')" class="inputError">
+                    {{ errorField }}
                   </p>
                 </div>
               </label>
             </div>
-    
+ 
+           <div>
+              <label>
+                <span>Last Name</span>
+                <input type="text" 
+                  placeholder="Doe"
+                  formControlName="lastname" 
+                  autocomplete="off"/>
+                <div class="divError" style="width:100%;display:flex;justify-content:left;flex-direction:column">
+                  <p *ngFor="let errorField of getError('lastname')" class="inputError">
+                    {{ errorField }}
+                  </p>
+                </div>
+              </label>
+            </div>                       
+
             <div>
               <label>
                 <span>Email</span>
                 <input type="email" 
-                  placeholder="m@example.com"
-                  formControlName="email" 
-                  autocomplete="off" />
+                   placeholder="m@example.com"
+                   formControlName="email" 
+                   autocomplete="off" />
                 <div class="divError" style="width:100%;display:flex;justify-content:left;flex-direction:column">
-                  <p *ngFor="let error of getError('email')" class="inputError">
-                    {{ error }}
+                  <p *ngFor="let errorField of getError('email')" class="inputError">
+                    {{ errorField }}
                   </p>
                 </div>
               </label>
             </div>
 
-            <div>
+            <div *ngIf="mode() === 'create'">
               <label>
                 <span>Password</span>
                 <input type="password" 
-                  placeholder="Create a secure password"
-                  formControlName="password" 
-                  autocomplete="off" />
-
-                <!-- <p *ngIf="getError('password')" class="inputError">
-                      {{ getError('password') }}
-                </p> -->
-<!-- muestro varios errores -->
-
+                   placeholder="Create a secure password"
+                   formControlName="password" 
+                   autocomplete="off" />  
                 <div class="divError" style="width:100%;display:flex;justify-content:left;flex-direction:column">
-                  <p *ngFor="let error of getError('password')" class="inputError">
-                    {{ error }}
+                  <p *ngFor="let errorField of getError('password')" class="inputError">
+                    {{ errorField }}
                   </p>
-                </div>
-
+                </div> 
               </label>
             </div>            
     
@@ -98,27 +114,29 @@ import { UserStore } from '../../user.store';
                 <span>Rol</span>
                 <select formControlName="role">
                   <option value="">Selecciona un rol</option>
-                  <option *ngFor="let role of roles" [value]="role">{{ role | titlecase }}</option>
+                  <option *ngFor="let role of roles()" [value]="role">{{ role | titlecase }}</option>
                 </select>
               </label>
-            </div>
-    
+            </div> 
+            
             <div>
-              <label><span>Created:</span><span>{{user?.createdAt! | fechaEs }}</span></label>
+              <label><span>Created:</span><span>{{user()?.createdAt! | fechaEs }}</span></label>
             </div>
-            <div *ngIf="user?.updatedAt">
-              <label><span>Modified:</span><span>{{user?.updatedAt! | fechaEs }}</span></label>
+            <div *ngIf="user()?.updatedAt">
+              <label><span>Modified:</span><span>{{user()?.updatedAt! | fechaEs }}</span></label>
             </div>
+
           </ng-container>
 
         <hr>
 
-        <PRE>{{this.user | json}}</PRE>
+        <PRE>{{ (this.user() && this.mode()!='create'? this.user() : userService.userEmpty ) | json}}</PRE>
         
         <div class="fm_actions">
           <button type="button" (click)="cancelar()" class="btCancel">Volver</button>
-          <button *ngIf="mode != 'view'" type="submit" [disabled]="form.invalid || form.pristine">    
-            {{ user?.id ? 'Modificar' : 'Guardar' }}
+          <button *ngIf="mode() != 'view' && !error()" type="submit" 
+            [disabled]="form.invalid || form.pristine">    
+            {{ mode() === 'create' ? "Grabar" : "Modificar"}}
           </button>
         </div>
 
@@ -128,27 +146,68 @@ import { UserStore } from '../../user.store';
 `
 })
 export class UserFormComponent {
-    @Input() user?: User;
-    @Input() roles?: string[] = [];
-    @Input() mode?: string = 'edit'; // 'view' o 'edit'
+    //@Input() user?: User;
+    user  = input<ActionUser>();
+    error = input<boolean>();
+    roles = input<string[]>([]);
+    mode  = input<string>('edit');
+
+    // @Input() roles?: string[] = [];
+    // @Input() mode?: string = 'edit'; // 'view' o 'edit'
+
     @Output() save = new EventEmitter<User>();
     @Output() cancel = new EventEmitter<string>();
+
     form!: FormGroup;
     
     private userStore = inject(UserStore);
+
     readonly userState = this.userStore.state;
-    constructor(private fb: FormBuilder,private userService: UserService) {}
+
+    constructor(
+        private fb: FormBuilder,
+        public userService: UserService) {
+
+      // AL SER Reactive Forms no podemos poner  [disabled] en el template en los (inputs...).
+      // usamos un effect y desalbilitamos el formulario NO el input.
+       effect(()=>{
+          const error     = this.userState().error;
+          console.log("EFFECT ---- FORM COMPONENTES ERROR, ",error)
+
+          if(!error) return;
+
+          this.form.disable()
+
+      })
+
+
+
+
+    }
     
     ngOnInit(): void {
 
-        console.log("user en form", this.user);
-        this.user = this.user && this.mode!='create'? this.user : this.userService.userEmpty
-        const userData = this.user;
+        console.log("___ user() ",  this.user() );
+        console.log("___ user en form",  this.user() ? this.user() : this.userService.userEmpty    );
+
+//        this.user() = this.user() && this.mode()!='create'? this.user : this.userService.userEmpty
+        
+        //const userData = this.user();
        // userData.password = '';
 
-        this.form = this.createFbGroup(userData); 
+        this.form = this.createFbGroup( this.user() ? this.user()! : this.userService.userEmpty ); 
     
-        this.form.patchValue(userData);
+        this.form.patchValue( this.user() ? {
+              isactive  :this.user()!.isActive,
+              username  :this.user()!.username,
+              firstname :this.user()!.firstname,
+              lastname  :this.user()!.lastname,
+              email     :this.user()!.email,              
+              role      :this.user()!.role,              
+              // password  :this.user()!.password,
+              // createdAt :this.user()!.createdAt,
+              // updatedAt :this.user()!.updatedAt
+            } : this.userService.userEmpty );
 
         // Si se proporciona un usuario, actualiza el formulario con sus valores, 
         // de lo contrario, usa el usuario vacío
@@ -167,7 +226,7 @@ export class UserFormComponent {
         // }
     }
     
-    createFbGroup(user: User) {
+    createFbGroup(user: ActionUser) {
       // return this.fb.group({
       //   id: [user.id],
       //   name: [user.name],

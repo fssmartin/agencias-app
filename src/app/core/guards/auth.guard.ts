@@ -36,7 +36,7 @@ export const loggedGuard: CanActivateFn = () => {
 export const canDeactivateGuard: CanDeactivateFn<any> =
   (component, currentRoute, currentState, nextState) => {
 
-    //tengo que limpiar todos los stores de admin cuando se salgan !
+    //tengo que limpiar todos los stores de admin, user, ....  cuando se salgan !
      const userStore = inject(UserStore);
      userStore.cleanMsgState(false);
     return true;

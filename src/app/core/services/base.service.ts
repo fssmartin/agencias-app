@@ -6,9 +6,12 @@ export abstract class BaseService {
     return (error: any) => {
       console.error(`❌ Error en ${operation}:`, error);
 
-      let message = 'Error inesperado';
+      let message = error.status +  ', Error inesperado';
 
       switch (error.status) {
+        case 400:
+          message = error.error || error.message ||'es muy generico error... en login, user no existe, y en create correo existe ya';          
+          break;
         case 404:
           message = 'Recurso no encontrado';
           break;
@@ -19,7 +22,7 @@ export abstract class BaseService {
           message = 'Sin conexión';
           break;
         default:
-          message = error.message || 'Error desconocido';
+          message = error.error || error.message || 'Error desconocido';
       }
 
       message = "❌ " + message;

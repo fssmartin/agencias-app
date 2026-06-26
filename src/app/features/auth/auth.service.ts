@@ -1,11 +1,12 @@
 import { computed, effect, inject, Injectable,   signal } from "@angular/core";
-import { AuthState, AuthStateModel, AuthUser, LoginResponse, User, UserRole } from "../../core/models/users.models";
 import { UserService } from "../admin/pages/users/user.service";
 import { HttpClient } from "@angular/common/http";
 import { catchError, delay, map, Observable, of, take, tap, throwError } from "rxjs";
 import { BaseService } from "../../core/services/base.service";
+import { ApiUser, UserRole } from "../admin/pages/users/models/user.model";
+import { AuthState, AuthStateModel, AuthUser } from "./models/auth.model";
 
- 
+ // BaseService ES PARA LOS ERRRORES !! 
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends BaseService implements AuthState {
@@ -69,6 +70,13 @@ export class AuthService extends BaseService implements AuthState {
     
   private initFromStorage() {
 
+    // 1 - tengo que sacar la info del storage 
+    // 2 - validar el token expired
+    // 3 - decodifica token
+    // 4 - buscar el id del user 
+    // 5 - logarlo si.
+
+    //1
     const token = localStorage.getItem('token');
 
     console.log("___ AUTH ____________initFromStorage___token__",token)
@@ -76,36 +84,37 @@ export class AuthService extends BaseService implements AuthState {
     if ( !token ) return;
 
     try {
-      // validar token
+    //2
       if (this.isTokenExpired(token)) {
         console.log("___ AUTH ____________this.isTokenExpired(token)")
         localStorage.removeItem('token');
         return;
       }
 
+    //3
       const payload = this.decodeToken(token);
-   
 
       console.log("___ AUTH ____________payload ___ ", payload)
-
-      //    ⚡ opción buena: cargar usuario desde backend
+    
+    //4
         this.userService.getById(payload.sub).subscribe({
           next: (user) => {
             console.log("__ user userService.getById" , user)
-            this._state.update(state => ({
-                                ...state,
-                                currentUser: {
-                                  "id":    user.id,
-                                  "name":  user.name,
-                                  "email": user.email,
-                                  "role":  this.getRole(user.role!),
-                                  "exp" : payload.exp
-                                }
-            }))
+    //5            
+            // this._state.update(state => ({
+            //                     ...state,
+            //                     currentUser: {
+            //                       "id":    user.id,
+            //                       "name":  user.username, 
+            //                       "email": user.email,
+            //                       "role":  this.getRole(user.role!),
+            //                       "exp" : payload.exp
+            //                     }
+            // }))
           },
           error: () => {
-            console.log("___ error localStorage.removeItem('token')")  
-            localStorage.removeItem('token')
+              console.log("___ error localStorage.removeItem('token')")  
+              localStorage.removeItem('token');
           }
         }); 
    
@@ -114,23 +123,6 @@ export class AuthService extends BaseService implements AuthState {
     }
   }
   
-  // isAuthenticated():boolean{
-  //   const token = this.getToken();
-  //   if(!token){
-  //     return false;
-  //   }
-  //   const payload = JSON.parse(atob(token.split('.')[1]))
-  //   const exp     = payload.exp * 1000;
-  //   return Date.now() < exp; 
-  // }
-  
-
-  // isAuthenticated(): boolean {
-  //   const token = localStorage.getItem('token');
-  //   if (!token) return false;    
-  //   return !this.isTokenExpired(token);
-  // }
-
   private decodeToken(token:string):any{
       const payload = JSON.parse(atob(token.split('.')[1]));
       console.log("___ AUTH____TOKEN DECODE___", payload )
@@ -161,7 +153,7 @@ export class AuthService extends BaseService implements AuthState {
             ...state, 
             currentUser:{
               id:   user.id, 
-              name: user.name, 
+              name: user.name,
               email:user.email, 
               role: user.role!,
               exp : user.exp
@@ -172,18 +164,18 @@ export class AuthService extends BaseService implements AuthState {
 
   login(email: string, password: string ): Observable<any> {
     // Enviamos la petición POST pasándole la URL y el cuerpo con las credenciales
-    return this.http.post<LoginResponse>(this.apiAuth, {email,password}).pipe(
+    return this.http.post<ApiUser>(this.apiAuth, {email,password}).pipe(
       // take(1) asegura que la petición se cierre sola en cuanto responda el servidor
       take(1),
       delay(1400),
       // tap() ejecuta lógica en segundo plano SIN modificar el flujo de datos original
-      tap((respuesta: LoginResponse) => {
+      tap((respuesta: ApiUser) => {
         if (respuesta && respuesta?.accessToken) { 
 
           this.updateUserAuth(
             {
               'id':   respuesta.user.id+"", 
-              'name': respuesta.user.name, 
+              'name': respuesta.user.username,
               'email':respuesta.user.email, 
               'role': this.getRole(respuesta.user.role!),
               'exp' : this.getExpToken(respuesta.accessToken)
@@ -216,7 +208,7 @@ export class AuthService extends BaseService implements AuthState {
         take(1),
         delay(1400),
         tap((request) =>  console.log("___ AUTH ____ USER REGISTRADOOOOO",request) ),
-        tap((request:LoginResponse) => {
+        tap((request:ApiUser) => {
               this._state.update(state=>({
                 ...state,
                 currentUser : {

@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { UserRole } from '../../../../core/models/users.models';
+import { UserRole } from './models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,4 +16,3 @@ export class RolesService {
     return of(this.myRoles);
   }
 }
-

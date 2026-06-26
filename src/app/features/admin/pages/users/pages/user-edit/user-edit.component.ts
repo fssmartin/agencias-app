@@ -1,24 +1,29 @@
-import { Component, inject, Input, signal } from '@angular/core'; 
+import { Component, DestroyRef, inject, Input, signal } from '@angular/core'; 
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { AuthState, User, UserRole } from '../../../../../../core/models/users.models';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../user.service';
 //import { UserUiStateService } from '../../user-ui-state.service';
 
 import { UserFormComponent } from "../user-form/user-form.component";
-import { catchError, delay, filter, map, of, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, delay, filter, map, of, switchMap, tap } from 'rxjs';
 import { LoadingComponent } from "../../../../../../shared/components/ui/loading/loading.component";
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../../../auth/auth.service';
 import { UserStore } from '../../user.store';
+import { NotificationsComponent } from '../../../../../../shared/components/ui/notifications/notifications.component';
+import { ActionUser } from '../../models/user.model';
 
 
 @Component({
   selector: 'app-user-edit',
   standalone: true,
-  imports: [CommonModule, UserFormComponent, LoadingComponent],
+  imports: [CommonModule, UserFormComponent, LoadingComponent, NotificationsComponent],
   template: `
+
+
+  <!-- <pre>selectedUser,{{userState().selectedUser}}</pre>
+  <pre>mode, {{mode | json}}</pre> -->
 
     <!-- <app-loading *ngIf="loading$ | async"></app-loading> -->
     <app-loading [texto]="msgLoading" *ngIf="userState().loading"></app-loading>
@@ -27,13 +32,27 @@ import { UserStore } from '../../user.store';
     
  
     <!-- <div *ngIf="error$ | async as error"> -->
-    <!-- <div *ngIf="errorSignal()">
-        <div class="msj msjError">{{ errorSignal() }}</div>
-    </div>     -->
+
+    <h4  *ngIf="!userState().loading">
+        <span>{{   mode === 'view' ? 'Consulta Usuario' :  (  mode === 'edit' ? 'Editar Usuario' : 'Crear Usuario')  }}</span>
+
+        <!-- <div class="msgInfo" *ngIf="error()">
+            <div class="msj msjError">{{ error() }}</div>  
+        </div>           -->
+        <app-notifications></app-notifications>
+
+
+    </h4>
+
+<!-- <pre>{{userState().loading|json}}</pre>
+<pre>{{userState().selectedUser!|json}}</pre>
+<pre>{{mode|json}}</pre>
+<pre>{{roles}}</pre> -->
 
     <app-user-form 
         *ngIf="!userState().loading"
         [mode]="mode"
+        [error]= "userState().error" 
         [user]="userState().selectedUser!"
         [roles]="roles"
         (save)="onSave($event)"
@@ -48,81 +67,74 @@ export class UserEditComponent {
   private userService = inject(UserService);
   private userStore = inject(UserStore);
   private route = inject(ActivatedRoute);
+
   id!:string
 
   roles: string[] = [];
-  mode:string = 'edit'; // 'view' o 'edit'
+  mode:string = 'edit'; // 'view' , 'edit', create
   msgLoading : string = 'Cargando';
-
-  // public loadingSignal = signal<boolean>(true);
 
   readonly userState = this.userStore.state;
   readonly userEmpty = this.userService.userEmpty;
   
-  // public usuario = toSignal(
-  //     this.route.paramMap.pipe(
-  //         delay(1400),
-  //         tap(() => this.loadingSignal.set(true)),
-  //         map(params => params.get('id') || ''),
-  //         filter(id => !!id),
-  //         switchMap(id => this.userService.getById(id).pipe(
-  //           catchError(() => {
-  //             this.router.navigate(['/admin/users']);
-  //             return of(null);
-  //           })
-  //         )),
-  //         tap(() => this.loadingSignal.set(false))
-  //       ),
-  //       { initialValue: this.userService.userEmpty }
-  // );
+  
+  private destroyRef = inject(DestroyRef); // ✅ CLAVE
 
   constructor( ) {}
 
   ngOnInit(): void {
-    console.log("--- ngOnInit UserEditComponent");
-    
-    // 
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');      
-      this.mode='create'
-      if (id) {
-          this.userStore.getUserById(id);
-          this.msgLoading = 'Cargando data del Usuario'
-      }
-    });
 
-    this.roles = this.route.snapshot.data['roles'];
-    // y esta para el modo
-    
-    this.route.queryParamMap
-          .pipe(map(params => params.get('mode')))
-          .subscribe(mode => {
-            this.mode = mode!;
-           });
-           console.log("_______userState().selectedUser_____",this.mode,this.userState().selectedUser)
+        console.log("--- ngOnInit UserEditComponent");
+  
+        // me viene del resolver, en router
+        this.roles = this.route.snapshot.data['roles'];
+
+        this.mode  = this.route.snapshot.data['mode'];
+
+        let id = this.route.snapshot.paramMap.get('id');
+        console.log("id",id)
+        this.msgLoading = 'Cargando data del Usuario'
+        if(id)
+           this.userStore.getUserById(id!);
+
+        // combineLatest([this.route.paramMap, this.route.queryParamMap])
+        //   .pipe(
+        //     map(([param, queryParams])=>({
+        //       id:param.get('id'),
+        //       mode:queryParams.get('mode')
+        //     }),
+        //     takeUntilDestroyed(this.destroyRef) // ✅ ahora 
+        //   )).subscribe(({id,mode})=>{
+        //       console.log("id",id)
+        //       console.log("mode",mode);
+        //       this.mode = mode!;
+        //       this.msgLoading = 'Cargando data del Usuario'
+        //       if(id)
+        //         this.userStore.getUserById(id!);
+        //   });
+/*
+        this.route.paramMap.subscribe(params => {
+          const id = params.get('id');      
+          //this.mode='create'
+          console.log("_______id_____",id)
+          if (id) {
+              this.userStore.getUserById(id);
+              this.msgLoading = 'Cargando data del Usuario'
+          }
+        });
+
+
+        // y esta para el modo    
+        this.route.queryParamMap
+              .pipe(map(params => params.get('mode')))
+              .subscribe(mode => {
+                this.mode = mode!;
+              });
+              console.log("_______userState().selectedUser_____",this.mode,this.userState().selectedUser)
+*/              
   }
  
-  onSave(user: User) {
-      
-      // this.userService.updateUser(updatedUser)
-      //   .subscribe(() => {
-      //       // problema, al refresh se sigue persistiendo el state, y no quiero eso, solo quiero que se muestre el mensaje al volver de edit a list, pero si hago refresh en list, no quiero que se siga mostrando el mensaje, para eso tengo que limpiar el state al entrar en list, y lo hago con un metodo del service que me limpia los estados de error y loading
-      //       // mejor usar servicio que el state.
-      //       if(updatedUser?.id){
-      //           //tengo que actualizar el usuario logeado si es el mismo que el que actualizo
-      //           if(this.authService.currentUser()?.id === updatedUser?.id) {
-      //               this.authService.updateUserAuth({
-      //                 'id':   updatedUser.id, 
-      //                 'name': updatedUser.name, 
-      //                 'email':updatedUser.email, 
-      //                 'role': this.authService.getRole(updatedUser.role!) 
-      //               });
-      //           }
-      //           this.userUiStateService.setState(updatedUser.id, 'update'); // Establece el state global de mensajes al volver a la lista
-      //           this.router.navigate(['/admin/users']);
-      //       }
-      //   });
-
+  onSave(user: ActionUser) {      
       if(this.userStore.state().selectedUser){
         this.msgLoading = 'Actualizando data'
         this.userStore.updateUser(user);
@@ -130,8 +142,6 @@ export class UserEditComponent {
         this.msgLoading = 'Insertando Usuario';
         this.userStore.createUser(user);
       }
-
-          
   }
 
   onCancel(data: any) {
