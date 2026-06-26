@@ -149,7 +149,8 @@ button,
   }
 
   &.btCrear {
-    color: #193CB8;
+      color: brown;
+      font-weight: bold;
 
     &::before {
       content: "+ ";
@@ -301,7 +302,7 @@ table {
   td button {
     background: none;
     border: none;
-    margin: 0 0.3rem;
+    margin: 0 0.2rem;
     font-size: 0.8rem;
     color:black;
 
@@ -313,6 +314,7 @@ table {
   td button {
     opacity: 0.4;
     padding: 0;
+    font-size: 11px;
     &.disabled {
       color: red;
     }
@@ -324,6 +326,7 @@ table {
     background-color: #ccc;
     cursor: pointer;
     font-size: 14px;
+    font-weight: bold;
     border-bottom: 1px solid #a7a7a7;
     &.noOrder{
       cursor: default;
@@ -336,16 +339,29 @@ table {
 
   tr {
     background-color: #ccc;
+
+    &:nth-child(even) {
+        background-color: #d8d6d6
+    }
+    &:nth-child(odd) {
+      background-color:#d1d9ff
+    }    
+
     &.pagination {
+      background-color: transparent;
       td{
         width: 100%;
         border:none;
       }
     } 
     &.total{
+      background-color: transparent;
       border:none;
       height: 40px;
-      vertical-align: bottom;      
+      vertical-align: bottom; 
+      &:hover{
+        background-color: transparent;
+      }     
       & td{
           width: 100%;
           text-align: right;
