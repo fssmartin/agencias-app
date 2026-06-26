@@ -37,12 +37,26 @@ import { ListUser } from '../../models/list-user.model';
           [itemSelected] = this.userState().selectedUser?.id          
           [data]=userStore.orderDataState()
           [columns]="[
-            { key: ['isActive'],  label: '' ,      type :'boolean' },
-            { key: ['role'],      label: '' ,      type :'role' },
-            { key: ['fullName'],  label: 'Name' ,  type :'text' },
-            { key: ['email'],     label: 'Email' , type :'text'}
-          ]">
+            { key: ['isActive'],  label: '' ,      type :'boolean'  , order:false},
+            { key: ['role'],      label: '' ,      type :'role'     , order:false},
+            { key: ['fullName'],  label: 'Name' ,  type :'text'     , order:false},
+            { key: ['email'],     label: 'Email' , type :'text'     , order:true}
+          ]",
+          lbCreation="User">
       </app-table-list>
+          <!-- [configuration] = {
+            columns = [
+                { key: ['isActive'],  label: '' ,      type :'boolean' , order:false },
+                { key: ['role'],      label: '' ,      type :'role'    , order:false},
+                { key: ['fullName'],  label: 'Name' ,  type :'text'    , order:true},
+                { key: ['email'],     label: 'Email' , type :'text'    , order:false}
+              ],
+            order:      true
+            pagination: true,
+            total :     true,
+            lbCreation: 'User'
+
+          } -->
 
         <!-- <table *ngIf="sortedUsers$ | async as users" 
         <table 

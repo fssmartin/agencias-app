@@ -8,7 +8,7 @@ import { NotificationUiService } from '../../../../core/services/notificactions.
   imports: [CommonModule],  
   template:`
   
-  <!-- <pre>{{notificationUi.state()|json}}</pre> -->
+  <!-- <pre>{{notificationUi.state()?.type|json}}</pre> -->
     <div class="msgInfo" >
         <div class="msj" [ngClass]="notificationUi.state()?.type">{{notificationUi.state()?.message}}</div>  
     </div>

@@ -19,7 +19,7 @@ export class UserStore {
     // 👇 Expones el estado como readonly
     readonly state = this._state.asReadonly();
 
-    sortState = signal<{field: string; dir: 'asc' | 'desc' }>({field:'name',dir:'asc'})
+    sortState = signal<{field: string; dir: 'asc' | 'desc' }>({field:'email',dir:'asc'})
 
     direcOrderState = computed(() => this.sortState().dir );
     fieldOrderState = computed(() => this.sortState().field );   
@@ -126,7 +126,12 @@ export class UserStore {
                 error:(err)=>{
                     this._state.update(s=>({...s,data: previous,loading:false,error:true}))
                     this.notificationUi.error(err.message);
+                },
+                complete:()=>{
+                    console.log("complete DELETE --- ",this._state())
+                    this.notificationUi.show();// para el setTimeout y ocultar..
                 }
+                
             }) 
     }
 
@@ -204,6 +209,8 @@ export class UserStore {
     cleanMsgState(reload:boolean){    
         this._state.update(s=>({...s, selectedUser:null, loading:reload,error:false,}))
         this.notificationUi.cleanNotify();
+
+        console.log("BORROOOOO_ selectedUser",this._state())
         if(reload) this.router.navigate(['/admin/users']);  
     }
 

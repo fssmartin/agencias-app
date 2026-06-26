@@ -23,7 +23,7 @@ import { TableListComponent } from '../../../../components/table-list/table-list
               { key: ['descripcion'], label: 'Descripcion', type:'text' },
               { key: ['createdAt'], label: 'CreatedAt', type:'date' }
             ]"
-            [crear] = "'Crear Question'"
+            [lbCreation] = "'Question'"
         ></app-table-list>
 
         <!-- <table
@@ -77,7 +77,10 @@ export class QuestionListComponent {
     questions: Question[] = [
       { id: '1', descripcion: '¿Cuál es tu color favorito?', isActive: true, createdAt: new Date() },
       { id: '2', descripcion: '¿Cuál es tu comida favorita?', isActive: true, createdAt: new Date() },
-      { id: '3', descripcion: '¿Cuál es tu película favorita?', isActive: false, createdAt: new Date() }
+      { id: '3', descripcion: '¿Cuál es tu película favorita?', isActive: false, createdAt: new Date() },
+      { id: '4', descripcion: 'zzz z zz z zzz z zz?', isActive: true, createdAt: new Date() },
+      { id: '5', descripcion: '¿yyyyyyyy asd asd asd ?', isActive: false, createdAt: new Date() },
+      { id: '6', descripcion: '¿xxxxxxxxxxxxxxxxxx?', isActive: true, createdAt: new Date() }
     ];
 
   // constructor(public qService: QuestionService) {}

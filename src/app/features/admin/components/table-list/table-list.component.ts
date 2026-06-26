@@ -7,28 +7,30 @@ import { output } from '@angular/core';
   selector: 'app-table-list',
   standalone: true,
   imports: [CommonModule, RouterLink ],
-  template: ` 
+  template: `
 
-<!-- <pre>{{itemSelected()|json}}</pre>  -->
+<!-- <pre>{{fieldOrder()|json}}</pre>
+<pre>{{direcOrder()|json}}</pre> -->
 
-    <table 
+    <table
           class="listTable">
           <tr>
-            <th *ngFor="let col of columns()" (click)="sort.emit(col.key[0])">
+            <th *ngFor="let col of columns()" (click)="lanzarEmit(col.key[0] , col.order)"
+              [ngClass]="{ 'noOrder': !col.order}">
               {{ col.label }}
-              <span *ngIf="fieldOrder()  === col.key[0] ">
-                {{  direcOrder() === 'asc' ? '▲' : '▼' }}
+              <span *ngIf="fieldOrder() == col.key[0] && col.order ">
+                {{  direcOrder() == 'desc' ? '▲' : '▼' }}
               </span>
             </th>
             <th>
               <!-- <button routerLink="edit"
                       [queryParams]="{ mode: 'create' }"  -->
                 <button  [routerLink]="['create']"
-                  class="fRight btEnlace btCrear">{{ crear() }}</button>
+                  class="fRight btEnlace btCrear">{{ lbCreation() }}</button>
             </th>
           </tr>
-          <tr *ngFor="let item of data(); trackBy: trackById"        
-              [ngClass]="{ 'highlight-row': item.id == itemSelected()!}" 
+          <tr *ngFor="let item of data(); trackBy: trackById"
+              [ngClass]="{ 'highlight-row': item.id == itemSelected()}"
           >
 
             <td *ngFor="let col of columns()" [ngClass]="col.type">
@@ -75,11 +77,22 @@ import { output } from '@angular/core';
                        <i class="fa-regular fa-trash-can"></i></button>
             </td>
           </tr>
-          <tr>
-            <td></td>
-            <td  colspan="24" text-align="right">Total: <strong>{{data()?.length}}</strong></td>
+          <tr class="total">
+            <td colspan="100">
+                <p>
+                  <span>Total: <strong>{{data()?.length}}/3</strong></span>
+                  <span>Pag. 1/11</span>
+                  <span>
+                    <select name="numPag" id="numPag"><option value="10" selected>10/pag</option><option value="20">20/pag</option></select>
+                    <span>ir a<input type="text" name="ira" id="ira" placeholder="0" value="0"/></span>
+                  </span>
+                </p>
+            </td>
           </tr>
-    </table> 
+          <tr class="pagination">
+            <td colspan="100">Pagination: <strong>1</strong> - 2 - 3 > </td>
+          </tr>
+    </table>
   `
 })
 export class TableListComponent {
@@ -89,19 +102,27 @@ export class TableListComponent {
   itemSelected= input<string>(); // ✅ signal-based input
   columns = input<{ key: string[],
                     label: string,
-                    type?: 'text' | 'date' | 'boolean' | 'icon'| 'role'
+                    type?: 'text' | 'date' | 'boolean' | 'icon'| 'role',
+                    order: boolean
                   }[]>([]);
-  crear  = input< string>("Crear Item");
+  lbCreation  = input< string>("Crear Item");
   delete = output<any>();
   sort   = output<any>();
 
   // deleteUser(id: string) {
-  //     if(!id) return;          
+  //     if(!id) return;
   //     if (confirm('¿Está usted seguro de borrar este usuario?')) {
   //         this.msgLoad = "Deleting User"
   //         this.userStore.deleteUser(id);
-  //     } 
-  // } 
+  //     }
+  // }
+
+  lanzarEmit(registro:any, isOrder:boolean){
+
+    if(!isOrder) return;
+      this.sort.emit(registro);
+
+  }
 
 
 

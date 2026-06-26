@@ -3,14 +3,15 @@
     {
       "id": "2",
       "email": "luis.garcia@examzple.com",
-      "user_name": "luisGarcia",
+      "user_name": "luisGarciaAA",
       "first_name": "Luis",
       "last_name": "Garcia",
       "password": "$2a$10$vu5vvmLkpJfaxZmRdMFWhOHD6XqVyUHjtqOY/Tem/DrtVfXzLML.W",
-      "is_active": false,
+      "is_active": true,
       "role": "ADMIN",
       "updated_at": "2026-06-23T15:13:56.529Z",
-      "created_at": "2024-12-09T06:11:22.072Z"
+      "created_at": "2024-12-09T06:11:22.072Z",
+      "update_at": "2026-06-26T07:46:24.099Z"
     },
     {
       "id": "3",
@@ -19,10 +20,11 @@
       "first_name": "Pedro",
       "last_name": "Vilaaa",
       "password": "$2a$10$hKa0oW6oQXY5y3j5sOywQuUpglPOJBiTw2xmjQmFDcgZegvmUJnkm",
-      "role": "MANAGER",
+      "role": "USER",
       "is_active": true,
       "created_at": "2024-12-09T06:11:22.072Z",
-      "updated_at": "2026-06-18T15:16:13.616Z"
+      "updated_at": "2026-06-18T15:16:13.616Z",
+      "update_at": "2026-06-26T07:46:40.451Z"
     },
     {
       "id": "fm_G8ZQ",
@@ -32,20 +34,20 @@
       "last_name": "Perez",
       "password": "$2a$10$FPae.UoiG7y2ZHnJ4kh8ru1vUMsap.eDkCS1gS9ZsCakTTe291.PS",
       "role": "ADMIN",
-      "is_active": true,
-      "created_at": "2026-06-09T06:11:22.072Z"
+      "is_active": false,
+      "created_at": "2026-06-09T06:11:22.072Z",
+      "update_at": "2026-06-26T07:46:58.490Z"
     },
     {
-      "email": "asdasdasd@asdasdasdasd.es",
-      "password": "$2a$10$AUArpKCd1HO6d8Xf0FwLGeEmu4tzfCAIRX.NMV12tfqrTSxGB0hJi",
-      "is_active": false,
-      "user_name": "Pepaaaaaaaaaaaaaaaaaaaaa",
-      "first_name": "Asss",
-      "last_name": "111111aA",
-      "role": "MANAGER",
-      "created_at": "2026-06-09T06:11:22.072Z",
-      "id": "TuMOZC1",
-      "update_at": "2026-06-24T15:09:12.948Z"
+      "email": "asdasd@asd.es",
+      "password": "$2a$10$4s8ZTzrCulZmiuPIpgYvgOnUq99uZIXTSxU/Kg06ptYDpqwrcCHHi",
+      "is_active": true,
+      "user_name": "22A1",
+      "first_name": "1asdasdA",
+      "last_name": "sadasdA",
+      "role": "USER",
+      "created_at": "2026-06-26T08:41:17.506Z",
+      "id": "t5y_o7y"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
