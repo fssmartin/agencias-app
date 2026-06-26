@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { output } from '@angular/core';
 
@@ -80,7 +80,7 @@ import { output } from '@angular/core';
           <tr class="total">
             <td colspan="100">
                 <p>
-                  <span>Total: <strong>{{data()?.length}}/3</strong></span>
+                  <span>Total: <strong>{{ totReg() }} /3</strong></span>
                   <span>Pag. 1/11</span>
                   <span>
                     <select name="numPag" id="numPag"><option value="10" selected>10/pag</option><option value="20">20/pag</option></select>
@@ -90,11 +90,21 @@ import { output } from '@angular/core';
             </td>
           </tr>
           <tr class="pagination">
-            <td colspan="100">Pagination: <strong>1</strong> - 2 - 3 > </td>
+            <td colspan="100">Pagination: 
+              <ng-container *ngFor="let pag of totPag()" >
+                <a href="#"  [ngClass]="{ 'active': pag == pagSelected()}">{{pag}}</a>
+              </ng-container> 
           </tr>
     </table>
   `
 })
+/*
+  totReg 40
+  regXpag 10
+  pagActive  2
+
+
+*/
 export class TableListComponent {
   fieldOrder = input<string>(); // ✅ signal-based input
   direcOrder = input<string>(); // ✅ signal-based input
@@ -106,6 +116,23 @@ export class TableListComponent {
                     order: boolean
                   }[]>([]);
   lbCreation  = input< string>("Crear Item");
+
+
+
+
+  //PAGINATION
+  pagSelected = computed(() => {
+    let pepe = this.data();
+    return 2
+  }); 
+  reXpag = 4;
+  totReg = computed(() => this.data()?.length);
+  totPag = computed(() => {
+    // 42 registros , 10 reg x pag
+    return  Array.from({length: 40 / this.reXpag!}, (_, i) => i + 1)
+  });
+
+
   delete = output<any>();
   sort   = output<any>();
 

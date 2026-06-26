@@ -20,8 +20,8 @@ import { TableListComponent } from '../../../../components/table-list/table-list
         <app-table-list 
             [data]=questions
             [columns]="[
-              { key: ['descripcion'], label: 'Descripcion', type:'text' },
-              { key: ['createdAt'], label: 'CreatedAt', type:'date' }
+              { key: ['descripcion'], label: 'Descripcion', type:'text' , order:true },
+              { key: ['createdAt'], label: 'CreatedAt', type:'date'  , order:false}
             ]"
             [lbCreation] = "'Question'"
         ></app-table-list>

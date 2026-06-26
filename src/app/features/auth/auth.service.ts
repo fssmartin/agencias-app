@@ -101,16 +101,16 @@ export class AuthService extends BaseService implements AuthState {
           next: (user) => {
             console.log("__ user userService.getById" , user)
     //5            
-            // this._state.update(state => ({
-            //                     ...state,
-            //                     currentUser: {
-            //                       "id":    user.id,
-            //                       "name":  user.username, 
-            //                       "email": user.email,
-            //                       "role":  this.getRole(user.role!),
-            //                       "exp" : payload.exp
-            //                     }
-            // }))
+            this._state.update(state => ({
+                                ...state,
+                                currentUser: {
+                                  "id":    user.id!,
+                                  "name":  user.username!, 
+                                  "email": user.email!,
+                                  "role":  this.getRole(user.role!),
+                                  "exp" : payload.exp
+                                }
+            }))
           },
           error: () => {
               console.log("___ error localStorage.removeItem('token')")  

@@ -61,22 +61,23 @@ export class UserService extends BaseService{
       tap(user => {
         //console.log('USER:', user);
       }),
-      map((user: UserDto) => ({
-        id: user.id,
-        username : user.user_name, 
-        firstname: user.first_name,
-        lastname : user.last_name,
-        email:     user.email,
-        isActive:  user.is_active,
-        role:      user.role as UserRole,
-        createdAt: user.created_at 
-                    ? new Date(user.created_at) 
-                        : undefined
-        ,
-        updatedAt: user.updated_at 
-                    ? new Date(user.updated_at) 
-                        : undefined
-      })),       
+      map(x  => UserMapper.toSelect(x)), 
+      // map((user: UserDto) => ({
+      //   id: user.id,
+      //   username : user.user_name, 
+      //   firstname: user.first_name,
+      //   lastname : user.last_name,
+      //   email:     user.email,
+      //   isActive:  user.is_active,
+      //   role:      user.role as UserRole,
+      //   createdAt: user.created_at 
+      //               ? new Date(user.created_at) 
+      //                   : undefined
+      //   ,
+      //   updatedAt: user.updated_at 
+      //               ? new Date(user.updated_at) 
+      //                   : undefined
+      // })),       
       catchError(this.handleError('getById'))
       // catchError(err => {
       //   if (err.status === 404)  
@@ -108,16 +109,16 @@ export class UserService extends BaseService{
       tap(data => {
        console.log('service --> USER modified service',data);
       }),
-    // USANDO UN MAPPER ! de model A DTO back    
+    // USANDO UN MAPPER ! de DTO back a MODEL    
     // PARA DEVOLVER
       map(x  => UserMapper.toActionUser(x)),            
       // map((user) => ({
       //   id: user.id,
-      //   username: user.username,
-      //   firstname : user.firstname,
-      //   lastname:user.lastname,
+      //   username: user.user_name,
+      //   firstname : user.firs_tname,
+      //   lastname:user.last_name,
       //   email: user.email,
-      //   isActive: user.isActive,
+      //   isActive: user.is_active,
       //   role: user.role,
       // })),       
       catchError(this.handleError('updateUser'))
