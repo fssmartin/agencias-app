@@ -46,11 +46,11 @@ export class UserMapper {
 
   // DTO -> MODEL
   static toActionUser(dto: UserDto):UserActionUC {
-    //console.log("-------------------> MAPPER toActionUser", dto)
-    return { 
-        userSelect:this.toSelect(dto),
-        userList:this.toLister(dto)
-    };
+      //console.log("-------------------> MAPPER toActionUser", dto)
+      return {
+          userSelect:this.toSelect(dto),
+          userList:this.toLister(dto)
+      };
   }
 
 

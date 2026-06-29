@@ -1,29 +1,31 @@
-import { computed, effect, inject, Injectable,   signal } from "@angular/core";
+import { computed, DestroyRef, effect, inject, Injectable,   signal } from "@angular/core";
 import { UserService } from "../admin/pages/users/user.service";
 import { HttpClient } from "@angular/common/http";
 import { catchError, delay, map, Observable, of, take, tap, throwError } from "rxjs";
 import { BaseService } from "../../core/services/base.service";
 import { ApiUser, UserRole } from "../admin/pages/users/models/user.model";
-import { AuthState, AuthStateModel, AuthUser } from "./models/auth.model";
+import { AuthState, AuthStateModel, AuthUser, AuthUserFull } from "./models/auth.model";
+import { userAccessDto } from "../../core/dto/user.dto"; 
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { AuthStore } from "./auth.store";
+import { AuthMapper } from "./mappers/auth.mapper";
 
  // BaseService ES PARA LOS ERRRORES !! 
 
 @Injectable({ providedIn: 'root' })
-export class AuthService extends BaseService implements AuthState {
+export class AuthService extends BaseService  {
 
   private apiAuth = 'http://localhost:3000/login';
   private apiRegister = 'http://localhost:3000/register';
 
-  private _state = signal<AuthStateModel>({
-    currentUser:null
-  })
+  public userAuthEmpty:AuthUserFull={
+      id:    '',
+      name:  '',
+      email: '',
+      role:  UserRole.USER,
+      exp:null
+  }
 
-  state = this._state.asReadonly();
-
-  currentUser      = computed( ()=> this.state().currentUser );
-  isAdmin          = computed(() => this.state().currentUser?.role === UserRole.ADMIN);  
-  isLogged         = computed(() => this.state().currentUser !== null); // --> ES LO MISMO  !!this.currentUser());
-  countNotified    = computed(() => this.state().currentUser ? 12 : 0); 
 
   // remainingSeconds = computed(() =>  {
   //       const user = this.state().currentUser;
@@ -52,6 +54,9 @@ export class AuthService extends BaseService implements AuthState {
  
   private http = inject(HttpClient); 
   private userService = inject(UserService); 
+  
+
+  private destroyRef = inject(DestroyRef);
  
   constructor() {
     super();
@@ -97,26 +102,30 @@ export class AuthService extends BaseService implements AuthState {
       console.log("___ AUTH ____________payload ___ ", payload)
     
     //4
-        this.userService.getById(payload.sub).subscribe({
-          next: (user) => {
-            console.log("__ user userService.getById" , user)
+        this.userService.getById(payload.sub)
+          .pipe(takeUntilDestroyed(this.destroyRef)) 
+          .subscribe({
+            next: (user) => {
+              console.log("__ user userService.getById" , user)
     //5            
-            this._state.update(state => ({
-                                ...state,
-                                currentUser: {
-                                  "id":    user.id!,
-                                  "name":  user.username!, 
-                                  "email": user.email!,
-                                  "role":  this.getRole(user.role!),
-                                  "exp" : payload.exp
-                                }
-            }))
-          },
-          error: () => {
-              console.log("___ error localStorage.removeItem('token')")  
-              localStorage.removeItem('token');
-          }
-        }); 
+              // this.authStore.state.update(state => ({
+              //                     ...state,
+              //                     Loading : false,
+              //                     error : null,
+              //                     currentUser: {
+              //                       "id":    user.id!,
+              //                       "name":  user.username!, 
+              //                       "email": user.email!,
+              //                       "role":  this.getRole(user.role!),
+              //                       "exp" :  payload.exp
+              //                     }
+              // }))
+            },
+            error: () => {
+                console.log("___ error localStorage.removeItem('token')")  
+                localStorage.removeItem('token');
+            }
+          }); 
    
     } catch (e) {
       localStorage.removeItem('token');
@@ -149,47 +158,52 @@ export class AuthService extends BaseService implements AuthState {
   }
 
   updateUserAuth(user:AuthUser){
-        this._state.update(state=> ({
-            ...state, 
-            currentUser:{
-              id:   user.id, 
-              name: user.name,
-              email:user.email, 
-              role: user.role!,
-              exp : user.exp
-            }
-          })
-        )
+
+      // this._state.update(state=> ({
+      //     ...state, 
+      //     currentUser:{
+      //         id:   user.id, 
+      //         name: user.name,
+      //         email:user.email, 
+      //         role: user.role!,
+      //         exp : user.exp
+      //     }
+      //   })
+      // )
+      
   }
 
-  login(email: string, password: string ): Observable<any> {
+  login(email: string, password: string ): Observable<AuthUser> {
     // Enviamos la petición POST pasándole la URL y el cuerpo con las credenciales
-    return this.http.post<ApiUser>(this.apiAuth, {email,password}).pipe(
+    return this.http.post<userAccessDto>(this.apiAuth, {email,password}).pipe(
       // take(1) asegura que la petición se cierre sola en cuanto responda el servidor
       take(1),
       delay(1400),
-      // tap() ejecuta lógica en segundo plano SIN modificar el flujo de datos original
-      tap((respuesta: ApiUser) => {
-        if (respuesta && respuesta?.accessToken) { 
-
-          this.updateUserAuth(
-            {
-              'id':   respuesta.user.id+"", 
-              'name': respuesta.user.username,
-              'email':respuesta.user.email, 
-              'role': this.getRole(respuesta.user.role!),
-              'exp' : this.getExpToken(respuesta.accessToken)
-            }
-          );
-          
-          // ✅ SOLO el token se guarda manual
-          localStorage.setItem('token', respuesta.accessToken);
-          console.log('Sesión guardada en el servicio con éxito.', respuesta);
-
-        }
+      tap((request: userAccessDto) => {
+            localStorage.setItem('token', request.accessToken);
+            console.log('Sesión guardada localstorage', request.accessToken); 
       }),
-      map(data => ({request:'ok'}
-      )),
+      map(x  => AuthMapper.DtoAuthtoUser(x.user,this.getExpToken(x.accessToken))),  
+
+// map(x  => AuthMapper.dtoAuthtoUser(x)),    
+         
+      // tap() ejecuta lógica en segundo plano SIN modificar el flujo de datos original
+      // tap((respuesta: userAccessDto) => {
+      //   if (respuesta && respuesta?.accessToken) { 
+      //     this.updateUserAuth(
+      //       {
+      //         'id':   respuesta.user.id, 
+      //         'name': respuesta.user.user_name,
+      //         'email':respuesta.user.email, 
+      //         'role': this.getRole(respuesta.user.role!),
+      //         'exp' : this.getExpToken(respuesta.accessToken)
+      //       }
+      //     );
+          
+
+      //   }
+      // }),
+      //map(data => ({request:'ok'})),
       catchError(this.handleError('loginUser'))      
       // catchError((error) => {
       //   console.log('Error de red detectado en el servicio:', error);
@@ -204,21 +218,21 @@ export class AuthService extends BaseService implements AuthState {
   register(name:string, email: string, password: string): Observable<any> {
       // const id = crypto.randomUUID();
       // console.log("Registro user ok , ",id);
-      return this.http.post<any>(this.apiRegister,  { name, email, password }).pipe(
+      return this.http.post<ApiUser>(this.apiRegister,  { name, email, password }).pipe(
         take(1),
         delay(1400),
         tap((request) =>  console.log("___ AUTH ____ USER REGISTRADOOOOO",request) ),
         tap((request:ApiUser) => {
-              this._state.update(state=>({
-                ...state,
-                currentUser : {
-                  id: request.user.id,
-                  name: name,
-                  email: email,
-                  role: UserRole.USER,
-                  exp : this.getExpToken(request.accessToken)
-                }
-              }))
+              // this._state.update(state=>({
+              //   ...state,
+              //   currentUser : {
+              //     id: request.user.id,
+              //     name: name,
+              //     email: email,
+              //     role: UserRole.USER,
+              //     exp : this.getExpToken(request.accessToken)
+              //   }
+              // }))
               localStorage.setItem('token', request.accessToken);
               console.log('Sesión guardada en el servicio con éxito.', request);
             }
@@ -236,12 +250,11 @@ export class AuthService extends BaseService implements AuthState {
   }
 
   logout() {
-      this._state.update(state=> ({
-          ...state, 
-          currentUser:null
-        }));
+      // this._state.update(state=> ({
+      //     ...state, 
+      //     currentUser:null
+      //   }));
         localStorage.removeItem('token');
-
   }
 
   private getIconRole(role:string){

@@ -292,6 +292,8 @@ table {
     padding: 0;
     color: black;
     background-color: transparent;
+    vertical-align: middle;
+    position: relative;
   }
 
   tr:not(:first-child, :last-child):hover {
@@ -321,7 +323,7 @@ table {
   }
 }
 
-.listTable {
+.listTable { 
   th {
     background-color: #ccc;
     cursor: pointer;
@@ -344,7 +346,7 @@ table {
         background-color: #d8d6d6
     }
     &:nth-child(odd) {
-      background-color:#d1d9ff
+      background-color:#ebe5c5bf;
     }    
 
     &.pagination {
@@ -353,6 +355,15 @@ table {
         width: 100%;
         border:none;
       }
+      a{
+        color:black;
+        padding: 0 3px;
+        text-decoration: none;
+        &.active{ font-weight: bold; pointer-events: none;}
+        &:hover{
+          text-decoration: underline;
+        }
+      }      
     } 
     &.total{
       background-color: transparent;
@@ -388,7 +399,7 @@ table {
           input, select{
             width: 70px;
             margin: 4px 0;
-            margin-right: 5px;
+            // margin-right: 5px;
             color: white;
             font-size: 12px;
           }
@@ -414,6 +425,30 @@ table {
 
       &:last-child {
         text-align: right;
+        position: relative; 
+      }
+      &.role,&.icon,&.boolean{
+          max-width: 10px;
+        div{
+          width: 18px;
+          display: block; 
+          margin: 0 auto;
+        }
+      }
+
+      &.text{
+        max-width: 80px;       
+        padding-left: 5px;
+        div{
+          width: 150px;       
+          white-space: nowrap;    
+          overflow: hidden;       
+          text-overflow: ellipsis;
+          display: block;
+        }
+      } 
+      &.date{
+
       }
     }
   }
@@ -483,3 +518,5 @@ table {
     padding: 2px 6px;
   }
 }
+
+ 

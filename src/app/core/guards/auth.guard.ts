@@ -2,27 +2,30 @@ import { inject } from '@angular/core';
 import { CanActivateFn, CanDeactivateFn, Router } from '@angular/router';
 import { AuthService } from '../../features/auth/auth.service';
 import { UserStore } from '../../features/admin/pages/users/user.store';
+import { AuthStore } from '../../features/auth/auth.store';
 
 export const adminGuard: CanActivateFn = () => {
-  const authService = inject(AuthService);
+  const authStore = inject(AuthStore);
   const router = inject(Router);
 
   console.log("----- adminGuard: CanActivateFn")
  
   // console.log("IS ADMIN ? CanActivateFn adminGuard -- " , authService.isAdmin())
- 
-  return authService.isAdmin()
+
+  
+  // tengo que preguntar por la signal en authStore.. no en service
+
+  return authStore.isAdmin()
       ? true
       : router.createUrlTree(['/home']); 
-
 };
 
 export const loggedGuard: CanActivateFn = () => {
-    const authService = inject(AuthService);
+    const authStore = inject(AuthStore);
     const router = inject(Router);
     
     console.log("----- loggedGuard: CanActivateFn")
-    if (authService.isLogged()) {
+    if (authStore.isLogged()) {
       return true;
     }
 

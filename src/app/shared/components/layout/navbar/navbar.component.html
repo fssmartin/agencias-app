@@ -22,7 +22,7 @@
               </a> 
             </li>
           <ng-template #enlaceUser>
-              <li *ngIf="link.role === authService.currentUser()?.role"   >
+              <li *ngIf="link.role === authStore.currentUser()?.role"   >
                 <a 
                   routerLinkActive="active"        
                   [routerLink]="link.path"
@@ -36,7 +36,7 @@
   </ul>
  
   <ul *ngIf="isHeader" class="navbarUser">
-      <ng-container  *ngIf="authService.isLogged(); else loggedOut">        
+      <ng-container  *ngIf="authStore.isLogged(); else loggedOut">        
         <li >
             <div class="notifications">
                 <i class="fa-solid fa-bell"></i>
@@ -47,16 +47,16 @@
         <li >
             <a 
                 class="userLogado"
-                [title]="authService.currentUser()?.name"
+                [title]="authStore.currentUser()?.name"
                 [routerLink]="['/profile']"
               >
-               <i *ngIf="authService.currentUser()?.role==='MANAGER'" class="fa-solid fa-user-pen"></i>
-               <i *ngIf="authService.currentUser()?.role==='USER'"    class="fa-solid fa-user"></i>
-               <i *ngIf="authService.currentUser()?.role==='ADMIN'"   class="fa-solid fa-user-shield"></i>
+               <i *ngIf="authStore.currentUser()?.role==='MANAGER'" class="fa-solid fa-user-pen"></i>
+               <i *ngIf="authStore.currentUser()?.role==='USER'"    class="fa-solid fa-user"></i>
+               <i *ngIf="authStore.currentUser()?.role==='ADMIN'"   class="fa-solid fa-user-shield"></i>
             </a>
         </li>
         <li >
-            <a (click)="authService.logout()" href="" title="Log Out">
+            <a (click)="authStore.logout()" href="" title="Log Out">
                <i class="fa fa-sign-out-alt"></i>
             </a>
         </li>

@@ -4,7 +4,7 @@ import {Component, Input, } from '@angular/core';
 import {   RouterLink, RouterLinkActive,   } from '@angular/router';
 
 import { NavLink } from '../../../models/navlink.model';
-import { AuthService } from '../../../../features/auth/auth.service';
+import { AuthStore } from '../../../../features/auth/auth.store';
 
  
 @Component({
@@ -21,7 +21,7 @@ export class NavbarComponent  {
   @Input() exact = false; 
  
   constructor( 
-    public authService:AuthService  
+    public authStore:AuthStore  
   ) {}
 
  ngOnInit(): void {

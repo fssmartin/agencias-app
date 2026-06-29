@@ -25,7 +25,6 @@ import { ListUser } from '../../models/list-user.model';
     <!-- <app-loading *ngIf="loading$ | async"></app-loading> -->
     <app-loading  [texto]="msgLoad" *ngIf="userState()?.loading"></app-loading>
  
-
     <!-- <ng-container *ngIf="!(loading$ | async)"> -->
     <ng-container  *ngIf="!userState()?.loading">
 
@@ -224,7 +223,7 @@ export class UserListComponent {
  
   //Cambiar orden
   onSortBy(field: keyof ListUser) { 
- 
+ console.log("field ??__ ",field,this.userStore.direcOrderState())
       this.userStore.sortState.set(
           {
             field:field,

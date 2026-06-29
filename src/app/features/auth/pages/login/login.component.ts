@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, signal, Signal, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, inject, signal, Signal, ViewChild} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthCardComponent } from '../../components/auth-card/auth-card.component';
 import { createLoginForm } from './login.form';
@@ -6,8 +6,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { getErrorMessage } from '../../../../shared/utils/forms/form-errors';
 import { AuthService } from '../../auth.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, delay, map, of, startWith } from 'rxjs';
+import { AuthState } from '../../models/auth.model';
+import { AuthStore } from '../../auth.store';
 
 @Component({
   selector: 'app-login',
@@ -76,11 +78,11 @@ import { catchError, delay, map, of, startWith } from 'rxjs';
               </label>
 
               <div class="fm_actions">
-                  <span class="msgError"> {{loginState().error}}</span>
+                  <span class="msgError"> {{state().error}}</span>
                   <div class="botones">
                     <button type="submit"
-                        [disabled]="form.invalid || form.pristine || loginState().loading">
-                            @if (loginState().loading) {
+                        [disabled]="form.invalid || form.pristine || state().loading">
+                            @if (state().loading) {
                               <i class="fa fa-spinner fa-spin"></i> Checking...
                             } @else {
                               Login
@@ -102,7 +104,7 @@ import { catchError, delay, map, of, startWith } from 'rxjs';
 
     </app-auth-card>
 
-    <pre>{{ loginState() | json }}</pre>
+    <!-- <pre>{{ loginState() | json }}</pre> -->
 
   `
 })
@@ -110,12 +112,17 @@ export class LoginComponent implements AfterViewInit {
 
   private fb = inject(FormBuilder);
   form:FormGroup = createLoginForm(this.fb);
+  private destroyRef = inject(DestroyRef); // ✅ CLAVE
 
-  loginState = signal({ data: {}, loading: false, error: null })
 
-  constructor(
-    private router:Router,
-    private authService:AuthService
+  //loginState = signal({ data: {}, loading: false, error: null })
+
+  public authStore = inject(AuthStore);
+
+  state = this.authStore.state;
+  
+
+  constructor( 
   ){ }
 
   ngOnInit(): void {
@@ -129,11 +136,7 @@ export class LoginComponent implements AfterViewInit {
  
   login() {
 
-      this.loginState.set({
-          data: [],
-          loading: true, 
-          error: null    
-      });
+
 
       console.log('Login:', this.form.value);
 
@@ -144,29 +147,35 @@ export class LoginComponent implements AfterViewInit {
 
       const { email, password } =  this.form.value;
 
-      this.authService.login(email.trim(), password.trim()).pipe(
-        map(data => ({ data, loading: false, error: null }))
-      )
-      .subscribe({
-          next: (request) => {
-            console.log('¡Login correcto!', request.data.request);
-            // Redirigimos al panel de administración de forma segura
-            this.loginState.set({
-              data:    request.data,
-              loading: request.loading, 
-              error:   request.error    
-            });            
-            this.router.navigate(['/home']);
-          },
-          error: (err) => {
-            console.log("___________________________error___ component al logarse !!",err)
-            this.loginState.set({
-                data:    {},
-                loading: false, 
-                error:   err  
-            });                 
-          }
-      });
+      this.authStore.login(email, password)
+
+
+
+
+      // this.authService.login(email.trim(), password.trim()).pipe(
+      //   map(data => ({ data, loading: false, error: null }))
+      // )
+      // .pipe(takeUntilDestroyed(this.destroyRef)) 
+      // .subscribe({
+      //     next: (request) => {
+      //       console.log('¡Login correcto!', request.data.request);
+      //       // Redirigimos al panel de administración de forma segura
+      //       this.loginState.set({
+      //         data:    request.data,
+      //         loading: request.loading, 
+      //         error:   request.error    
+      //       });            
+      //       this.router.navigate(['/home']);
+      //     },
+      //     error: (err) => {
+      //       console.log("___________________________error___ component al logarse !!",err)
+      //       this.loginState.set({
+      //           data:    {},
+      //           loading: false, 
+      //           error:   err  
+      //       });                 
+      //     }
+      // });
   }
 
   ngAfterViewInit(): void {

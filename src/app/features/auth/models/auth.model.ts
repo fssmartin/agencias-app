@@ -9,14 +9,19 @@ export interface AuthState {
 
 //signal
 export interface AuthStateModel {
-  currentUser: AuthUser | null;
+  currentUser: AuthUserFull | null;
+  loading:boolean,
+  error:string | null
 };
-
 
 export interface AuthUser {
   id: string;
   name: string;
   email: string;
   role: UserRole;
-  exp?:number
 }
+
+export interface AuthUserFull extends AuthUser {
+  exp?:number|null 
+}
+ 

@@ -37,17 +37,6 @@
       "is_active": false,
       "created_at": "2026-06-09T06:11:22.072Z",
       "update_at": "2026-06-26T07:46:58.490Z"
-    },
-    {
-      "email": "asdasd@asd.es",
-      "password": "$2a$10$4s8ZTzrCulZmiuPIpgYvgOnUq99uZIXTSxU/Kg06ptYDpqwrcCHHi",
-      "is_active": true,
-      "user_name": "22A1",
-      "first_name": "1asdasdA",
-      "last_name": "sadasdA",
-      "role": "USER",
-      "created_at": "2026-06-26T08:41:17.506Z",
-      "id": "t5y_o7y"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

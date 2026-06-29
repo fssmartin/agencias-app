@@ -7,6 +7,7 @@ import { CategoryDetailComponent } from '../../../shared/components/category/cat
 import { Category } from '../../../shared/models/category.model'; 
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../auth/auth.service';
+import { AuthStore } from '../../auth/auth.store';
 
 @Component({
   selector: 'app-home-layout',
@@ -15,7 +16,7 @@ import { AuthService } from '../../auth/auth.service';
   template: `
     <div class="container">
 
-      <div class="col" *ngIf="authService.currentUser()"><p class="wellCome">Wellcome <strong>{{authService.currentUser()?.name}}</strong>, ahora es tu turno</p></div>
+      <div class="col" *ngIf="authStore.currentUser()"><p class="wellCome">Wellcome <strong>{{authStore.currentUser()?.name}}</strong>, ahora es tu turno</p></div>
 
       <div class="col col50"> 
         
@@ -48,7 +49,7 @@ export class HomeComponent {
   categoriaSeleccionada?: Category ;
 
 
-  constructor(public authService:AuthService ){ 
+  constructor(public authStore:AuthStore ){ 
 
   } 
 

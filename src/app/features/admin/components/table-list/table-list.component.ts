@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, effect, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { output } from '@angular/core';
 
@@ -29,7 +29,7 @@ import { output } from '@angular/core';
                   class="fRight btEnlace btCrear">{{ lbCreation() }}</button>
             </th>
           </tr>
-          <tr *ngFor="let item of data(); trackBy: trackById"
+          <tr *ngFor="let item of dataShow(); trackBy: trackById"
               [ngClass]="{ 'highlight-row': item.id == itemSelected()}"
           >
 
@@ -38,11 +38,11 @@ import { output } from '@angular/core';
                 <ng-container [ngSwitch]="col.type">
 
                   <!-- Boolean -->
-                  <span *ngSwitchCase="'boolean'">{{ item[col.key[0]] ? '✅' : '❌' }}</span>
+                  <div *ngSwitchCase="'boolean'">{{ item[col.key[0]] ? '✅' : '❌' }}</div>
                   <!-- Rol -->
-                  <span *ngSwitchCase="'role'">{{ item[col.key[0]] === 'ADMIN' ? '🛡️' : item[col.key[0]] === 'MANAGER' ? '📊' : '👤'  }}</span>
+                  <div *ngSwitchCase="'role'">{{ item[col.key[0]] === 'ADMIN' ? '🛡️' : item[col.key[0]] === 'MANAGER' ? '📊' : '👤'  }}</div>
                   <!-- Fecha -->
-                  <span *ngSwitchCase="'date'">{{ item[col.key[0]] | date:'dd/MM/yyyy:HH:MM' }}</span>
+                  <div *ngSwitchCase="'date'">{{ item[col.key[0]] | date:'dd/MM/yyyy:HH:MM' }}</div>
                   <!-- Gender -->
                   <!-- <span *ngSwitchCase="'icon'">
                         <i [ngClass]="item[col.key[0]].toLocaleUpperCase() === 'MALE'
@@ -51,15 +51,13 @@ import { output } from '@angular/core';
                         </i>
                   </span> -->
 
-
-
                   <!-- Default -->
-                  <span *ngSwitchDefault>
+                  <ng-container *ngSwitchDefault>
                     <!-- {{ item[col.key] }} -->
-                      <span *ngFor="let key of col.key">
+                      <div *ngFor="let key of col.key">
                             {{ item[key] }}
-                      </span>
-                  </span>
+                      </div>
+                  </ng-container>
 
                 </ng-container>
 
@@ -77,14 +75,21 @@ import { output } from '@angular/core';
                        <i class="fa-regular fa-trash-can"></i></button>
             </td>
           </tr>
+
+    <!-- PAGINATION -->
+
           <tr class="total">
             <td colspan="100">
                 <p>
-                  <span>Total: <strong>{{ totReg() }} /3</strong></span>
-                  <span>Pag. 1/11</span>
+                  <span>Total: <strong>{{ totRegSelected() }} /{{totReg()}}</strong></span>
+                  <span>Pag. {{pagSelected()}} / {{pagTotales()}}</span>
                   <span>
-                    <select name="numPag" id="numPag"><option value="10" selected>10/pag</option><option value="20">20/pag</option></select>
-                    <span>ir a<input type="text" name="ira" id="ira" placeholder="0" value="0"/></span>
+                    <select name="numPag" id="numPag" (change)="changeReXpag($event)">">
+                      <option [value]=1 [selected]="reXpag() === 1">1/pag </option>
+                      <option [value]=2 [selected]="reXpag() === 2">2/pag </option>
+                      <option [value]=5 [selected]="reXpag() === 5">5/pag </option>
+                    </select>
+                    <!-- <span>ir a<input type="text" name="ira" id="ira" placeholder="0" value="0"/></span> -->
                   </span>
                 </p>
             </td>
@@ -92,19 +97,14 @@ import { output } from '@angular/core';
           <tr class="pagination">
             <td colspan="100">Pagination: 
               <ng-container *ngFor="let pag of totPag()" >
-                <a href="#"  [ngClass]="{ 'active': pag == pagSelected()}">{{pag}}</a>
+                <a href="#ni" (click)="gotoPage(pag)"  [ngClass]="{ 'active': pag == pagSelected()}">{{pag}}</a>
               </ng-container> 
           </tr>
+
     </table>
   `
 })
-/*
-  totReg 40
-  regXpag 10
-  pagActive  2
 
-
-*/
 export class TableListComponent {
   fieldOrder = input<string>(); // ✅ signal-based input
   direcOrder = input<string>(); // ✅ signal-based input
@@ -118,22 +118,34 @@ export class TableListComponent {
   lbCreation  = input< string>("Crear Item");
 
 
+  //PAGINATION 
+        _pagination =  signal<any>({
+            pagSelected : 1 ,
+            reXpag : 5,
+            data : this.data() || []
+        });
 
+        pagSelected =  computed(() => this._pagination().pagSelected );
+        reXpag      =  computed(() => this._pagination().reXpag );
+        totReg      =  computed(() => {return this._pagination().data.length});
+        totPag      =  computed(() => {
+          return  Array.from({length: this.calcTotPag() }, (_, i) => i + 1)
+        });
+        totRegSelected =  computed(() =>  this.dataShow().length);
+        pagTotales =  computed(() => this.totPag()?.length);
+        dataShow   = computed(() => {
+            const data = this._pagination().data ?? [];
+            const page = this.pagSelected();
+            const perPage = this.reXpag();
 
-  //PAGINATION
-  pagSelected = computed(() => {
-    let pepe = this.data();
-    return 2
-  }); 
-  reXpag = 4;
-  totReg = computed(() => this.data()?.length);
-  totPag = computed(() => {
-    // 42 registros , 10 reg x pag
-    return  Array.from({length: 40 / this.reXpag!}, (_, i) => i + 1)
-  });
+            const start = (page - 1) * perPage;
+            const end = start + perPage;
 
+            return data.slice(start, end);
+        });
+// fin PAGINATION
 
-  delete = output<any>();
+  delete = output<string>();
   sort   = output<any>();
 
   // deleteUser(id: string) {
@@ -144,17 +156,47 @@ export class TableListComponent {
   //     }
   // }
 
-  lanzarEmit(registro:any, isOrder:boolean){
-
-    if(!isOrder) return;
-      this.sort.emit(registro);
-
+  constructor(    
+  ){    
+      // cuando ordeno no se entera si no hago el
+      effect(()=>{
+          this._pagination.update(s=> ({...s, data:this.data(), pagSelected: 1 }))
+      })
   }
 
+    
+  ngOnInit(){
+      this._pagination.update(s=> ({...s, data:this.data()}))
+  }
 
+  calcTotPag(){
+      let divi = this.totReg()! / this.reXpag()!;
+      let mod  = this.totReg()! % this.reXpag()!;     
+      return  Math.floor(divi) > 0 ? Math.floor(divi) + Math.floor(mod) : 1 ;
+  }
+
+  changeReXpag(event: Event) {
+      const value = (event.target as HTMLSelectElement).value;
+      this._pagination.update(s => ({
+        ...s,
+        reXpag: Number(value),
+        pagSelected: 1 // reset a primera página
+      }));
+      return false;
+  }
+
+  gotoPage(page:number){
+      this._pagination.update(s=> ({...s, pagSelected: page}))
+      return false;
+  }
+
+  lanzarEmit(registro:string, isOrder:boolean){ 
+      if(!isOrder) return;
+        this.sort.emit(registro);
+  }
 
     //Solo actualiza los que cambian
   trackById(index: number, item: any) {
-    return item.id || index;
+        return item.id || index;
   }
 }

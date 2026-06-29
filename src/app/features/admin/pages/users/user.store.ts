@@ -31,22 +31,24 @@ export class UserStore {
 
         return [...data].sort((a, b) => {
 
-        const valueA = (a as any)[field];
-        const valueB = (b as any)[field];
+            const valueA = (a as any)[field];
+            const valueB = (b as any)[field];
 
-        let result = 0;
+            let result = 0;
 
-        if (valueA instanceof Date && valueB instanceof Date) {
-            result = valueA.getTime() - valueB.getTime();
-        } else if (typeof valueA === 'string' && typeof valueB === 'string') {
-            result = valueA.localeCompare(valueB);
-        } else if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
-            result = Number(valueA) - Number(valueB);
-        } else {
-            result = valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-        }
-        
-        return dir === 'asc' ? result : -result;
+            console.log("_____orderDataState ?? ", dir)
+
+            if (valueA instanceof Date && valueB instanceof Date) {
+                result = valueA.getTime() - valueB.getTime();
+            } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+                result = valueA.localeCompare(valueB);
+            } else if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
+                result = Number(valueA) - Number(valueB);
+            } else {
+                result = valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+            }
+            
+            return dir === 'asc' ? result : -result;
         })
     });   
 

@@ -29,7 +29,6 @@ export interface LoginRequestDto {
   password: string;
 }
 
- 
 
 export interface ActionUserDto {
     is_active?: boolean;
@@ -41,3 +40,5 @@ export interface ActionUserDto {
     updated_at?: string;
     created_at?: string;
 }
+
+
