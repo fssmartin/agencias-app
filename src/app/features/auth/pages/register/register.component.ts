@@ -96,6 +96,7 @@ import { Router } from '@angular/router';
               <span>Your Country/Region</span>
               <select name="country" id="country" required  
                 role="presentation" required   autofocus=""> 
+                  <option value="ES">España</option>
                   <option value="SZ">Eswatini</option>
                   <option value="ET">Ethiopia</option>
                   <option value="FK">Falkland Islands</option>

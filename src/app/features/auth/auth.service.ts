@@ -1,20 +1,21 @@
-import { computed, DestroyRef, effect, inject, Injectable,   signal } from "@angular/core";
+import { DestroyRef,  inject, Injectable } from "@angular/core";
 import { UserService } from "../admin/pages/users/user.service";
 import { HttpClient } from "@angular/common/http";
-import { catchError, delay, map, Observable, of, take, tap, throwError } from "rxjs";
+import { catchError, delay, map, Observable, of, take, tap } from "rxjs";
 import { BaseService } from "../../core/services/base.service";
-import { ApiUser, UserRole } from "../admin/pages/users/models/user.model";
-import { AuthState, AuthStateModel, AuthUser, AuthUserFull } from "./models/auth.model";
-import { userAccessDto } from "../../core/dto/user.dto"; 
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { AuthStore } from "./auth.store";
+import { ActionUser, ApiUser, UserRole } from "../admin/pages/users/models/user.model";
+import { AuthUser, AuthUserFull, JwtPayload } from "./models/auth.model";
+import { userAccessDto, UserDto } from "../../core/dto/user.dto"; 
+
 import { AuthMapper } from "./mappers/auth.mapper";
+import { UserMapper } from "../admin/pages/users/mappers/user.mapper";
 
  // BaseService ES PARA LOS ERRRORES !! 
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends BaseService  {
 
+  private apiUser = 'http://localhost:3000/users';
   private apiAuth = 'http://localhost:3000/login';
   private apiRegister = 'http://localhost:3000/register';
 
@@ -53,16 +54,18 @@ export class AuthService extends BaseService  {
   // private _now = signal(Date.now());
  
   private http = inject(HttpClient); 
-  private userService = inject(UserService); 
+  // private userService = inject(UserService); 
   
 
-  private destroyRef = inject(DestroyRef);
+  // private destroyRef = inject(DestroyRef);
  
   constructor() {
     super();
-    console.log("___ AUTH INIT  constructor")
+    // no hacemos nada ... lo hacemos en el constructor del store
+    console.log("0 ___ AUTH SERVICE - INIT constructor")
+
     
-    this.initFromStorage();
+   // this.initFromStorage();
 
     
     // setInterval(() => {
@@ -73,78 +76,76 @@ export class AuthService extends BaseService  {
   }
  
     
-  private initFromStorage() {
+  private initFromStorage_A() {
 
     // 1 - tengo que sacar la info del storage 
     // 2 - validar el token expired
     // 3 - decodifica token
     // 4 - buscar el id del user 
     // 5 - logarlo si.
+ 
+  }
 
-    //1
-    const token = localStorage.getItem('token');
+  initFromStorage():Observable<AuthUserFull>{
 
-    console.log("___ AUTH ____________initFromStorage___token__",token)
+      const token = this.getStoredToken();
 
-    if ( !token ) return;
+      console.log("1 ___ AUTH ____________ initFromStorage___token__",token)
 
-    try {
-    //2
-      if (this.isTokenExpired(token)) {
-        console.log("___ AUTH ____________this.isTokenExpired(token)")
-        localStorage.removeItem('token');
-        return;
+      if (!token) {
+        console.log("_____ AUTH ____________ NO HAY TOKEN")
+        return of();
       }
-
-    //3
-      const payload = this.decodeToken(token);
-
-      console.log("___ AUTH ____________payload ___ ", payload)
     
-    //4
-        this.userService.getById(payload.sub)
-          .pipe(takeUntilDestroyed(this.destroyRef)) 
-          .subscribe({
-            next: (user) => {
-              console.log("__ user userService.getById" , user)
-    //5            
-              // this.authStore.state.update(state => ({
-              //                     ...state,
-              //                     Loading : false,
-              //                     error : null,
-              //                     currentUser: {
-              //                       "id":    user.id!,
-              //                       "name":  user.username!, 
-              //                       "email": user.email!,
-              //                       "role":  this.getRole(user.role!),
-              //                       "exp" :  payload.exp
-              //                     }
-              // }))
-            },
-            error: () => {
-                console.log("___ error localStorage.removeItem('token')")  
-                localStorage.removeItem('token');
-            }
-          }); 
+      console.log("2 ___ AUTH ____________decodeToken")
+      const payload = this.decodeToken(token); 
    
-    } catch (e) {
-      localStorage.removeItem('token');
-    }
+      if (this.isTokenExpired(payload)) {
+        console.log("___ AUTH ____________ token expired")
+        this.clearSession()
+        return of();
+      } 
+
+      return this.loadUser(payload);
+  }
+
+  private loadUser(payload:JwtPayload):Observable<AuthUserFull>{
+
+      return  this.http.get<UserDto>(`${this.apiUser}/${payload.sub}`).pipe(
+              delay(1000),
+              tap(user => {
+                console.log("USER 1",user)
+              }),
+              map(x  => AuthMapper.DtoAuthtoUser(x, payload.exp  )), 
+              tap(user => {                
+                console.log('USER 2', user);
+              }),
+              catchError(this.handleError('getById'))
+              // catchError(err => {
+              //   if (err.status === 404)  
+              //     return throwError(() => new Error("❌ Usuario no encontrado"));
+              //   return throwError(() => new Error('❌ Error cargando usuario'));
+              // })
+            );      
+  }
+
+  private getStoredToken():string|null{
+    return localStorage.getItem('token')
   }
   
-  private decodeToken(token:string):any{
+  private decodeToken(token:string):JwtPayload{
       const payload = JSON.parse(atob(token.split('.')[1]));
-      console.log("___ AUTH____TOKEN DECODE___", payload )
+      console.log("____TOKEN DECODE___", payload )
      return payload;
   }
 
-  private isTokenExpired(token: string): boolean {
+  private isTokenExpired(payload: JwtPayload): boolean {
     try {
-      // ✅ Obtener payload del JWT
-      const payload = this.decodeToken(token);
-      console.log("___ AUTH____isTokenExpired___", payload )
+      // // ✅ Obtener payload del JWT
+      // const payload = this.decodeToken(token);
       // ✅ Campo estándar del JWT (en segundos)
       const exp = payload.exp;
+
       if (!exp) return true; // si no hay exp → inválido      
       const buffer = 5 * 1000; // 5 segundos 
       
@@ -156,29 +157,23 @@ export class AuthService extends BaseService  {
       return true;
     }
   }
-
-  updateUserAuth(user:AuthUser){
-
-      // this._state.update(state=> ({
-      //     ...state, 
-      //     currentUser:{
-      //         id:   user.id, 
-      //         name: user.name,
-      //         email:user.email, 
-      //         role: user.role!,
-      //         exp : user.exp
-      //     }
-      //   })
-      // )
-      
+ 
+  getExpToken(token:string):number{
+      const payload = this.decodeToken(token);
+      console.log("___ AUTH____getExpToken___", payload )
+      // ✅ Campo estándar del JWT (en segundos)
+      const exp = payload.exp;
+      if (!exp) return 0; // si no hay exp → inválido      
+      return exp;
   }
 
   login(email: string, password: string ): Observable<AuthUser> {
-    // Enviamos la petición POST pasándole la URL y el cuerpo con las credenciales
+    
     return this.http.post<userAccessDto>(this.apiAuth, {email,password}).pipe(
       // take(1) asegura que la petición se cierre sola en cuanto responda el servidor
       take(1),
       delay(1400),
+      tap((request) =>  console.log("login______________",request) ),      
       tap((request: userAccessDto) => {
             localStorage.setItem('token', request.accessToken);
             console.log('Sesión guardada localstorage', request.accessToken); 
@@ -249,12 +244,12 @@ export class AuthService extends BaseService  {
     );
   }
 
-  logout() {
-      // this._state.update(state=> ({
-      //     ...state, 
-      //     currentUser:null
-      //   }));
-        localStorage.removeItem('token');
+  logout() { 
+    this.clearSession();
+  }
+
+  private clearSession(){
+    localStorage.removeItem('token');
   }
 
   private getIconRole(role:string){
@@ -273,14 +268,7 @@ export class AuthService extends BaseService  {
     }
   } 
 
-  getExpToken(token:string):number{
-      const payload = this.decodeToken(token);
-      console.log("___ AUTH____getExpToken___", payload )
-      // ✅ Campo estándar del JWT (en segundos)
-      const exp = payload.exp;
-      if (!exp) return 0; // si no hay exp → inválido      
-      return exp;
-  }
+
 
   // hasPermission(permission: Permission): boolean {
   //   return this.user?.permissions?.includes(permission) ?? false;

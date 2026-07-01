@@ -13,7 +13,6 @@ export function getErrorMessage(control: AbstractControl | null): string[] {
   if (control.errors['email']) 
     messages.push('El email es invalido');
 
-  
   if (control.errors['minlength']) 
     messages.push(`Mínimo ${control.errors['minlength'].requiredLength} caracteres`);
   

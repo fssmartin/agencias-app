@@ -28,12 +28,12 @@ export const ADMIN_ROUTES : Routes = [
             },
             {
                 path: 'users',
-                canDeactivate: [canDeactivateGuard],
+//                canDeactivate: [canDeactivateGuard],
                 loadChildren: () => import('./pages/users/users.routes').then(m => m.USERS_ROUTES)    
             },
             {
                 path: 'questions',
-                canDeactivate: [canDeactivateGuard],
+//                canDeactivate: [canDeactivateGuard],
                 loadChildren: () => import('./pages/questions/questions.routes').then(m => m.QUESTIONS_ROUTES)
             },
 /*

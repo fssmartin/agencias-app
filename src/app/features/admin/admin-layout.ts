@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/layout/navbar/navbar.component';
+import { AdminNavigationService } from './admin.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -27,9 +28,11 @@ export class AdminLayoutComponent {
   ]
 
  
-  constructor( ){ 
 
-  } 
+  constructor(
+    private adminNavigationService: AdminNavigationService
+  ) {}
+
 
   ngOnInit(): void {  
   

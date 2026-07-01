@@ -209,10 +209,10 @@ export class UserStore {
     }
 
     cleanMsgState(reload:boolean){    
+        console.log("-- STORE USER , -- cleanMsgState --> updateState cleanNotify")
         this._state.update(s=>({...s, selectedUser:null, loading:reload,error:false,}))
         this.notificationUi.cleanNotify();
 
-        console.log("BORROOOOO_ selectedUser",this._state())
         if(reload) this.router.navigate(['/admin/users']);  
     }
 

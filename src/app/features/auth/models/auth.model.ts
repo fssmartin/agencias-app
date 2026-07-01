@@ -25,3 +25,8 @@ export interface AuthUserFull extends AuthUser {
   exp?:number|null 
 }
  
+
+export interface JwtPayload {
+   sub:string;
+   exp:number;
+}

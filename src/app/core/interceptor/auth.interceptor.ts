@@ -1,8 +1,8 @@
 
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, mergeMap, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   
@@ -16,6 +16,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 req.url.includes('/login') ||
                 req.url.includes('/register');
 
+  console.log('-- Interceptor ', isAuthRequest,token );
 
   // ✅ Si NO hay token → seguimos igual
   if (!token || isAuthRequest) {
@@ -32,14 +33,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // ✅ Continuar con la petición modificada
  
     return next(authReq).pipe(
-
-        // 👇 AQUÍ VA TU CÓDIGO
+        // mergeMap(response => {
+        //   return throwError(() =>
+        //     new HttpErrorResponse({
+        //       status: 401
+        //     })
+        //   );
+        // }),
         catchError((error) => {
 
             if (error.status === 401) {
                 console.log('🔴 Token inválido o expirado');
                 localStorage.removeItem('token');
-                router.navigate(['/login']);
+                router.navigate(['auth/login']);
             }
 
             return throwError(() => error);

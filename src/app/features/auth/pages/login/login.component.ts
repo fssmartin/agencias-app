@@ -112,18 +112,15 @@ export class LoginComponent implements AfterViewInit {
 
   private fb = inject(FormBuilder);
   form:FormGroup = createLoginForm(this.fb);
-  private destroyRef = inject(DestroyRef); // ✅ CLAVE
 
-
-  //loginState = signal({ data: {}, loading: false, error: null })
-
+ 
   public authStore = inject(AuthStore);
 
   state = this.authStore.state;
   
+  private destroyRef = inject(DestroyRef);
 
-  constructor( 
-  ){ }
+  constructor(private router:Router ){ }
 
   ngOnInit(): void {
 
@@ -136,8 +133,6 @@ export class LoginComponent implements AfterViewInit {
  
   login() {
 
-
-
       console.log('Login:', this.form.value);
 
       if (this.form.invalid) {
@@ -148,34 +143,19 @@ export class LoginComponent implements AfterViewInit {
       const { email, password } =  this.form.value;
 
       this.authStore.login(email, password)
+        .pipe(
+          takeUntilDestroyed(this.destroyRef)        
+        )
+        .subscribe({
+             next: (request) => {
+               console.log('¡Login correcto!', request.data);               
+                this.router.navigate(['/home']);
+             },
+             error: (err) => {
+                console.log("___________________________error___ component al logarse !!",err)
+             }
+         });
 
-
-
-
-      // this.authService.login(email.trim(), password.trim()).pipe(
-      //   map(data => ({ data, loading: false, error: null }))
-      // )
-      // .pipe(takeUntilDestroyed(this.destroyRef)) 
-      // .subscribe({
-      //     next: (request) => {
-      //       console.log('¡Login correcto!', request.data.request);
-      //       // Redirigimos al panel de administración de forma segura
-      //       this.loginState.set({
-      //         data:    request.data,
-      //         loading: request.loading, 
-      //         error:   request.error    
-      //       });            
-      //       this.router.navigate(['/home']);
-      //     },
-      //     error: (err) => {
-      //       console.log("___________________________error___ component al logarse !!",err)
-      //       this.loginState.set({
-      //           data:    {},
-      //           loading: false, 
-      //           error:   err  
-      //       });                 
-      //     }
-      // });
   }
 
   ngAfterViewInit(): void {

@@ -1,6 +1,5 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, CanDeactivateFn, Router } from '@angular/router';
-import { AuthService } from '../../features/auth/auth.service';
 import { UserStore } from '../../features/admin/pages/users/user.store';
 import { AuthStore } from '../../features/auth/auth.store';
 
@@ -40,6 +39,9 @@ export const canDeactivateGuard: CanDeactivateFn<any> =
   (component, currentRoute, currentState, nextState) => {
 
     //tengo que limpiar todos los stores de admin, user, ....  cuando se salgan !
+
+    console.log("_____ canDeactivateGuard -- cleanMsgState")
+
      const userStore = inject(UserStore);
      userStore.cleanMsgState(false);
     return true;

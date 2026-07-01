@@ -15,8 +15,12 @@ import { AuthStore } from '../../auth/auth.store';
   imports: [CommonModule, CategoryDetailComponent, CategoryListComponent],
   template: `
     <div class="container">
-
-      <div class="col" *ngIf="authStore.currentUser()"><p class="wellCome">Wellcome <strong>{{authStore.currentUser()?.name}}</strong>, ahora es tu turno</p></div>
+      
+      @if (authStore.currentUser()) {
+        <div class="col"><p class="wellCome">Wellcome <strong>{{authStore.currentUser()?.name}}</strong>, ahora es tu turno</p></div>
+      }@else{
+          <div class="col"><p class="wellCome">Te estamos esperando , logeate</div>      
+      }
 
       <div class="col col50"> 
         
