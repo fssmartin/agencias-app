@@ -1,4 +1,56 @@
 {
+  "images": [
+    {
+      "id": "1",
+      "description": "aaaa",
+      "url": "http://localhost:3001/uploads/avatar1.jpg"
+    },
+    {
+      "id": "2",
+      "description": "bbbb",
+      "url": "http://localhost:3001/uploads/avatar2.jpg"
+    },
+    {
+      "id": "3",
+      "description": "ccc",
+      "url": "http://localhost:3001/uploads/avatar3.jpg"
+    },
+    {
+      "id": "4",
+      "description": "ccc 4",
+      "url": "http://localhost:3001/uploads/avatar4.jpg"
+    },
+    {
+      "id": "5",
+      "description": "ccc 5",
+      "url": "http://localhost:3001/uploads/avatar5.jpg"
+    },
+    {
+      "id": "6",
+      "description": "ccc 6",
+      "url": "http://localhost:3001/uploads/avatar6.jpg"
+    },
+    {
+      "id": "7",
+      "description": "ccc 7",
+      "url": "http://localhost:3001/uploads/avatar7.jpg"
+    },
+    {
+      "id": "8",
+      "description": "ccc 8",
+      "url": "http://localhost:3001/uploads/avatar8.jpg"
+    },
+    {
+      "id": "9",
+      "description": "ccc 9",
+      "url": "http://localhost:3001/uploads/avatar9.jpg"
+    },
+    {
+      "id": "10",
+      "description": "ccc 10",
+      "url": "http://localhost:3001/uploads/avatar10.jpg"
+    }
+  ],
   "users": [
     {
       "id": "2",
@@ -11,43 +63,124 @@
       "role": "ADMIN",
       "updated_at": "2026-06-23T15:13:56.529Z",
       "created_at": "2024-12-09T06:11:22.072Z",
-      "update_at": "2026-06-26T07:46:24.099Z"
+      "update_at": "2026-06-26T07:46:24.099Z",
+      "images_user": [
+        {
+          "id": "1",
+          "description": "ss",
+          "url_image": "avatar1.jpg",
+          "is_active": true
+        },
+        {
+          "id": "2",
+          "description": "cc",
+          "url_image": "avatar2.jpg",
+          "is_active": false
+        },
+        {
+          "id": "3",
+          "description": "vv",
+          "url_image": "avatar3.jpg",
+          "is_active": true
+        }
+      ]
     },
     {
       "id": "3",
       "email": "pedro.vila@example.com",
-      "user_name": "pedrVIla",
-      "first_name": "Pedro",
-      "last_name": "Vilaaa",
+      "user_name": "pedrVIlaa",
+      "first_name": "aAdasdasd",
+      "last_name": "Vilaaaa",
       "password": "$2a$10$hKa0oW6oQXY5y3j5sOywQuUpglPOJBiTw2xmjQmFDcgZegvmUJnkm",
       "role": "USER",
       "is_active": true,
       "created_at": "2024-12-09T06:11:22.072Z",
       "updated_at": "2026-06-18T15:16:13.616Z",
-      "update_at": "2026-06-26T07:46:40.451Z"
+      "update_at": "2026-07-03T11:31:08.129Z",
+      "images_user": [
+        {
+          "id": "4",
+          "description": "aa",
+          "url_image": "avatar4.jpg",
+          "is_active": true
+        },
+        {
+          "id": "5",
+          "description": "bb",
+          "url_image": "avatar5.jpg",
+          "is_active": false
+        }
+      ]
     },
     {
       "id": "fm_G8ZQ",
       "email": "belen.perez@example.com",
       "user_name": "belenPerez",
-      "first_name": "Belen",
+      "first_name": "Belennn",
       "last_name": "Perez",
       "password": "$2a$10$FPae.UoiG7y2ZHnJ4kh8ru1vUMsap.eDkCS1gS9ZsCakTTe291.PS",
       "role": "ADMIN",
       "is_active": false,
       "created_at": "2026-06-09T06:11:22.072Z",
-      "update_at": "2026-06-26T07:46:58.490Z"
+      "update_at": "2026-07-03T11:31:44.228Z",
+      "images_user": [
+        {
+          "id": "6",
+          "description": "nn",
+          "url_image": "avatar6.jpg",
+          "is_active": true
+        },
+        {
+          "id": "7",
+          "description": "mm",
+          "url_image": "avatar7.jpg",
+          "is_active": true
+        },
+        {
+          "id": "8",
+          "description": "kk",
+          "url_image": "avatar8.jpg",
+          "is_active": false
+        }
+      ]
     },
     {
+      "id": "lVwb2Qn",
       "email": "asd@asd.es",
       "password": "$2a$10$ZKU1NY3meyNoDfLzI0o3k.JmPCbqRbP7fAO67JAzvnQQgVN2yQFLC",
       "is_active": true,
       "user_name": "paA",
       "first_name": "sadaA",
       "last_name": "sssA",
-      "role": "MANAGER",
+      "role": "ADMIN",
       "created_at": "2026-07-01T09:21:00.185Z",
-      "id": "lVwb2Qn"
+      "update_at": "2026-07-02T09:55:03.927Z",
+      "images_user": [
+        {
+          "id": "9",
+          "description": "kk",
+          "url_image": "avatar9.jpg",
+          "is_active": true
+        },
+        {
+          "id": "10",
+          "description": "pp",
+          "url_image": "avatar10.jpg",
+          "is_active": false
+        }
+      ]
+    },
+    {
+      "email": "sffffff@asd.es",
+      "password": "$2a$10$2eGqpEgcSvVhkXGwljZf5.GHd8d19KviUx1i1AGdpvUm86pCmHBPm",
+      "is_active": false,
+      "user_name": "hhhhA",
+      "first_name": "asdA",
+      "last_name": "dddddddddA",
+      "role": "ADMIN",
+      "created_at": "2026-07-03T06:57:05.923Z",
+      "id": "pfI-xdh",
+      "update_at": "2026-07-03T11:31:55.458Z"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

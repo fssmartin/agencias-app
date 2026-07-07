@@ -1,3 +1,4 @@
+import { BaseImage } from "../../images/models/image.model";
 import { ListUser } from "./list-user.model";
 
 // user full -> login back api
@@ -20,6 +21,7 @@ export interface User extends BaseUser{
     lastname: string;
     createdAt?: Date;  
     updatedAt?: Date;  // ✏️ se añade en updates
+    images? :BaseImage[];
 }
 
 export interface UserState  {

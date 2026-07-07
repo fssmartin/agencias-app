@@ -1,6 +1,7 @@
 import { UserDto } from '../../../../../core/dto/user.dto'; 
 import { ActionUser, User, UserActionUC, UserRole } from '../models/user.model';
 import { ListUser } from '../models/list-user.model';
+import { ImageMapper } from '../../images/mappers/image.mapper';
 
 export class UserMapper {
 
@@ -39,7 +40,8 @@ export class UserMapper {
         role: dto.role,
         password:dto.password,
         createdAt: dto.created_at ? new Date(dto.created_at) : undefined,
-        updatedAt: dto.updated_at ? new Date(dto.updated_at) : undefined
+        updatedAt: dto.updated_at ? new Date(dto.updated_at) : undefined,
+        images : dto.images_user ? dto.images_user.map(ImageMapper.toDomain) : undefined 
     };
   }
 

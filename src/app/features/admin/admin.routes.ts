@@ -27,6 +27,11 @@ export const ADMIN_ROUTES : Routes = [
                 pathMatch: 'full',
             },
             {
+                path: 'images',
+//                canDeactivate: [canDeactivateGuard],
+                loadChildren: () => import('./pages/images/images.routes').then(m => m.IMAGES_ROUTES)    
+            },
+            {
                 path: 'users',
 //                canDeactivate: [canDeactivateGuard],
                 loadChildren: () => import('./pages/users/users.routes').then(m => m.USERS_ROUTES)    

@@ -11,97 +11,107 @@ import { output } from '@angular/core';
 
 <!-- <pre>{{fieldOrder()|json}}</pre>
 <pre>{{direcOrder()|json}}</pre> -->
-
+    <p class="addItem">
+      <button  [routerLink]="['create']"
+                          class="fRight btEnlace btCrear">{{ lbCreation() }}</button>
+    </p>
     <table
           class="listTable">
-          <tr>
-            <th *ngFor="let col of columns()" (click)="lanzarEmit(col.key[0] , col.order)"
-              [ngClass]="{ 'noOrder': !col.order}">
-              {{ col.label }}
-              <span *ngIf="fieldOrder() == col.key[0] && col.order ">
-                {{  direcOrder() == 'desc' ? '▲' : '▼' }}
-              </span>
-            </th>
-            <th>
-              <!-- <button routerLink="edit"
-                      [queryParams]="{ mode: 'create' }"  -->
-                <button  [routerLink]="['create']"
-                  class="fRight btEnlace btCrear">{{ lbCreation() }}</button>
-            </th>
-          </tr>
-          <tr *ngFor="let item of dataShow(); trackBy: trackById"
-              [ngClass]="{ 'highlight-row': item.id == itemSelected()}"
-          >
+          <thead>
+            <tr>
+              <th *ngFor="let col of columns()" (click)="lanzarEmit(col.key[0] , col.order)"
+                [ngClass]="[col.type, !col.order ? 'noOrder':'' ]">
+                {{ col.label }}
+                <span *ngIf="fieldOrder() == col.key[0] && col.order ">
+                  {{  direcOrder() == 'desc' ? '▲' : '▼' }}
+                </span>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
 
-            <td *ngFor="let col of columns()" [ngClass]="col.type">
-
-                <ng-container [ngSwitch]="col.type">
-
-                  <!-- Boolean -->
-                  <div *ngSwitchCase="'boolean'">{{ item[col.key[0]] ? '✅' : '❌' }}</div>
-                  <!-- Rol -->
-                  <div *ngSwitchCase="'role'">{{ item[col.key[0]] === 'ADMIN' ? '🛡️' : item[col.key[0]] === 'MANAGER' ? '📊' : '👤'  }}</div>
-                  <!-- Fecha -->
-                  <div *ngSwitchCase="'date'">{{ item[col.key[0]] | date:'dd/MM/yyyy:HH:MM' }}</div>
-                  <!-- Gender -->
-                  <!-- <span *ngSwitchCase="'icon'">
-                        <i [ngClass]="item[col.key[0]].toLocaleUpperCase() === 'MALE'
-                            ? 'fa-solid fa-mars'
-                            : 'fa-solid fa-venus'">
-                        </i>
-                  </span> -->
-
-                  <!-- Default -->
-                  <ng-container *ngSwitchDefault>
-                    <!-- {{ item[col.key] }} -->
-                      <div *ngFor="let key of col.key">
-                            {{ item[key] }}
-                      </div>
+            <tr *ngFor="let item of dataShow(); trackBy: trackById"
+                [ngClass]="{ 'highlight-row': item.id == itemSelected()}"
+            >
+  
+              <td *ngFor="let col of columns()" [ngClass]="col.type">
+  
+                  <ng-container [ngSwitch]="col.type">
+  
+                    <!-- Boolean -->
+                    <div *ngSwitchCase="'boolean'">{{ item[col.key[0]] ? '✅' : '❌' }}</div>
+                    <!-- Rol -->
+                    <div *ngSwitchCase="'role'">{{ item[col.key[0]] === 'ADMIN' ? '🛡️' : item[col.key[0]] === 'MANAGER' ? '📊' : '👤'  }}</div>
+                    <!-- Fecha -->
+                    <div *ngSwitchCase="'date'">{{ item[col.key[0]] | date:'dd/MM/yyyy HH:MM' }}</div>
+                    <!-- Gender -->
+                    <!-- <span *ngSwitchCase="'icon'">
+                          <i [ngClass]="item[col.key[0]].toLocaleUpperCase() === 'MALE'
+                              ? 'fa-solid fa-mars'
+                              : 'fa-solid fa-venus'">
+                          </i>
+                    </span> -->
+  
+                    <!-- Default -->
+                    <ng-container *ngSwitchDefault>
+                      <!-- {{ item[col.key] }} -->
+                        <div *ngFor="let key of col.key">
+                              {{ item[key] }}
+                        </div>
+                    </ng-container>
+  
                   </ng-container>
-
-                </ng-container>
-
-            </td>
-            <td>
-                       <!-- [queryParams]="{ 'mode': 'view' }"  -->
-              <button  [routerLink]="[item.id]"
-                       title="Show">
-                       <i class="fa-solid fa-eye"></i></button>
-                       <!-- [queryParams]="{ 'mode': 'edit' }"  -->
-              <button  [routerLink]="[item.id, 'edit']"
-                       title="Edit">
-                       <i class="fa-solid fa-pencil"></i></button>
-              <button title="Delete" (click)="delete.emit(item.id)">
-                       <i class="fa-regular fa-trash-can"></i></button>
-            </td>
-          </tr>
+  
+              </td>
+              <td>
+                <div>
+                              <!-- [queryParams]="{ 'mode': 'view' }"  -->
+                    <button  [routerLink]="[item.id]" title="Show">
+                              <!-- <i class="fa-solid fa-eye"></i> -->
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                              <!-- [queryParams]="{ 'mode': 'edit' }"  -->
+                    <button  [routerLink]="[item.id, 'edit']" title="Edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-3"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                              <!-- <i class="fa-solid fa-pencil"></i> -->
+                    </button>
+                    <button title="Delete" (click)="delete.emit(item.id)">
+                              <!-- <i class="fa-regular fa-trash-can"></i> -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>                          
+                    </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
 
     <!-- PAGINATION -->
+          <tfoot>
+            <tr class="total">
+              <td colspan="100">
+                  <p>
+                    <span>Total: <strong>{{ totRegSelected() }} /{{totReg()}}</strong></span>
+                    <span>Pag. {{pagSelected()}} / {{pagTotales()}}</span>
+                    <span>
+                      <select name="numPag" id="numPag" (change)="changeReXpag($event)">">
+                        <option [value]=1 [selected]="reXpag() === 1">1/pag </option>
+                        <option [value]=2 [selected]="reXpag() === 2">2/pag </option>
+                        <option [value]=5 [selected]="reXpag() === 5">5/pag </option>
+                      </select>
+                      <!-- <span>ir a<input type="text" name="ira" id="ira" placeholder="0" value="0"/></span> -->
+                    </span>
+                  </p>
+              </td>
+            </tr>
+            <tr class="pagination">
+              <td colspan="100">Pagination: 
+                <ng-container *ngFor="let pag of totPag()" >
+                  <a href="#ni" (click)="gotoPage(pag)"  [ngClass]="{ 'active': pag == pagSelected()}">{{pag}}</a>
+                </ng-container> 
+            </tr>
+          </tfoot>
 
-          <tr class="total">
-            <td colspan="100">
-                <p>
-                  <span>Total: <strong>{{ totRegSelected() }} /{{totReg()}}</strong></span>
-                  <span>Pag. {{pagSelected()}} / {{pagTotales()}}</span>
-                  <span>
-                    <select name="numPag" id="numPag" (change)="changeReXpag($event)">">
-                      <option [value]=1 [selected]="reXpag() === 1">1/pag </option>
-                      <option [value]=2 [selected]="reXpag() === 2">2/pag </option>
-                      <option [value]=5 [selected]="reXpag() === 5">5/pag </option>
-                    </select>
-                    <!-- <span>ir a<input type="text" name="ira" id="ira" placeholder="0" value="0"/></span> -->
-                  </span>
-                </p>
-            </td>
-          </tr>
-          <tr class="pagination">
-            <td colspan="100">Pagination: 
-              <ng-container *ngFor="let pag of totPag()" >
-                <a href="#ni" (click)="gotoPage(pag)"  [ngClass]="{ 'active': pag == pagSelected()}">{{pag}}</a>
-              </ng-container> 
-          </tr>
-
-    </table>
+    </table> 
   `
 })
 
@@ -112,7 +122,7 @@ export class TableListComponent {
   itemSelected= input<string>(); // ✅ signal-based input
   columns = input<{ key: string[],
                     label: string,
-                    type?: 'text' | 'date' | 'boolean' | 'icon'| 'role',
+                    type?: 'email' | 'text' | 'date' | 'boolean' | 'icon'| 'role',
                     order: boolean
                   }[]>([]);
   lbCreation  = input< string>("Crear Item");

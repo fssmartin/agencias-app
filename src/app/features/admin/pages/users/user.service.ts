@@ -62,29 +62,14 @@ export class UserService extends BaseService{
         //console.log('USER:', user);
       }),
       map(x  => UserMapper.toSelect(x)), 
-      // map((user: UserDto) => ({
-      //   id: user.id,
-      //   username : user.user_name, 
-      //   firstname: user.first_name,
-      //   lastname : user.last_name,
-      //   email:     user.email,
-      //   isActive:  user.is_active,
-      //   role:      user.role as UserRole,
-      //   createdAt: user.created_at 
-      //               ? new Date(user.created_at) 
-      //                   : undefined
-      //   ,
-      //   updatedAt: user.updated_at 
-      //               ? new Date(user.updated_at) 
-      //                   : undefined
-      // })),       
+       
       catchError(this.handleError('getById'))
       // catchError(err => {
       //   if (err.status === 404)  
       //     return throwError(() => new Error("❌ Usuario no encontrado"));
       //   return throwError(() => new Error('❌ Error cargando usuario'));
       // })
-    );  
+    );
 
   }
 

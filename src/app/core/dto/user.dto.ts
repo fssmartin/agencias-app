@@ -1,6 +1,7 @@
 // lo que me viene del back y como tengo que enviarlo.
 
 import { UserRole } from "../../features/admin/pages/users/models/user.model";
+import { imageApiDto } from "./image.dto";
 
 export interface userAccessDto {
   accessToken: string;
@@ -22,6 +23,8 @@ export interface UserDto {
 
   created_at?: string;
   updated_at?: string;
+
+  images_user:[imageApiDto]
 }
 
 export interface LoginRequestDto {
@@ -39,6 +42,7 @@ export interface ActionUserDto {
     role?: string;
     updated_at?: string;
     created_at?: string;
+    images_user?:[number];
 }
 
 

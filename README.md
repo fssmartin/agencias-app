@@ -1,5 +1,27 @@
 # AgenciasApp
 
+
+
+// para subir imagenes 
+creo carpeta upload-server
+cd upload-server 
+npm init -y  
+npm install express multer
+¿Qué hace Multer?
+Cuando Angular envía: foto.jpg
+
+Express solo ve datos binarios.
+Multer se encarga de:
+Recibir archivos
+Guardar archivos
+Sin Multer, Express no sabe manejar imágenes fácilmente.
+
+
+Piensa en Multer como el "empleado" que recoge los paquetes que llegan al servidor.
+
+/***************************************/
+
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.3.
 
 ## Development server

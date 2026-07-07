@@ -8,6 +8,9 @@ import { ActionUser, UserState } from "./models/user.model";
 @Injectable({ providedIn: 'root' })
 export class UserStore {
 
+    
+    private destroyRef = inject(DestroyRef); // ✅ CLAVE
+
     private  _state = signal<UserState>({
         selectedUser : null,
         data: [],
@@ -52,7 +55,6 @@ export class UserStore {
         })
     });   
 
-    private destroyRef = inject(DestroyRef); // ✅ CLAVE
 
 
     constructor(private userService: UserService,

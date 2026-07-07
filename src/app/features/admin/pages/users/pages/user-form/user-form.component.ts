@@ -118,7 +118,34 @@ import { ActionUser, User } from '../../models/user.model';
                 </select>
               </label>
             </div> 
+
+            <!-- <div>
+              <label>
+                <span>Imagen</span>
+                <input type="file" 
+                   placeholder="Selecciona una imagen"
+                   formControlName="imagen" 
+                   autocomplete="off" />  
+              </label>
+            </div>              -->
             
+            <div *ngIf="mode() != 'create'">
+                <div>
+                  <label>
+                      <span>Images</span> 
+                        @for (image of user()?.images; track image.url!) {
+                              <img
+                                [src]="urlImages+image.url"
+                                [title]="image.desc"
+                                width="50"
+                                [ngClass]="!image.isActive ? 'noActive':'' "
+                                />
+                        }
+                      
+                  </label>
+                </div> 
+            </div>
+
             <div>
               <label><span>Created:</span><span>{{user()?.createdAt! | fechaEs }}</span></label>
             </div>
@@ -136,7 +163,9 @@ import { ActionUser, User } from '../../models/user.model';
           <button type="button" (click)="cancelar()" class="btCancel">Volver</button>
           <button *ngIf="mode() != 'view' && !error()" type="submit" 
             [disabled]="form.invalid || form.pristine">    
-            {{ mode() === 'create' ? "Grabar" : "Modificar"}}
+            {{ mode() === 'create' ? "Grabar" : "Modificar"}}&nbsp;&nbsp;
+          <i *ngIf="mode() === 'create'" class="fa-solid fa-floppy-disk"></i>
+          <i *ngIf="mode() === 'edit'" class="fa-solid fa-pen"></i>
           </button>
         </div>
 
@@ -157,6 +186,8 @@ export class UserFormComponent {
 
     @Output() save = new EventEmitter<User>();
     @Output() cancel = new EventEmitter<string>();
+
+    urlImages = "http://localhost:3001/uploads/"
 
     form!: FormGroup;
     

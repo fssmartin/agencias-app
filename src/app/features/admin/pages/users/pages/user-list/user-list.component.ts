@@ -39,7 +39,7 @@ import { ListUser } from '../../models/list-user.model';
             { key: ['isActive'],  label: '' ,      type :'boolean'  , order:false},
             { key: ['role'],      label: '' ,      type :'role'     , order:false},
             { key: ['fullName'],  label: 'Name' ,  type :'text'     , order:false},
-            { key: ['email'],     label: 'Email' , type :'text'     , order:true}
+            { key: ['email'],     label: 'Email' , type :'email'         , order:true}
           ]",
           lbCreation="User">
       </app-table-list>

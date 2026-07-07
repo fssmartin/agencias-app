@@ -22,6 +22,7 @@ import { AdminNavigationService } from './admin.service';
 export class AdminLayoutComponent {  
   titularAdmin = 'Admin Layout';
   links = [
+    { path: './images',     label: 'Images'   ,  role:'ADMIN' , icon:"<i class='fa-solid fa-image'></i>" },
     { path: './questions',  label: 'Questions' , role:'ADMIN' , icon:"<i class='fa-solid fa-circle-question'></i>" },
     { path: './users',      label: 'Users',      role:'ADMIN' , icon:"<i class='fa-solid fa-users'></i>"},
     { path: './categories', label: 'Categories', role:'ADMIN' , icon:"<i class='fa-solid fa-layer-group'></i>" }
