@@ -31,6 +31,36 @@ export interface UserState  {
   error: boolean;
 };
 
+
+// GENERICO y ya no estaria por pages si no q me serviria para todos 
+// y no tendria que estar limpiando los states de todos , solo 1 ??
+
+export enum ApiStatus {
+  Loading = 'LOADING',
+  Success = 'SUCCESS',
+  Error = 'ERROR'
+}
+
+interface ApiState<T, P> {
+  status: ApiStatus;
+  data: T | null;
+  selectedItem: P | null;
+}
+
+
+// const state: ApiState<User[], User> = {
+//   status: ApiStatus.Success,
+//   data: [
+//     { id: 1, name: 'Fernando' },
+//     { id: 2, name: 'Ana' }
+//   ],
+//   selectedItem: {
+//     id: 1,
+//     name: 'Fernando'
+//   }
+// };
+
+
 //  userSelected --> show / update / 
 // El partial hace que toodos sean opcionales
 export type ActionUser = Partial<User>;

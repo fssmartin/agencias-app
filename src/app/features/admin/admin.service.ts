@@ -1,14 +1,17 @@
-import { Injectable } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 
 import { UserStore } from './pages/users/user.store'; 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 // import { QuestionStore } 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminNavigationService {
+
+  private destroyRef = inject(DestroyRef); // ✅ CLAVE
 
   constructor(
     private router: Router,
@@ -34,11 +37,15 @@ export class AdminNavigationService {
       
       this.router.events
       .pipe(
-          filter(event => event instanceof NavigationEnd)
-        )
+          filter(event => event instanceof NavigationEnd),
+          takeUntilDestroyed(this.destroyRef)
+        )        
         .subscribe(() => {
             
         console.log("---------------- this.router.url --->          ", this.router.url)
+
+// TENGO QUE IR LIMPIANDO TODOS LOS STORES... 
+
 
         // Si NO estoy en users => limpio UserStore
         if (!this.router.url.startsWith('/admin/users')) {

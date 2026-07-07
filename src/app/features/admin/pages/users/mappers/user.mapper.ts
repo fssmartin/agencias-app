@@ -82,7 +82,6 @@ export class UserMapper {
         update_at: (new Date()).toISOString(),
     };
   }
-
   
   // frontend → listado
   static toList(user: User): ListUser {

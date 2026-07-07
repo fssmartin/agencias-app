@@ -1,8 +1,18 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 
+
+export enum NotificationType {
+  Success = 'success',
+  Error = 'error',
+  Warning = 'warning',
+  Info = 'info'
+}
+
+
 export interface Notification {
-  type: 'success' | 'error' | 'warning' | 'info';
+//  type: 'success' | 'error' | 'warning' | 'info';
+  type: NotificationType;
   message: string;
 }
 
@@ -24,6 +34,7 @@ export class NotificationUiService {
     console.log("____ modifico signal Notificacion !!")
     this._state.set(notificaccion) 
   }
+  
   show():void{
       console.log("____ CLEAN NOTIFYYYY setTimeout !!!! 3000")
       setTimeout(() => {
@@ -37,12 +48,12 @@ export class NotificationUiService {
   }
 
   success(message: string):void {
-    this.set({ type: 'success', message });
+    this.set({ type: NotificationType.Success, message });
     console.log("____ SUCCESS, ",message)
   }
 
   error(message: string):void {
-    this.set({ type: 'error', message });
+    this.set({ type: NotificationType.Error, message });
     console.log("____ ERROR, ",message)
   }
 

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router'; 
 import { AdminLayoutComponent } from './admin-layout';
-import { adminGuard, canDeactivateGuard } from '../../core/guards/auth.guard';
+import { adminGuard } from '../../core/guards/auth.guard';
 // import { ConfigurationComponent } from './pages/configuration/configuration.component';
 // import { UsersComponent } from './pages/users/users.component';
 // import { QuestionsComponent } from './pages/questions/questions.component';
@@ -23,7 +23,7 @@ export const ADMIN_ROUTES : Routes = [
         children: [
             {
                 path: '',
-                redirectTo: 'users',
+                redirectTo: 'images',
                 pathMatch: 'full',
             },
             {

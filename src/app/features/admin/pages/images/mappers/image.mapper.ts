@@ -10,7 +10,10 @@ export class ImageMapper {
     return {
         id: dto.id,
         desc: dto.description,
+        name: dto.name_image,
         url: dto.url_image,
+        width:dto.width,
+        height:dto.height,
         isActive: dto.is_active,
         createdAt: dto.created_at ? new Date(dto.created_at) : undefined,
         updatedAt: dto.updated_at ? new Date(dto.updated_at) : undefined,

@@ -66,6 +66,7 @@ export class UserStore {
 
         console.log("__ store getUsers");
 
+        // CARGANDO !
         this._state.update(s=>({...s, loading:true}));
         // solo cambio el loading.. el userSelected a null no , pq aqui entra la primera vez como cuando, editas o creas.. para seleccionar en listado
 
@@ -205,8 +206,10 @@ export class UserStore {
             }) 
     }
 
-    initState(){    
+    initState(){   
+        // CARGANDO ! 
         this._state.update(s=>({...s, selectedUser:null, loading:true,error:false}))
+        // LIMPIO 
         this.notificationUi.cleanNotify();
     }
 

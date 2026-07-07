@@ -28,16 +28,12 @@ export class AdminLayoutComponent {
     { path: './categories', label: 'Categories', role:'ADMIN' , icon:"<i class='fa-solid fa-layer-group'></i>" }
   ]
 
- 
-
   constructor(
     private adminNavigationService: AdminNavigationService
   ) {}
 
-
   ngOnInit(): void {  
   
   }
-    
     
 }

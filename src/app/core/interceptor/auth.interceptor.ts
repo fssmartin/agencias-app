@@ -11,10 +11,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // 🔐 Obtener token
   const token = localStorage.getItem('token');
 
-    // Porque NO queremos añadir el token al login ni registro
-    const isAuthRequest =
-                req.url.includes('/login') ||
-                req.url.includes('/register');
+  // Porque NO queremos añadir el token al login ni registro
+  const isAuthRequest =
+              req.url.includes('/login') ||
+              req.url.includes('/register');
 
   console.log('-- Interceptor ', isAuthRequest,token );
 
