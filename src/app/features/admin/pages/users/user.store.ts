@@ -12,8 +12,8 @@ export class UserStore {
     private destroyRef = inject(DestroyRef); // ✅ CLAVE
 
     private  _state = signal<UserState>({
-        selectedUser : null,
         data: [],
+        selectedUser : null,
         loading: false,
         error: false,
     });

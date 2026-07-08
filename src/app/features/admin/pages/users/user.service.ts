@@ -9,6 +9,7 @@ import { ListUser } from "./models/list-user.model";
 
 @Injectable({ providedIn: 'root' })
 export class UserService extends BaseService{
+                          // extiende BaseService para los mensajes de error handleError
 
   private api = 'http://localhost:3000/users';
 

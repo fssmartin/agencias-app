@@ -10,11 +10,11 @@ export enum ApiStatus {
 }
 
 export interface ApiState<T, X> {
-  data: T[] | null;
+  data: T[];
   selectedItem: X | null;
-//  status: ApiStatus;
   loading:boolean;
   error:boolean;
+  //  status: ApiStatus;
 }
 
 

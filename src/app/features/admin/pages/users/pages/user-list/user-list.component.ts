@@ -28,35 +28,21 @@ import { ListUser } from '../../models/list-user.model';
     <!-- <ng-container *ngIf="!(loading$ | async)"> -->
     <ng-container  *ngIf="!userState()?.loading">
 
-      <app-table-list 
+        <app-table-list 
           (sort)="onSortBy($event)"
           (delete)="onDelete($event)"
+          [data]=userStore.orderDataState()
           [fieldOrder] = userStore.fieldOrderState()
           [direcOrder] = userStore.direcOrderState()
           [itemSelected] = this.userState().selectedUser?.id          
-          [data]=userStore.orderDataState()
-          [columns]="[
-            { key: ['isActive'],  label: '' ,      type :'boolean'  , order:false},
-            { key: ['role'],      label: '' ,      type :'role'     , order:false},
-            { key: ['fullName'],  label: 'Name' ,  type :'text'     , order:false},
-            { key: ['email'],     label: 'Email' , type :'email'         , order:true}
-          ]",
-          lbCreation="User">
-      </app-table-list>
-          <!-- [configuration] = {
-            columns = [
-                { key: ['isActive'],  label: '' ,      type :'boolean' , order:false },
-                { key: ['role'],      label: '' ,      type :'role'    , order:false},
-                { key: ['fullName'],  label: 'Name' ,  type :'text'    , order:true},
-                { key: ['email'],     label: 'Email' , type :'text'    , order:false}
-              ],
-            order:      true
-            pagination: true,
-            total :     true,
-            lbCreation: 'User'
+          [tableConfig]=tableConfig>
+      </app-table-list> 
 
-          } -->
+   
 
+
+
+        
         <!-- <table *ngIf="sortedUsers$ | async as users" 
         <table 
           class="listTable">
@@ -127,6 +113,20 @@ export class UserListComponent {
   
   msgLoad :string = "Cargando Lista Usuarios";
  
+ tableConfig:any = {
+            columns : [
+              { key: ['isActive'],  label: '' ,      type :'boolean'  , order:false, class:'noBorder' },
+              { key: ['role'],      label: '' ,      type :'role'     , order:false, class:'noBorder' },
+              { key: ['fullName'],  label: 'Name' ,  type :'text'     , order:false, class:''  },
+              { key: ['email'],     label: 'Email' , type :'email'    , order:true , class:''  },
+            ],
+            order: true,
+            lbCreation: 'User',
+            minheight:'100px',
+            maxheight:'200px',    
+            pagination: null,
+  }
+
   //selectedUser: User = this.userService.userEmpty;
 
   // highlightedUserId: string | null = null;
@@ -223,7 +223,7 @@ export class UserListComponent {
  
   //Cambiar orden
   onSortBy(field: keyof ListUser) { 
- console.log("field ??__ ",field,this.userStore.direcOrderState())
+      console.log("field ??__ ",field,this.userStore.direcOrderState())
       this.userStore.sortState.set(
           {
             field:field,

@@ -20,8 +20,8 @@ export class ImageStore {
     // });
 
     private  _state = signal<ApiState<BaseImage, ActionImage>>({
-        selectedItem : null,
         data: [],
+        selectedItem : null,
         loading: false,
         error: false,
     });    
@@ -30,10 +30,38 @@ export class ImageStore {
     // 👇 Expones el estado como readonly
     readonly state = this._state.asReadonly();
 
-    sortState = signal<{field: string; dir: 'asc' | 'desc' }>({field:'email',dir:'asc'})
+    sortState = signal<{field: string; dir: 'asc' | 'desc' }>({field:'desc',dir:'asc'})
 
     direcOrderState = computed(() => this.sortState().dir );
     fieldOrderState = computed(() => this.sortState().field );   
+
+    orderDataState = computed(() =>  {
+        const data = this._state().data;
+
+        const { field, dir } = this.sortState();
+
+        return [...data].sort((a, b) => {
+
+            const valueA = (a as any)[field];
+            const valueB = (b as any)[field];
+
+            let result = 0;
+
+            console.log("_____orderDataState ?? ", field, dir)
+
+            if (valueA instanceof Date && valueB instanceof Date) {
+                result = valueA.getTime() - valueB.getTime();
+            } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+                result = valueA.localeCompare(valueB);
+            } else if (typeof valueA === 'boolean' && typeof valueB === 'boolean') {
+                result = Number(valueA) - Number(valueB);
+            } else {
+                result = valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+            }
+            
+            return dir === 'asc' ? result : -result;
+        })
+    }); 
 
     constructor(private imageService: ImageService,
         private router: Router,

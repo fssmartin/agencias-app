@@ -5,8 +5,6 @@ import { TableListComponent } from '../../../../components/table-list/table-list
 import { ImageStore } from '../../image.store';
 import { LoadingComponent } from '../../../../../../shared/components/ui/loading/loading.component';
 import { NotificationsComponent } from '../../../../../../shared/components/ui/notifications/notifications.component';
- 
-
 
 @Component({
   selector: 'app-image-list',
@@ -26,13 +24,12 @@ import { NotificationsComponent } from '../../../../../../shared/components/ui/n
     <ng-container  *ngIf="!imageState()?.loading">
 
         <app-table-list 
-            [data]=imageState().data!
-            [columns]="[
-              { key: ['isActive'], label: '', type:'boolean' , order:false },
-              { key: ['desc'],     label: 'Descripcion', type:'text' , order:true },
-              { key: ['url'],      label: 'Url', type:'text' , order:false },
-            ]"
-            [lbCreation] = "'Images'"
+            (sort)="onSortBy($event)"
+            [data]=imageStore.orderDataState()
+            [fieldOrder] = imageStore.fieldOrderState()
+            [direcOrder] = imageStore.direcOrderState()
+            [itemSelected] = this.imageState().selectedItem?.id          
+            [tableConfig]=tableConfig
         ></app-table-list>
  
     </ng-container> 
@@ -42,12 +39,25 @@ import { NotificationsComponent } from '../../../../../../shared/components/ui/n
 })
 export class ImageListComponent {  
 
-  private imageStore = inject(ImageStore);
+  public imageStore = inject(ImageStore);
   
   imageState = this.imageStore.state;
   msgLoad :string = "Cargando Lista Imagenes";
 
   private timeoutId: any;
+
+ tableConfig:any = {
+            columns : [
+              { key: ['isActive'], label: '',            type:'boolean' , order:false, class:'noBorder'  },
+              { key: ['desc'],     label: 'Descripcion', type:'text' ,    order:true , class:'' },
+              { key: ['url'],      label: 'Url',         type:'text' ,    order:true,  class:'' }
+            ],
+            order: true,
+            lbCreation: 'Image',
+            minheight:'100px',
+            maxheight:'200px',    
+            pagination: { toPagination:true, total:true, perpage:true },
+  }
 
   constructor(
     // public authService:AuthService 
@@ -84,6 +94,17 @@ export class ImageListComponent {
     return question.id;
   }
  
+    //Cambiar orden
+    onSortBy(field: keyof BaseImage) { 
+        console.log("field ??__ ",field,this.imageStore.direcOrderState())
+        this.imageStore.sortState.set(
+            {
+              field:field,
+              dir: this.imageStore.direcOrderState() ===  'asc' ? 'desc' : 'asc'
+            }
+          )
+   
+    }
    
     
 }

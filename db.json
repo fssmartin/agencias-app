@@ -1,55 +1,15 @@
 {
   "images": [
-    {
-      "id": "1",
-      "description": "aaaa",
-      "url": "http://localhost:3001/uploads/avatar1.jpg"
-    },
-    {
-      "id": "2",
-      "description": "bbbb",
-      "url": "http://localhost:3001/uploads/avatar2.jpg"
-    },
-    {
-      "id": "3",
-      "description": "ccc",
-      "url": "http://localhost:3001/uploads/avatar3.jpg"
-    },
-    {
-      "id": "4",
-      "description": "ccc 4",
-      "url": "http://localhost:3001/uploads/avatar4.jpg"
-    },
-    {
-      "id": "5",
-      "description": "ccc 5",
-      "url": "http://localhost:3001/uploads/avatar5.jpg"
-    },
-    {
-      "id": "6",
-      "description": "ccc 6",
-      "url": "http://localhost:3001/uploads/avatar6.jpg"
-    },
-    {
-      "id": "7",
-      "description": "ccc 7",
-      "url": "http://localhost:3001/uploads/avatar7.jpg"
-    },
-    {
-      "id": "8",
-      "description": "ccc 8",
-      "url": "http://localhost:3001/uploads/avatar8.jpg"
-    },
-    {
-      "id": "9",
-      "description": "ccc 9",
-      "url": "http://localhost:3001/uploads/avatar9.jpg"
-    },
-    {
-      "id": "10",
-      "description": "ccc 10",
-      "url": "http://localhost:3001/uploads/avatar10.jpg"
-    }
+      { "id": "1", "description":"pepe",  "url_image":"http://localhost:3001/uploads/avatar1.jpg", "is_active":false, "width":100, "height":100, "name_image":"avatar1.jpg"},
+      { "id": "2", "description":"ssss",  "url_image":"http://localhost:3001/uploads/avatar2.jpg", "is_active":true , "width":100, "height":100, "name_image":"avatar2.jpg"},
+      { "id": "3", "description":"asdf",  "url_image":"http://localhost:3001/uploads/avatar3.jpg", "is_active":true , "width":100, "height":100, "name_image":"avatar3.jpg"},
+      { "id": "4", "description":"dsaa",  "url_image":"http://localhost:3001/uploads/avatar4.jpg", "is_active":false, "width":100, "height":100, "name_image":"avatar4.jpg"},
+      { "id": "5", "description":"ffff",  "url_image":"http://localhost:3001/uploads/avatar5.jpg", "is_active":true , "width":100, "height":100, "name_image":"avatar5.jpg"},
+      { "id": "6", "description":"wwww",  "url_image":"http://localhost:3001/uploads/avatar6.jpg", "is_active":true , "width":100, "height":100, "name_image":"avatar6.jpg"},
+      { "id": "7", "description":"cccc",  "url_image":"http://localhost:3001/uploads/avatar7.jpg", "is_active":false , "width":100, "height":100, "name_image":"avatar7.jpg"},
+      { "id": "8", "description":"xxxx",  "url_image":"http://localhost:3001/uploads/avatar8.jpg", "is_active":true , "width":100, "height":100, "name_image":"avatar8.jpg"},
+      { "id": "9", "description":"hhhh",  "url_image":"http://localhost:3001/uploads/avatar9.jpg", "is_active":true , "width":100, "height":100, "name_image":"avatar9.jpg"},
+      { "id": "10", "description":"qweqwe1",  "url_image":"http://localhost:3001/uploads/avatar10.jpg", "is_active":false , "width":100, "height":100, "name_image":"avatar10.jpg"}
   ],
   "users": [
     {
