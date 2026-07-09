@@ -118,7 +118,7 @@ import { output } from '@angular/core';
                       <!-- <span>ir a<input type="text" name="ira" id="ira" placeholder="0" value="0"/></span> -->
                     </span>
                   @if (tableConfig().pagination.total) {
-                      <span>Mostrando : {{ initReg()  }} a {{ finiReg() }} de {{totReg()}} resultados</span>
+                      <span class="showing">Mostrando : {{ initReg()  }} a {{ finiReg() }} de {{totReg()}} resultados</span>
                   }
                 }  
 
