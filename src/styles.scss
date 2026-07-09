@@ -3,15 +3,15 @@
 ======================== */
 :host,
 :root {
-  background-color: #ccc;
+  background-color: #f8f8f8
 }
 
 body {
   padding: 15px;
   margin: 0 auto;
   max-width: 800px;
-  background-color: #ccc;
-  color: black;
+  background-color: #f8f8f8;
+  color: #6e6b7b;
 }
 
 main {
@@ -349,7 +349,6 @@ table {
 
 
 .table-container {
-  max-height: 200px;
   overflow-y: auto;
   width: 100%;
 }  
@@ -429,20 +428,15 @@ table {
       z-index: 1;
   }
 
-  tr {
-    background-color: #ccc;
-
-    &:nth-child(even) {
-        background-color: #d8d6d6
-    }
+  tr {    
+ 
     &:nth-child(odd) {
-      background-color:rgb(237 235 224 / 75%);
+      background-color:#fafafc
     }   
     
     &:hover {
-     background-color: #ceed88;
+     background-color: rgba(78, 165, 243, .12);
     }
-
 
     &.highlight-row {
       background-color: #c8f7c5;
@@ -450,7 +444,7 @@ table {
 
     & td, & th {
       font-size: 13px;
-      border-bottom: 1px solid #a7a7a7;
+      border-bottom:1px solid #d8d8d8;
       padding:0 5px;
       // &.boolean,
       // &.role {

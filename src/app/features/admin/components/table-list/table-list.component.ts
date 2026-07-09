@@ -20,7 +20,7 @@ import { output } from '@angular/core';
                 <!-- class="fRight btEnlace btCrear">{{  lbCreation() }}</button> -->
     </p>
 
-    <div class="table-container">
+    <div class="table-container"  [ngStyle]="{'max-height': tableConfig().maxheight,'min-height': tableConfig().minheight}"   >
       <table class="listTable">
             <thead>
               <tr>
@@ -101,51 +101,52 @@ import { output } from '@angular/core';
         </table>          
       <!-- PAGINATION -->
       
-    </div>
+      
+    </div> 
+          
       @if (tableConfig().pagination) {     
         <div class="sectionPagination">
             <p class="total">
-                      @if (tableConfig().pagination.total) {
-                        <span>Total: <strong>{{ totRegSelected() }} / {{totReg()}}</strong></span>
-                        @if (totPag().length > 1) {                        
-                          <span>Pag. {{pagSelected()}} of {{pagTotales()}}</span>
-                        }
-                      }
-                      @if (tableConfig().pagination.perpage) {
-                        <span>Item per page
-                          <select name="numPag" id="numPag" (change)="changeReXpag($event)">">
-                              <option [value]=1 [selected]="reXpag() === 1">1 </option>
-                              <option [value]=2 [selected]="reXpag() === 2">2 </option>
-                              <option [value]=5 [selected]="reXpag() === 5">5 </option>
-                              <option [value]=10 [selected]="reXpag() === 10">10 </option>
-                          </select>
-                          <!-- <span>ir a<input type="text" name="ira" id="ira" placeholder="0" value="0"/></span> -->
-                        </span>
-                      }  
-            </p>
-          @if (tableConfig().pagination.toPagination && totPag().length > 1) {  
+              @if (tableConfig().pagination.perpage) {
+                    <span>
+                      <select name="numPag" id="numPag" (change)="changeReXpag($event)">">
+                          <option [value]=1 [selected]="reXpag() === 1">1 </option>
+                          <option [value]=2 [selected]="reXpag() === 2">2 </option>
+                          <option [value]=5 [selected]="reXpag() === 5">5 </option>
+                          <option [value]=10 [selected]="reXpag() === 10">10 </option>
+                      </select>
+                      <!-- <span>ir a<input type="text" name="ira" id="ira" placeholder="0" value="0"/></span> -->
+                    </span>
+                  @if (tableConfig().pagination.total) {
+                      <span>Mostrando : {{ initReg()  }} a {{ finiReg() }} de {{totReg()}} resultados</span>
+                  }
+                }  
 
-            <p class="pagination">
-                    
-                      @if ( pagSelected() - 1 > 1 ) {
-                          <a href="#ni" (click)="gotoPage(1)" >|<</a>                    
-                      }    
-                      @if ( pagSelected()  > 1 ) {
-                          <a href="#ni" (click)="gotoPage(pagSelected()-1)" ><</a>                    
-                      }  
+                @if (tableConfig().pagination.toPagination && totPag().length > 1) {  
+      
+                  <span class="pagination">
+                          
+                            @if ( pagSelected() - 1 > 1 ) {
+                                <a href="#ni" (click)="gotoPage(1)" >|<</a>                    
+                            }    
+                            @if ( pagSelected()  > 1 ) {
+                                <a href="#ni" (click)="gotoPage(pagSelected()-1)" ><</a>                    
+                            }  
+      
+                            <ng-container *ngFor="let pag of totPag()" >                      
+                              <a href="#ni" (click)="gotoPage(pag)"  [ngClass]="{ 'active': pag == pagSelected()}">{{pag}}</a>
+                            </ng-container> 
+      
+                            @if ( pagSelected() < pagTotales() ) {
+                                <a href="#ni" (click)="gotoPage(pagSelected()+1)">></a>
+                            }    
+                            @if ( pagSelected() + 1 < pagTotales() ) {
+                                <a href="#ni" (click)="gotoPage(pagTotales() )">>|</a>                    
+                            }  
+                    </span>
+                }   
+          </p>
 
-                      <ng-container *ngFor="let pag of totPag()" >                      
-                        <a href="#ni" (click)="gotoPage(pag)"  [ngClass]="{ 'active': pag == pagSelected()}">{{pag}}</a>
-                      </ng-container> 
-
-                      @if ( pagSelected() < totPag().length ) {
-                          <a href="#ni" (click)="gotoPage(pagSelected()+1)">></a>
-                      }    
-                      @if ( pagSelected() + 1 < totPag().length ) {
-                          <a href="#ni" (click)="gotoPage(totPag().length )">>|</a>                    
-                      }  
-            </p>
-          }   
         </div>             
       } 
   `
@@ -183,6 +184,10 @@ export class TableListComponent {
     });
     totRegSelected =  computed(() =>  this.dataShow().length);
     pagTotales =  computed(() => this.totPag()?.length);
+
+    initReg = computed(() => ( this.reXpag() * (this.pagSelected()-1) +1));
+    finiReg    = computed(() => ( this.pagSelected() * this.reXpag() <=  this.totReg()) ? this.pagSelected() * this.reXpag() : this.totReg());
+
     dataShow   = computed(() => {
         const data = this._pagination().data ?? [];
         const page = this.pagSelected();
@@ -221,8 +226,7 @@ export class TableListComponent {
 
   calcTotPag(){
       let divi = this.totReg()! / this.reXpag()!;
-      let mod  = this.totReg()! % this.reXpag()!;     
-      return  Math.floor(divi) > 0 ? Math.floor(divi) + Math.floor(mod) : 1 ;
+      return Math.round(divi)
   }
 
   changeReXpag(event: Event) {
