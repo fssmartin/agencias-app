@@ -148,8 +148,8 @@ export class UserStore {
 
         this.initState();
 
-        user.updatedAt = new Date();
-
+        user.updatedAt =(new Date()).toISOString()      
+    console.log("USER_________________________________________",user)
         this.userService.updateUser(user)
         .subscribe({
             next:({userSelect,userList})=>{
@@ -178,7 +178,7 @@ export class UserStore {
         const previous = this._state().data;
         
         user.updatedAt = undefined;
-        user.createdAt = new Date();
+        user.createdAt =(new Date()).toISOString();
 
         // limpio mensajes de todo tipo
         this.initState();

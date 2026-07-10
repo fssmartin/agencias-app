@@ -29,14 +29,14 @@ import { ListUser } from '../../models/list-user.model';
     <ng-container  *ngIf="!userState()?.loading">
 
         <app-table-list 
-          (sort)="onSortBy($event)"
-          (delete)="onDelete($event)"
-          [data]=userStore.orderDataState()
-          [fieldOrder] = userStore.fieldOrderState()
-          [direcOrder] = userStore.direcOrderState()
-          [itemSelected] = this.userState().selectedUser?.id          
-          [tableConfig]=tableConfig>
-      </app-table-list> 
+            (sort)="onSortBy($event)"
+            (delete)="onDelete($event)"
+            [data]=userStore.orderDataState()
+            [fieldOrder] = userStore.fieldOrderState()
+            [direcOrder] = userStore.direcOrderState()
+            [itemSelected] = this.userState().selectedUser?.id          
+            [tableConfig]=tableConfig>
+        </app-table-list> 
 
    
 

@@ -21,9 +21,11 @@ export class UserService extends BaseService{
     username: '',
     firstname: '',
     lastname: '',
+    password: '',
     email: '', 
     isActive: true,  
     role: UserRole.USER, 
+    images:[]
     //sin fechas
   };  
 

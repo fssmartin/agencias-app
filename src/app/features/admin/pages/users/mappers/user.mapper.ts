@@ -39,8 +39,8 @@ export class UserMapper {
         isActive: dto.is_active,
         role: dto.role,
         password:dto.password,
-        createdAt: dto.created_at ? new Date(dto.created_at) : undefined,
-        updatedAt: dto.updated_at ? new Date(dto.updated_at) : undefined,
+        createdAt: dto.created_at ?  dto.created_at : undefined,
+        updatedAt: dto.updated_at ?  dto.updated_at : undefined,
         images : dto.images_user ? dto.images_user.map(ImageMapper.toDomain) : undefined 
     };
   }
@@ -66,7 +66,7 @@ export class UserMapper {
         password: user.password!,
         email: user.email,
         role: user.role,
-        created_at: user.createdAt!.toISOString(),
+        created_at: user.createdAt!,
     };
   }
   // MODEL -> DTO (para crear usuario)
@@ -79,7 +79,17 @@ export class UserMapper {
         password: user.password,
         email: user.email,
         role: user.role,
-        update_at: (new Date()).toISOString(),
+
+        //images_user: user.images,
+        // al ser array necesito parsearlos asi uno a uno...
+        images_user: user.images?.map(image => ({
+          id: image.id,
+          url_image: image.url,
+          is_active: image.isActive,
+          description: image.desc
+        })),
+        updated_at:  user.updatedAt
+        //update_at: (new Date()).toISOString(),
     };
   }
   

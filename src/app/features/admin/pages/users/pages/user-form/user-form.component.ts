@@ -8,6 +8,7 @@ import { getErrorMessage } from '../../../../../../shared/utils/forms/form-error
 import { FechaEsPipe } from '../../../../../../shared/utils/pipes/fecha-es.pipe';
 import { UserStore } from '../../user.store';
 import { ActionUser, User } from '../../models/user.model';
+import { BaseImage } from '../../../images/models/image.model';
 
 
 @Component({
@@ -130,11 +131,13 @@ import { ActionUser, User } from '../../models/user.model';
             </div>              -->
             
             <div *ngIf="mode() != 'create'">
-                <div>
+                <!-- <div>
                   <label>
                       <span>Images</span> 
                         @for (image of user()?.images; track image.url!) {
                               <img
+                                #imagen
+                                (click) = onClickImage(imagen)
                                 [src]="urlImages+image.url"
                                 [title]="image.desc"
                                 width="50"
@@ -142,6 +145,21 @@ import { ActionUser, User } from '../../models/user.model';
                                 />
                         }
                       
+                  </label>
+                </div>  -->
+                <div>
+                  <label>
+                      <span>Images</span>                         
+                          @for (image of form.controls['images'].value; track image.url) {
+                            <img
+                              #imagen
+                              (click)="onClickImage(imagen,image)"
+                              [src]="urlImages + image.url"
+                              [title]="image.desc"
+                              width="50"
+                              [ngClass]="!image.isActive ? 'noActive' : ''"
+                            />
+                          }
                   </label>
                 </div> 
             </div>
@@ -162,10 +180,10 @@ import { ActionUser, User } from '../../models/user.model';
         <div class="fm_actions">
           <button type="button" (click)="cancelar()" class="btCancel">Volver</button>
           <button *ngIf="mode() != 'view' && !error()" type="submit" 
-            [disabled]="form.invalid || form.pristine">    
-            {{ mode() === 'create' ? "Grabar" : "Modificar"}}&nbsp;&nbsp;
-          <i *ngIf="mode() === 'create'" class="fa-solid fa-floppy-disk"></i>
-          <i *ngIf="mode() === 'edit'" class="fa-solid fa-pen"></i>
+                [disabled]="form.invalid || form.pristine">    
+                {{ mode() === 'create' ? "Grabar" : "Modificar"}}&nbsp;&nbsp;
+              <i *ngIf="mode() === 'create'" class="fa-solid fa-floppy-disk"></i>
+              <i *ngIf="mode() === 'edit'" class="fa-solid fa-pen"></i>
           </button>
         </div>
 
@@ -210,10 +228,6 @@ export class UserFormComponent {
           this.form.disable()
 
       })
-
-
-
-
     }
     
     ngOnInit(): void {
@@ -234,11 +248,9 @@ export class UserFormComponent {
               firstname :this.user()!.firstname,
               lastname  :this.user()!.lastname,
               email     :this.user()!.email,              
-              role      :this.user()!.role,              
-              // password  :this.user()!.password,
-              // createdAt :this.user()!.createdAt,
-              // updatedAt :this.user()!.updatedAt
-            } : this.userService.userEmpty );
+              role      :this.user()!.role,
+              images    :this.user()!.images      
+        } : this.userService.userEmpty );
 
         // Si se proporciona un usuario, actualiza el formulario con sus valores, 
         // de lo contrario, usa el usuario vacío
@@ -294,5 +306,11 @@ export class UserFormComponent {
         return [];
       }
       return getErrorMessage(control);
-    }    
+    }
+    
+    onClickImage(elemento: HTMLElement,imagen:BaseImage){
+         elemento.classList.toggle('noActive');
+         imagen.isActive = !imagen.isActive;
+         this.form.markAsDirty();
+    }
 }

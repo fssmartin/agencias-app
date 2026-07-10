@@ -14,14 +14,15 @@ export interface BaseUser{
     role: UserRole;   
 }
 
+
 export interface User extends BaseUser{
     username : string;
     password?: string; //al update user, no dejo modificar password
     firstname: string;
     lastname: string;
-    createdAt?: Date;  
-    updatedAt?: Date;  // ✏️ se añade en updates
-    images? :BaseImage[];
+    createdAt?: string;  
+    updatedAt?: string;  // ✏️ se añade en updates
+    images?   :BaseImage[];
 }
 
 export interface UserState  {

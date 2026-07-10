@@ -2,6 +2,7 @@
 import {FormBuilder } from '@angular/forms';
 import { AppValidators } from '../../../../../../shared/utils/forms/validators';
 import { ActionUser } from '../../models/user.model';
+import { BaseImage } from '../../../images/models/image.model';
 
 export const createUserForm = (fb: FormBuilder,user: ActionUser) => {
   if(user.id){
@@ -14,6 +15,7 @@ export const createUserForm = (fb: FormBuilder,user: ActionUser) => {
       email:     [user.email, AppValidators.email],
       isActive:  [user.isActive],
       role:      [user.role],
+      images:    fb.control<BaseImage[]>([])
       //permissions: [user.permissions]
       //permissions: [user.permissions || []]
     });
@@ -27,6 +29,7 @@ export const createUserForm = (fb: FormBuilder,user: ActionUser) => {
       isActive:  [user.isActive],
       role:      [user.role],
       password:  [ '' , AppValidators.password],
+      images:    [[]]
     });
   }
 };

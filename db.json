@@ -99,11 +99,10 @@
       "first_name": "Luis",
       "last_name": "Garcia",
       "password": "$2a$10$vu5vvmLkpJfaxZmRdMFWhOHD6XqVyUHjtqOY/Tem/DrtVfXzLML.W",
-      "is_active": true,
+      "is_active": false,
       "role": "ADMIN",
-      "updated_at": "2026-06-23T15:13:56.529Z",
       "created_at": "2024-12-09T06:11:22.072Z",
-      "update_at": "2026-06-26T07:46:24.099Z",
+      "updated_at": "2026-07-10T09:23:48.757Z",
       "images_user": [
         {
           "id": "1",
@@ -128,41 +127,40 @@
     {
       "id": "3",
       "email": "pedro.vila@example.com",
-      "user_name": "pedrVIlaa",
-      "first_name": "aAdasdasd",
-      "last_name": "Vilaaaa",
+      "user_name": "Pedro",
+      "first_name": "Vilaa",
+      "last_name": "Perez",
       "password": "$2a$10$hKa0oW6oQXY5y3j5sOywQuUpglPOJBiTw2xmjQmFDcgZegvmUJnkm",
       "role": "USER",
       "is_active": true,
       "created_at": "2024-12-09T06:11:22.072Z",
-      "updated_at": "2026-06-18T15:16:13.616Z",
-      "update_at": "2026-07-03T11:31:08.129Z",
+      "updated_at": "2026-07-10T13:01:48.227Z",
       "images_user": [
         {
           "id": "4",
-          "description": "aa",
           "url_image": "avatar4.jpg",
-          "is_active": true
+          "is_active": false,
+          "description": "aa"
         },
         {
           "id": "5",
-          "description": "bb",
           "url_image": "avatar5.jpg",
-          "is_active": false
+          "is_active": false,
+          "description": "bb"
         }
       ]
     },
     {
       "id": "fm_G8ZQ",
       "email": "belen.perez@example.com",
-      "user_name": "belenPerez",
+      "user_name": "belenPerezA",
       "first_name": "Belennn",
       "last_name": "Perez",
       "password": "$2a$10$FPae.UoiG7y2ZHnJ4kh8ru1vUMsap.eDkCS1gS9ZsCakTTe291.PS",
       "role": "ADMIN",
-      "is_active": false,
+      "is_active": true,
       "created_at": "2026-06-09T06:11:22.072Z",
-      "update_at": "2026-07-03T11:31:44.228Z",
+      "updated_at": "2026-07-10T10:00:33.932Z",
       "images_user": [
         {
           "id": "6",
@@ -188,13 +186,13 @@
       "id": "lVwb2Qn",
       "email": "asd@asd.es",
       "password": "$2a$10$ZKU1NY3meyNoDfLzI0o3k.JmPCbqRbP7fAO67JAzvnQQgVN2yQFLC",
-      "is_active": true,
-      "user_name": "paA",
+      "is_active": false,
+      "user_name": "paAAa",
       "first_name": "sadaA",
       "last_name": "sssA",
       "role": "ADMIN",
       "created_at": "2026-07-01T09:21:00.185Z",
-      "update_at": "2026-07-02T09:55:03.927Z",
+      "updated_at": "2026-07-10T10:04:24.717Z",
       "images_user": [
         {
           "id": "9",
@@ -220,7 +218,7 @@
       "role": "ADMIN",
       "created_at": "2026-07-03T06:57:05.923Z",
       "id": "pfI-xdh",
-      "update_at": "2026-07-03T11:31:55.458Z"
+      "updated_at": "2026-07-03T11:31:55.458Z"
     },
     {
       "email": "asd@sd.es",

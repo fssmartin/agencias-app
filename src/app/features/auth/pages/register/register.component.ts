@@ -30,7 +30,7 @@ import { Router } from '@angular/router';
                 class="auth" autocomplete="off">
 
             <label for="name">
-              <span>Username</span>
+              <span class="required">Username</span>
               <input
                 type="text"
                 placeholder="Jhon Doe"
@@ -46,7 +46,7 @@ import { Router } from '@angular/router';
             </label>
            
             <label for="email">
-              <span>Email</span>
+              <span class="required">Email</span>
               <input
                 type="email"
                 placeholder="m@example.com"
@@ -62,7 +62,7 @@ import { Router } from '@angular/router';
             </label>
          
             <label for="password">
-              <span>Password</span>
+              <span class="required">Password</span>
               <input
                 type="password"
                 placeholder="Create a secure password"
@@ -78,7 +78,7 @@ import { Router } from '@angular/router';
             </label>
           
             <label for="cpassword">
-              <span>Confirm Password</span>
+              <span class="required">Confirm Password</span>
               <input
                 type="password"
                 placeholder="Confirm your password"

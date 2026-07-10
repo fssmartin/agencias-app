@@ -225,8 +225,18 @@ form {
     gap: 0 8px;
     margin-bottom: 15px;
     color: black;
+    position: relative;
     span {
       min-width: 100px;
+      position: relative;
+      &.required::before{
+        color: red;
+        content:'*';
+        position: absolute;
+        left: -7px;
+        top: 6px;
+        font-size: 11px;
+      }
     }
 
     .inputError {
@@ -270,8 +280,11 @@ input:not([type="checkbox"], [type="radio"], [type="range"]) {
   padding: 0.2rem 0.5rem;
   padding-right: 35px;
   margin: 0;
-    line-height: normal;
-    height: auto;
+  line-height: normal;
+  height: auto;
+  background: #e9e9e9;
+  color: black;
+
 
   &::placeholder {
     font-size: 13px;
@@ -280,7 +293,7 @@ input:not([type="checkbox"], [type="radio"], [type="range"]) {
   & + .icon {
     position: absolute;
     right: 10px;
-    top: 45px;
+    top: 32px;
     color: gray;
     opacity: 0.5;
   }
@@ -301,6 +314,8 @@ input:focus {
 
 select:not([multiple], [size]) {
   padding: 0rem 0.5rem;
+  background: #e9e9e9;
+  color: black;
 }
 
 /* ========================
@@ -318,7 +333,6 @@ table {
     background-color: transparent;
     vertical-align: middle;
     position: relative;
-    border: 1px solid #ccc;
     & button {
       background: none;
       border: none;
@@ -456,8 +470,9 @@ table {
 
     & td, & th {
       font-size: 13px;
-      border-bottom:1px solid #d8d8d8;
       padding:0 5px;
+      border: 1px solid #ccc;
+
       // &.boolean,
       // &.role {
       //   text-align: center;
@@ -509,18 +524,16 @@ table {
       background-color: #ccc;
       cursor: pointer;
       font-size: 14px;
-      font-weight: bold;
-      border-bottom: 1px solid #a7a7a7;
+      font-weight: bold; 
       background: linear-gradient(to bottom,  #597d98 0%,#597d98 49%,#4b708d 50%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
       color: #cfdce7;
-      padding: 3px 5px !important;
-      border: none;
-      outline-style: dashed;
-      outline-width: thin;
+      padding: 3px 5px !important; 
+      // outline-style: dashed;
+      // outline-width: thin;
       position: relative;
-      
+      border-top:none;
       position: sticky;
-      top: 0;
+      top: -1px;
       z-index: 1;
 
       &:last-child, &.noBorder{
@@ -537,6 +550,8 @@ table {
         right: 10px;
         color: white;
       }
+      &:first-child {border-top-left-radius: 5px;}
+      &:last-child {border-top-right-radius: 5px;}
     }
 
   }

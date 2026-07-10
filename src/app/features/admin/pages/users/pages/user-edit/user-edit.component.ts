@@ -36,12 +36,10 @@ import { ActionUser } from '../../models/user.model';
     <h4  *ngIf="!userState().loading">
         <span>{{   mode === 'view' ? 'Consulta Usuario' :  (  mode === 'edit' ? 'Editar Usuario' : 'Crear Usuario')  }}</span>
 
-        <!-- <div class="msgInfo" *ngIf="error()">
-            <div class="msj msjError">{{ error() }}</div>  
-        </div>           -->
+        <div class="msgInfo" *ngIf="userState().error">
+            <div class="msj msjError">{{ userState().error }}</div>  
+        </div>          
         <app-notifications></app-notifications>
-
-
     </h4>
 
 <!-- <pre>{{userState().loading|json}}</pre>
@@ -89,11 +87,13 @@ export class UserEditComponent {
         // me viene del resolver, en router
         this.roles = this.route.snapshot.data['roles'];
 
-        this.mode  = this.route.snapshot.data['mode'];
+        this.mode  = this.route.snapshot.data['mode']; 
+        if(this.mode === 'create') this.userStore.cleanMsgState(false);
 
         let id = this.route.snapshot.paramMap.get('id');
         console.log("id",id)
         this.msgLoading = 'Cargando data del Usuario'
+
         if(id)
            this.userStore.getUserById(id!);
 
@@ -112,7 +112,7 @@ export class UserEditComponent {
         //       if(id)
         //         this.userStore.getUserById(id!);
         //   });
-/*
+     /*
         this.route.paramMap.subscribe(params => {
           const id = params.get('id');      
           //this.mode='create'
@@ -123,7 +123,6 @@ export class UserEditComponent {
           }
         });
 
-
         // y esta para el modo    
         this.route.queryParamMap
               .pipe(map(params => params.get('mode')))
@@ -131,7 +130,7 @@ export class UserEditComponent {
                 this.mode = mode!;
               });
               console.log("_______userState().selectedUser_____",this.mode,this.userState().selectedUser)
-*/              
+     */              
   }
  
   onSave(user: ActionUser) {      

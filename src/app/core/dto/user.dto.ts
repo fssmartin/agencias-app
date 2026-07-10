@@ -24,7 +24,7 @@ export interface UserDto {
   created_at?: string;
   updated_at?: string;
 
-  images_user:[imageApiDto]
+  images_user:imageApiDto[]
 }
 
 export interface LoginRequestDto {
@@ -42,7 +42,9 @@ export interface ActionUserDto {
     role?: string;
     updated_at?: string;
     created_at?: string;
-    images_user?:[number];
+    images_user?:imageApiDto[];
 }
+
+
 
 
