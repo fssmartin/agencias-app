@@ -9,7 +9,6 @@ export enum NotificationType {
   Info = 'info'
 }
 
-
 export interface Notification {
 //  type: 'success' | 'error' | 'warning' | 'info';
   type: NotificationType;
@@ -31,7 +30,7 @@ export class NotificationUiService {
   // isInfo    = computed(() => this.state()?.type === 'info');  
 
   set(notificaccion:Notification):void{
-    console.log("____ modifico signal Notificacion !!")
+    console.log("____ MODIFY signal Notificacion !!")
     this._state.set(notificaccion) 
   }
   
@@ -48,13 +47,13 @@ export class NotificationUiService {
   }
 
   success(message: string):void {
-    this.set({ type: NotificationType.Success, message });
     console.log("____ SUCCESS, ",message)
+    this.set({ type: NotificationType.Success, message });
   }
 
   error(message: string):void {
-    this.set({ type: NotificationType.Error, message });
     console.log("____ ERROR, ",message)
+    this.set({ type: NotificationType.Error, message });
   }
 
    

@@ -42,20 +42,21 @@ export class AdminNavigationService {
         )        
         .subscribe(() => {
             
-        console.log("---------------- this.router.url --->          ", this.router.url)
+            console.log("---------------- this.router.url --->          ", this.router.url)
 
-// TENGO QUE IR LIMPIANDO TODOS LOS STORES... 
+    // TENGO QUE IR LIMPIANDO TODOS LOS STORES... 
 
+    // TODO:: HABRIA QUE HACER ALGO PARA BORRAR TODOS.. 
 
-        // Si NO estoy en users => limpio UserStore
-        if (!this.router.url.startsWith('/admin/users')) {
-          this.userStore.cleanMsgState(false);
-        }
+            // Si NO estoy en users => limpio UserStore
+            if (!this.router.url.startsWith('/admin/users')) {
+              this.userStore.cleanMsgState(false);
+            }
 
-        // Si NO estoy en questions => limpio QuestionStore
-        // if (!this.router.url.startsWith('/admin/questions')) {
-        //   this.questionStore.reset();
-        // }
+            // Si NO estoy en questions => limpio QuestionStore
+            // if (!this.router.url.startsWith('/admin/questions')) {
+            //   this.questionStore.reset();
+            // }
 
       });
   }

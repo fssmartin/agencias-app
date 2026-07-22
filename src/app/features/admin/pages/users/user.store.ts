@@ -74,16 +74,16 @@ export class UserStore {
         .pipe(takeUntilDestroyed(this.destroyRef)) 
         .subscribe({
             next:(data)=>{
-                console.log("ok ")
-                this._state.update(s=> ({...s, data: data,loading:false,error:false}))
+                this._state.update(s=> ({...s, data: data, loading:false, error:false}))
             },
             error:(err)=>{
-                console.log("error ")
-                this._state.update(s=> ({...s, data: [], loading:false,error:true}))
-                this.notificationUi.error(err.message);
+                if(err.status===404){
+                    this.notificationUi.error("Se ha producido un error Interno..");
+                }
+                this._state.update(s=> ({...s, data: [], loading:false, error:true}));
             },
             complete:()=>{
-                console.log("complete ",this._state())
+                console.log("➡️ complete getUsers only next --> 3000")
                 this.notificationUi.show();// para el setTimeout y ocultar..
             }
         })
@@ -207,6 +207,7 @@ export class UserStore {
     }
 
     initState(){   
+        console.log("➡️ -- INIT STORE USER ")
         // CARGANDO ! 
         this._state.update(s=>({...s, selectedUser:null, loading:true,error:false}))
         // LIMPIO 
@@ -214,11 +215,12 @@ export class UserStore {
     }
 
     cleanMsgState(reload:boolean){    
-        console.log("-- STORE USER , -- cleanMsgState --> updateState cleanNotify")
+        console.log("➡️ -- STORE USER , -- cleanMsgState --> updateState cleanNotify")
         this._state.update(s=>({...s, selectedUser:null, loading:reload,error:false,}))
         this.notificationUi.cleanNotify();
 
         if(reload) this.router.navigate(['/admin/users']);  
+
     }
 
 }

@@ -34,7 +34,7 @@ export class ImageService  extends BaseService{
       console.log("________________________________________ entro...")
 
     return this.http.get<ImageDto[]>(this.api).pipe(
-              delay(1000),   
+              //delay(1000),   --> lo tengo en el Interceptor del loader
               tap(request => {
                 console.log('IMAGE:', request);
               }),
@@ -42,7 +42,9 @@ export class ImageService  extends BaseService{
               map((data) =>
                 data.map(dto => ImageMapper.toDomain(dto))
               ),
-              catchError(this.handleError('getImages'))  // es comun para toda la aplicacion
+              // catchError(
+              //   //this.handleError('getImages')
+              // )  // es comun para toda la aplicacion
             )
 
 

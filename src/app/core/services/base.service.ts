@@ -1,5 +1,17 @@
 import { throwError } from "rxjs";
 
+
+
+
+
+
+// NO SE DEBERIA DE USAR !
+
+
+
+
+
+
 export abstract class BaseService {
 
   protected handleError(operation: string) {

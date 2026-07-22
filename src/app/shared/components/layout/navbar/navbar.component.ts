@@ -20,9 +20,7 @@ export class NavbarComponent  {
   @Input() links:NavLink[] = []; 
   @Input() exact = false; 
  
-  constructor( 
-    public authStore:AuthStore  
-  ) {}
+constructor(public authStore:AuthStore ){ console.log("LLamo a AuthStore constructor NavbarComponent") } 
 
  ngOnInit(): void {
     console.log('navbar init'); 

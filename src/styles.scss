@@ -355,9 +355,7 @@ table {
     }
   }
 
-  // tr:not(:first-child, :last-child):hover {
-  //   background-color: #ceed88;
-  // }
+ 
 
 
 }
@@ -369,8 +367,8 @@ table {
 }  
 
 .sectionPagination{ 
-  border-top:1px solid #ccc;
-  margin-top:10px;
+  //border-top:1px solid #ccc;
+  //margin-top:10px;
 
   & .pagination {
     background-color: transparent;  
@@ -542,6 +540,7 @@ table {
       }
       &.noOrder{
         cursor: default;
+        pointer-events: none;
       }
       span {
         margin-left: 5px;

@@ -183,32 +183,6 @@
       ]
     },
     {
-      "id": "lVwb2Qn",
-      "email": "asd@asd.es",
-      "password": "$2a$10$ZKU1NY3meyNoDfLzI0o3k.JmPCbqRbP7fAO67JAzvnQQgVN2yQFLC",
-      "is_active": false,
-      "user_name": "paAAa",
-      "first_name": "sadaA",
-      "last_name": "sssA",
-      "role": "ADMIN",
-      "created_at": "2026-07-01T09:21:00.185Z",
-      "updated_at": "2026-07-10T10:04:24.717Z",
-      "images_user": [
-        {
-          "id": "9",
-          "description": "kk",
-          "url_image": "avatar9.jpg",
-          "is_active": true
-        },
-        {
-          "id": "10",
-          "description": "pp",
-          "url_image": "avatar10.jpg",
-          "is_active": false
-        }
-      ]
-    },
-    {
       "email": "sffffff@asd.es",
       "password": "$2a$10$2eGqpEgcSvVhkXGwljZf5.GHd8d19KviUx1i1AGdpvUm86pCmHBPm",
       "is_active": false,
@@ -230,6 +204,17 @@
       "role": "USER",
       "created_at": "2026-07-09T06:23:39.231Z",
       "id": "zlR6KPD"
+    },
+    {
+      "email": "asd@asd.es",
+      "password": "$2a$10$f4MEhpAh5qQo2n./7nlETuiUgvkAx61EZMTkmdrEJi.or/XrcgQ1m",
+      "is_active": true,
+      "user_name": "aaaaaA",
+      "first_name": "sssssssS",
+      "last_name": "dddD",
+      "role": "USER",
+      "created_at": "2026-07-22T12:06:03.947Z",
+      "id": "OJvXozf"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

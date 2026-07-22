@@ -1,22 +1,25 @@
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { delay, finalize } from 'rxjs/operators'; 
+import { LoadingService } from '../services/loading.service';
 
-// import { inject } from '@angular/core';
-// import { HttpInterceptorFn } from '@angular/common/http';
-// import { finalize } from 'rxjs/operators';
-// import { UiService } from '../services/ui.service';
+export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
 
-// export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
+    const loadingService = inject(LoadingService);
 
-//   const ui = inject(UiService);
+    let ahora =  Date.now();
 
-//   console.log("inteceptoooooo HttpInterceptorFn")
+    console.log('➡️ LOADING:');
 
-//   ui.showLoading();
+    loadingService.show();
 
-//   return next(req).pipe(
-//     finalize(() => {
-//         ui.hideLoading();
-//     })
-//   );
+    return next(req).pipe(
+        delay(1000),
+        finalize(() => {
+            console.log('✅ LOADING:', Date.now() - ahora);
+            loadingService.hide();
+        })
+    );
 
 
-// };
+};

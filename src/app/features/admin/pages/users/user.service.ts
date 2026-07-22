@@ -35,7 +35,7 @@ export class UserService extends BaseService{
   getUsuarios():Observable<ListUser[]> {
   
     return this.http.get<UserDto[]>(this.api).pipe(
-      delay(1000),   
+      //delay(1000),   --> lo tengo en el Interceptor del loader
 
       // USANDO UN MAPPER !
       map((data) =>
@@ -51,7 +51,11 @@ export class UserService extends BaseService{
       //     role: user.role
       //   }))
       // ), 
-      catchError(this.handleError('getUsuarios'))  // es comun para toda la aplicacion
+
+      // YA no uso aqui el catchError, sino un INTERCEPTOR GLOGAL, 
+      //   y los que no trato en el interceptor en el propio COMPONENTE !!...
+
+      //catchError(this.handleError('getUsuarios'))  // es comun para toda la aplicacion
    
     )   
 
@@ -60,13 +64,17 @@ export class UserService extends BaseService{
   getById(id: string): Observable<ActionUser> {
 
     return this.http.get<UserDto>(`${this.api}/${id}`).pipe(
-      delay(1000),
+      //delay(1000), --> lo tengo en el Interceptor del loader
       tap(user => {
         //console.log('USER:', user);
       }),
       map(x  => UserMapper.toSelect(x)), 
        
-      catchError(this.handleError('getById'))
+      // YA no uso aqui el catchError, sino un INTERCEPTOR GLOGAL, 
+      //   y los que no trato en el interceptor en el propio COMPONENTE !!...
+      
+      //catchError(this.handleError('getById'))
+
       // catchError(err => {
       //   if (err.status === 404)  
       //     return throwError(() => new Error("❌ Usuario no encontrado"));
@@ -79,8 +87,13 @@ export class UserService extends BaseService{
   deleteById(id: string): Observable<void> {    
     
     return this.http.delete<void>(`${this.api}/${id}`).pipe(
-      delay(1000),
-      catchError(this.handleError('deleteById'))
+      //delay(1000),--> lo tengo en el Interceptor del loader
+
+      // YA no uso aqui el catchError, sino un INTERCEPTOR GLOGAL, 
+      //   y los que no trato en el interceptor en el propio COMPONENTE !!...
+
+
+      //catchError(this.handleError('deleteById'))
       // catchError(err => {
       //    return throwError(() => err);  
       // })
@@ -93,7 +106,7 @@ export class UserService extends BaseService{
     const userDto : ActionUserDto = UserMapper.toUpdateDto(user);
 
     return this.http.patch<any>(`${this.api}/${user.id}`, userDto).pipe(
-      delay(1000),
+      //delay(1000),--> lo tengo en el Interceptor del loader
       tap(data => {
        console.log('service --> USER modified service',data);
       }),
@@ -109,7 +122,13 @@ export class UserService extends BaseService{
       //   isActive: user.is_active,
       //   role: user.role,
       // })),       
-      catchError(this.handleError('updateUser'))
+      
+      // YA no uso aqui el catchError, sino un INTERCEPTOR GLOGAL, 
+      //   y los que no trato en el interceptor en el propio COMPONENTE !!...
+      
+      
+      //catchError(this.handleError('updateUser'))
+      
       // catchError(err => {
       //   if (err.status === 404)  
       //     return throwError(() => new Error("❌ Usuario no encontrado"));
@@ -124,13 +143,14 @@ export class UserService extends BaseService{
      const userDto : ActionUserDto = UserMapper.toCreateDto(user);
 
      return this.http.post<userAccessDto>(this.api, userDto).pipe(
-      delay(1000),
+      //delay(1000),--> lo tengo en el Interceptor del loader
       tap(data => {
-        console.log('__________________USER CREADO______________________',data);
+        console.log('🆗__________________USER CREADO______________________',data);
       }),
       // USANDO UN MAPPER ! de model A DTO back
       // envio 2 objetos de vuelta ... 
       // PARA DEVOLVER
+      
       map(({user}) => UserMapper.toActionUser(user)),            
       // map(({user}) => ({
       //   id: user.id,
@@ -142,7 +162,11 @@ export class UserService extends BaseService{
       //   role: user.role,
       // })),       
      //devuelvo lo que necesito, no accestoken ,  user {....}
-      catchError(this.handleError('createUser'))
+      
+    // YA no uso aqui el catchError, sino un INTERCEPTOR GLOGAL, 
+    //   y los que no trato en el interceptor en el propio COMPONENTE !!...
+     
+     //catchError(this.handleError('createUser'))
    
     );
 

@@ -9,55 +9,14 @@ import { TableListComponent } from '../../../../components/table-list/table-list
 @Component({
   selector: 'app-question-list',
   standalone: true,
-  imports: [CommonModule,  TableListComponent],
+  imports: [CommonModule],
   template: `
 
 
     <h4><span>Questions List</span></h4> 
  
     <ng-container  >
-
-        <!-- <app-table-list 
-            [data]=questions
-            [columns]="[
-              { key: ['descripcion'], label: 'Descripcion', type:'text' , order:true },
-              { key: ['createdAt'], label: 'CreatedAt', type:'date'  , order:false}
-            ]"
-            [lbCreation] = "'Question'"
-        ></app-table-list> -->
-
-        <!-- <table
-          *ngIf="questions"
-          class="listTable">
-          <tr>
-            <th></th>
-            <th>Name</th>
-            <th><button routerLink="/admin/question/create"  class="fRight btEnlace btCrear">Crear Question</button></th>
-          </tr>
-          <tr *ngFor="let question of questions; trackBy: trackById">
-            <td>{{ question.isActive ? '✅' : '❌' }}</td>
-            <td>{{ question.descripcion | slice:0:15 }} {{ question.descripcion.length > 15 ? '...' : '' }}</td>
-            <td>
-              <button [routerLink]="['/admin/users/edit', question.id]"
-                [queryParams]="{ mode: 'view' }" title="Show" >  👁️</button>
-              <button [routerLink]="['/admin/users/edit', question.id]" 
-                [queryParams]="{ mode: 'edit' }" title="Edit">✏️</button>
-              <button (click)="deleteQuestion(question)"  class="" >🗑️</button>
-            </td>
-          </tr>
-          <tr *ngIf="questions.length > 0; else noUsers">
-            <td></td>
-            <td  colspan="4" text-align="right">Total: <strong>{{ questions.length }}</strong></td>
-          </tr>
-          <ng-template #noUsers>
-            <tr>
-              <td colspan="5" class="notFound" style="text-align: center;">
-                No users
-              </td>
-            </tr>
-          </ng-template>
-        </table>   -->
-
+ 
     </ng-container> 
     
 

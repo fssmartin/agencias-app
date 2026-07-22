@@ -23,7 +23,7 @@ export const ADMIN_ROUTES : Routes = [
         children: [
             {
                 path: '',
-                redirectTo: 'images',
+                redirectTo: 'users',
                 pathMatch: 'full',
             },
             {

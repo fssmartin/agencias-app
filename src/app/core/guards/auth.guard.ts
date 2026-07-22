@@ -1,6 +1,5 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, CanDeactivateFn, Router } from '@angular/router';
-import { UserStore } from '../../features/admin/pages/users/user.store';
 import { AuthStore } from '../../features/auth/auth.store';
 
 export const adminGuard: CanActivateFn = () => {
@@ -10,8 +9,6 @@ export const adminGuard: CanActivateFn = () => {
   console.log("----- adminGuard: CanActivateFn")
  
   // console.log("IS ADMIN ? CanActivateFn adminGuard -- " , authService.isAdmin())
-
-  
   // tengo que preguntar por la signal en authStore.. no en service
 
   return authStore.isAdmin()

@@ -54,7 +54,7 @@ export class HomeComponent {
 
 
   constructor(public authStore:AuthStore ){ 
-
+    //console.log("LLamo a AuthStore constructor HOME") 
   } 
 
   ngOnInit(): void {  

@@ -30,7 +30,6 @@ import { ActionUser } from '../../models/user.model';
 
     <!-- <ng-container *ngIf="!(loading$ | async)"> con behaviourSubjet -->
     
- 
     <!-- <div *ngIf="error$ | async as error"> -->
 
     <h4  *ngIf="!userState().loading">

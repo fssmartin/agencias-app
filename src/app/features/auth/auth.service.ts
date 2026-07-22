@@ -15,8 +15,8 @@ import { UserMapper } from "../admin/pages/users/mappers/user.mapper";
 @Injectable({ providedIn: 'root' })
 export class AuthService extends BaseService  {
 
-  private apiUser = 'http://localhost:3000/users';
-  private apiAuth = 'http://localhost:3000/login';
+  private apiUser =     'http://localhost:3000/users';
+  private apiAuth =     'http://localhost:3000/login';
   private apiRegister = 'http://localhost:3000/register';
 
   public userAuthEmpty:AuthUserFull={
@@ -54,28 +54,25 @@ export class AuthService extends BaseService  {
   // private _now = signal(Date.now());
  
   private http = inject(HttpClient); 
-  // private userService = inject(UserService); 
+    // private userService = inject(UserService); 
+    
+
+    // private destroyRef = inject(DestroyRef);
   
+    constructor() {
+      super();
+      // no hacemos nada ... lo hacemos en el constructor del store
 
-  // private destroyRef = inject(DestroyRef);
- 
-  constructor() {
-    super();
-    // no hacemos nada ... lo hacemos en el constructor del store
-    console.log("0 ___ AUTH SERVICE - INIT constructor")
-
+      console.log("0 ___ AUTH SERVICE - INIT constructor")
     
-   // this.initFromStorage();
+      // this.initFromStorage();
 
-    
-    // setInterval(() => {
-    //   this._now.set(Date.now());
-    // }, 1000);
+      // setInterval(() => {
+      //   this._now.set(Date.now());
+      // }, 1000);
 
- 
   }
- 
-    
+     
   private initFromStorage_A() {
 
     // 1 - tengo que sacar la info del storage 
@@ -112,21 +109,26 @@ export class AuthService extends BaseService  {
   private loadUser(payload:JwtPayload):Observable<AuthUserFull>{
 
       return  this.http.get<UserDto>(`${this.apiUser}/${payload.sub}`).pipe(
-              delay(1000),
-              tap(user => {
-                console.log("USER 1",user)
-              }),
-              map(x  => AuthMapper.DtoAuthtoUser(x, payload.exp  )), 
-              tap(user => {                
-                console.log('USER 2', user);
-              }),
-              catchError(this.handleError('getById'))
-              // catchError(err => {
-              //   if (err.status === 404)  
-              //     return throwError(() => new Error("❌ Usuario no encontrado"));
-              //   return throwError(() => new Error('❌ Error cargando usuario'));
-              // })
-            );      
+          //delay(3000), --> se lo pongo en el interceptor !
+          tap(user => {
+            console.log("-- USER 1",user)
+          }),
+          map(x  => AuthMapper.DtoAuthtoUser(x, payload.exp  )), 
+          tap(user => {                
+            console.log('-- USER 2', user);
+          }),
+          
+      // YA no uso aqui el catchError, sino un INTERCEPTOR GLOGAL, 
+      //   y los que no trato en el interceptor en el propio COMPONENTE !!...
+
+
+          //catchError(this.handleError('getById'))
+          // catchError(err => {
+          //   if (err.status === 404)  
+          //     return throwError(() => new Error("❌ Usuario no encontrado"));
+          //   return throwError(() => new Error('❌ Error cargando usuario'));
+          // })
+      );      
   }
 
   private getStoredToken():string|null{
@@ -168,15 +170,13 @@ export class AuthService extends BaseService  {
   }
 
   login(email: string, password: string ): Observable<AuthUser> {
-    
     return this.http.post<userAccessDto>(this.apiAuth, {email,password}).pipe(
       // take(1) asegura que la petición se cierre sola en cuanto responda el servidor
       take(1),
-      delay(1400),
-      tap((request) =>  console.log("login______________",request) ),      
+      //delay(1400),--> lo tengo en el Interceptor del loader
       tap((request: userAccessDto) => {
             localStorage.setItem('token', request.accessToken);
-            console.log('Sesión guardada localstorage', request.accessToken); 
+            console.log('✅ Sesión guardada localstorage', request.accessToken); 
       }),
       map(x  => AuthMapper.DtoAuthtoUser(x.user,this.getExpToken(x.accessToken))),  
 
@@ -199,7 +199,12 @@ export class AuthService extends BaseService  {
       //   }
       // }),
       //map(data => ({request:'ok'})),
-      catchError(this.handleError('loginUser'))      
+
+      // YA no uso aqui el catchError, sino un INTERCEPTOR GLOGAL, 
+      //   y los que no trato en el interceptor en el propio COMPONENTE !!...
+
+      // catchError(this.handleError('loginUser'))      
+
       // catchError((error) => {
       //   console.log('Error de red detectado en el servicio:', error);
       //   if (error.status === 0){
@@ -267,8 +272,6 @@ export class AuthService extends BaseService  {
       default:return UserRole.USER;
     }
   } 
-
-
 
   // hasPermission(permission: Permission): boolean {
   //   return this.user?.permissions?.includes(permission) ?? false;

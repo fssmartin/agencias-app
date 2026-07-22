@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/components/layout/navbar/navbar.component';
 import { FooterComponent } from './shared/components/layout/footer/footer.component';
+import { ScrollTopComponent } from './shared/components/ui/scroll-top/scroll-top.component';
+import { LoadingComponent } from './shared/components/ui/loading/loading.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, ScrollTopComponent, LoadingComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -19,6 +21,5 @@ export class AppComponent {
     { path: '/admin',   label: 'Admin'  , role:'ADMIN' , icon:"<i class='fa fa-gear'></i>"}
   ]
   title = 'Myapp';
-  exact = false;
 
 }

@@ -13,7 +13,7 @@ import { output } from '@angular/core';
 <!-- <pre>{{fieldOrder()|json}}</pre>
 
 <pre>{{direcOrder()|json}}</pre> -->
-
+ 
     <p class="addItem">
       <button  [routerLink]="['create']"
                 class="fRight btEnlace btCrear">{{  tableConfig().lbCreation }}</button>                
@@ -25,11 +25,11 @@ import { output } from '@angular/core';
             <thead>
               <tr>
                 <th *ngFor="let col of tableConfig().columns" (click)="lanzarEmit(col.key[0] , col.order)"
-                  [ngClass]="[col.type, !col.order ? 'noOrder':'', col.class ? col.class:'' ]"   >
+                  [ngClass]="[col.type, !col.order || dataShow().length===0 ? 'noOrder':'', col.class ? col.class:''   ]"   >
 
                   {{ col.label }}
 
-                  @if (col.order) {
+                  @if (col.order && dataShow().length>0) {
                       @if (fieldOrder() == col.key[0]) {
                         <span >
                           {{  direcOrder() == 'desc' ? '▲' : '▼' }}
@@ -43,61 +43,69 @@ import { output } from '@angular/core';
                 <th></th>
               </tr>
             </thead>
-            <tbody>
 
-              <tr *ngFor="let item of dataShow(); trackBy: trackById"
-                  [ngClass]="{ 'highlight-row': item.id == itemSelected()}"
-              >
-    
-                <td *ngFor="let col of tableConfig().columns" [ngClass]="col.type">
-    
-                    <ng-container [ngSwitch]="col.type">
-    
-                      <!-- Boolean -->
-                      <div *ngSwitchCase="'boolean'">{{ item[col.key[0]] ? '✅' : '❌' }}</div>
-                      <!-- Rol -->
-                      <div *ngSwitchCase="'role'">{{ item[col.key[0]] === 'ADMIN' ? '🛡️' : item[col.key[0]] === 'MANAGER' ? '📊' : '👤'  }}</div>
-                      <!-- Fecha -->
-                      <div *ngSwitchCase="'date'">{{ item[col.key[0]] | date:'dd/MM/yyyy HH:MM' }}</div>
-                      <!-- Gender -->
-                      <!-- <span *ngSwitchCase="'icon'">
-                            <i [ngClass]="item[col.key[0]].toLocaleUpperCase() === 'MALE'
-                                ? 'fa-solid fa-mars'
-                                : 'fa-solid fa-venus'">
-                            </i>
-                      </span> -->
-    
-                      <!-- Default -->
-                      <ng-container *ngSwitchDefault>
-                        <!-- {{ item[col.key] }} -->
-                          <div *ngFor="let key of col.key">
-                                {{ item[key] }}
-                          </div>
+            <tbody>
+              @if (dataShow().length) {
+                <tr *ngFor="let item of dataShow(); trackBy: trackById"
+                    [ngClass]="{ 'highlight-row': item.id == itemSelected()}"
+                >
+      
+                  <td *ngFor="let col of tableConfig().columns" [ngClass]="col.type">
+      
+                      <ng-container [ngSwitch]="col.type">
+      
+                        <!-- Boolean -->
+                        <div *ngSwitchCase="'boolean'">{{ item[col.key[0]] ? '✅' : '❌' }}</div>
+                        <!-- Rol -->
+                        <div *ngSwitchCase="'role'">{{ item[col.key[0]] === 'ADMIN' ? '🛡️' : item[col.key[0]] === 'MANAGER' ? '📊' : '👤'  }}</div>
+                        <!-- Fecha -->
+                        <div *ngSwitchCase="'date'">{{ item[col.key[0]] | date:'dd/MM/yyyy HH:MM' }}</div>
+                        <!-- Gender -->
+                        <!-- <span *ngSwitchCase="'icon'">
+                              <i [ngClass]="item[col.key[0]].toLocaleUpperCase() === 'MALE'
+                                  ? 'fa-solid fa-mars'
+                                  : 'fa-solid fa-venus'">
+                              </i>
+                        </span> -->
+      
+                        <!-- Default -->
+                        <ng-container *ngSwitchDefault>
+                          <!-- {{ item[col.key] }} -->
+                            <div *ngFor="let key of col.key">
+                                  {{ item[key] }}
+                            </div>
+                        </ng-container>
+      
                       </ng-container>
-    
-                    </ng-container>
-    
-                </td>
-                <td>
-                  <div>
-                                <!-- [queryParams]="{ 'mode': 'view' }"  -->
-                      <button  [routerLink]="[item.id]" title="Show">
-                                <!-- <i class="fa-solid fa-eye"></i> -->
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                      </button>
-                                <!-- [queryParams]="{ 'mode': 'edit' }"  -->
-                      <button  [routerLink]="[item.id, 'edit']" title="Edit">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-3"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                <!-- <i class="fa-solid fa-pencil"></i> -->
-                      </button>
-                      <button title="Delete" (click)="delete.emit(item.id)">
-                                <!-- <i class="fa-regular fa-trash-can"></i> -->
-                              <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>                          
-                      </button>
-                  </div>
-                </td>
-              </tr>
+      
+                  </td>
+                  <td>
+                    <div>
+                                  <!-- [queryParams]="{ 'mode': 'view' }"  -->
+                        <button  [routerLink]="[item.id]" title="Show">
+                                  <!-- <i class="fa-solid fa-eye"></i> -->
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                                  <!-- [queryParams]="{ 'mode': 'edit' }"  -->
+                        <button  [routerLink]="[item.id, 'edit']" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-3"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                  <!-- <i class="fa-solid fa-pencil"></i> -->
+                        </button>
+                        <button title="Delete" (click)="delete.emit(item.id)">
+                                  <!-- <i class="fa-regular fa-trash-can"></i> -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>                          
+                        </button>
+                    </div>
+                  </td>
+                </tr>
+              } @else {
+                <tr>
+                  <td colspan="20" class="error" style="text-align:center">NO hay datos...</td>
+                </tr>
+              }
+
             </tbody>
+
         </table>          
       <!-- PAGINATION -->
       

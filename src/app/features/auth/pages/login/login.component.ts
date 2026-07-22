@@ -120,7 +120,7 @@ export class LoginComponent implements AfterViewInit {
   
   private destroyRef = inject(DestroyRef);
 
-  constructor(private router:Router ){ }
+  constructor(){ }
 
   ngOnInit(): void {
 
@@ -142,20 +142,8 @@ export class LoginComponent implements AfterViewInit {
 
       const { email, password } =  this.form.value;
 
-      this.authStore.login(email, password)
-        .pipe(
-          takeUntilDestroyed(this.destroyRef)        
-        )
-        .subscribe({
-             next: (request) => {
-               console.log('¡Login correcto!', request.data);               
-                this.router.navigate(['/home']);
-             },
-             error: (err) => {
-                console.log("___________________________error___ component al logarse !!",err)
-             }
-         });
-
+      this.authStore.login(email, password);
+       
   }
 
   ngAfterViewInit(): void {
@@ -201,8 +189,6 @@ export class LoginComponent implements AfterViewInit {
     return getErrorMessage(control);
 
   }
-
-
 
 }
 

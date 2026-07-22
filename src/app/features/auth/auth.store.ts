@@ -4,6 +4,8 @@ import { catchError, map, Observable, pipe, tap, throwError } from "rxjs";
 import { AuthService } from "./auth.service";
 import { AuthStateModel, AuthUser, AuthUserFull } from "./models/auth.model";
 import { UserRole } from "../admin/pages/users/models/user.model";
+import { HttpErrorResponse } from "@angular/common/http";
+import { Router } from "@angular/router";
  
 
 @Injectable({ providedIn: 'root' })
@@ -34,39 +36,51 @@ export class AuthStore {
   //      actaulizar signal desde el store NO desde el servicio como lo tenia antes.
 
   // store PIDE datos y actualiza signals
-
-  constructor(private authService:AuthService){
+ 
+  constructor(private authService:AuthService,private router:Router ){
     console.log("_____ AUTH STORE --- INIT constructor --- restoreSession")
     this.restoreSession();
   }
   
   private restoreSession(){
 
-    this.authService.initFromStorage()
-        .pipe(
-            takeUntilDestroyed(this.destroyRef)        
-        )   
-        .subscribe({
-          next: user => this.setUser(user,false,null),
-          error: ()  => this.logout()
-        });
+      this.authService.initFromStorage()
+          .pipe(
+              takeUntilDestroyed(this.destroyRef)        
+          )   
+          .subscribe({
+            next: user => this.setUser(user,false,null),
+            error: (error: HttpErrorResponse) => {
+//             if (error.status === 404) {
+               console.log("------- ❌",error.error.message ? error.error.message : `[${error.status}]  ${error.message}` )
+               this.logout();
+            }
+          });
 
   }
 
-  public login(email:string, password:string):Observable<any> {
+  public login(email:string, password:string) {
       
-      this.setUser(null, true, null);    
+    this.setUser(null, true, null);
 
-      return this.authService.login(email, password.trim()).pipe(
-          map(data => ({ data, loading: false, error: null })),
-          tap((request) => ( 
-            this.setUser(request.data, false, null ) 
-          )),           
-          catchError(err => {
-                this.setUser(null,false,err.error ?? 'Error desconocido');
-                return throwError(() => err);
-              })
-          );
+    this.authService.login(email, password.trim()).pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map(data => ({ data, loading: false, error: null })),
+        tap((request) => ( 
+          this.setUser(request.data, false, null ) 
+        ))
+      )
+      .subscribe({
+          next: (request) => {
+            console.log('🆗 ¡Login correcto!', request.data);               
+            this.router.navigate(['/home']);
+          },
+          error: (err) => {
+            if(err.status=400){
+              this.setUser(null, false, 'Usuario o contraseña incorrectos' ) 
+            }
+          }
+      });
   }
   
   setUser(user: AuthUserFull|null, loading:boolean, error:string|null) {
@@ -74,10 +88,8 @@ export class AuthStore {
   }
 
   logout() {
-      this._state.set({currentUser: null,loading: false, error: null   });                
+      this._state.set({  currentUser: null, loading: false, error: null   });                
       this.authService.logout();
-  }
-
- 
+  } 
 
 }
